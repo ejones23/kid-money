@@ -49,7 +49,7 @@
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A90000000000000000000001 /* Project object */ = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 2600; LastUpgradeCheck = 2600; TargetAttributes = { A50000000000000000000001 = { CreatedOnToolsVersion = 26.0; }; A50000000000000000000002 = { CreatedOnToolsVersion = 26.0; TestTargetID = A50000000000000000000001; }; }; }; buildConfigurationList = A60000000000000000000003 /* Build configuration list for PBXProject "KidMoney" */; compatibilityVersion = "Xcode 16.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = A40000000000000000000001; productRefGroup = A40000000000000000000004 /* Products */; projectDirPath = ""; projectRoot = ""; targets = (A50000000000000000000001 /* KidMoney */, A50000000000000000000002 /* KidMoneyTests */,); };
+		A90000000000000000000001 /* Project object */ = {isa = PBXProject; attributes = { LastSwiftUpdateCheck = 2660; LastUpgradeCheck = 2660; TargetAttributes = { A50000000000000000000001 = { CreatedOnToolsVersion = 26.0; }; A50000000000000000000002 = { CreatedOnToolsVersion = 26.0; TestTargetID = A50000000000000000000001; }; }; }; buildConfigurationList = A60000000000000000000003 /* Build configuration list for PBXProject "KidMoney" */; compatibilityVersion = "Xcode 16.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = A40000000000000000000001; productRefGroup = A40000000000000000000004 /* Products */; projectDirPath = ""; projectRoot = ""; targets = (A50000000000000000000001 /* KidMoney */, A50000000000000000000002 /* KidMoneyTests */,); };
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
