@@ -8,6 +8,7 @@ struct KidMoneyApp: App {
     init() {
         do {
             modelContainer = try AppModelContainer.make()
+            KidMoneyShortcuts.updateAppShortcutParameters()
         } catch {
             fatalError("Unable to create the Kid Money data store: \(error.localizedDescription)")
         }
@@ -20,4 +21,3 @@ struct KidMoneyApp: App {
         .modelContainer(modelContainer)
     }
 }
-

@@ -14,7 +14,7 @@ Begin after Phase 2 compiles, tests pass, and the app is installed on a physical
 
 1. Terminate or background Kid Money.
 2. Say: “Siri, give Rebecca ten cents in Kid Money.”
-3. Record whether Siri selects the intent without clarification.
+3. Record whether Siri selects the intent and extracts the amount without clarification. A single amount follow-up is an acceptable intermediate result for this checkpoint and should be documented.
 4. Confirm the response reports the adjustment and $0.10 balance.
 5. Open the app and confirm Rebecca shows $0.10.
 6. Terminate and relaunch; confirm $0.10 remains.
@@ -51,4 +51,3 @@ Test the core phrase with the app open, backgrounded, and terminated, and with t
 Capture the exact phrase, Siri transcript and response, clarification, foreground behavior, balance before/after, timestamped OSLog lines, device model, and iOS version.
 
 Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fallback only if physical-device evidence justifies it.
-

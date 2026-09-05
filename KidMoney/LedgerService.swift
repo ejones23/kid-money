@@ -25,6 +25,27 @@ struct LedgerService {
         return try modelContext.fetch(descriptor)
     }
 
+    func child(id: UUID) throws -> Child? {
+        let descriptor = FetchDescriptor<Child>(
+            predicate: #Predicate { $0.id == id && !$0.isArchived }
+        )
+        return try modelContext.fetch(descriptor).first
+    }
+
+    func children(matching name: String) throws -> [Child] {
+        let query = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return [] }
+
+        let children = try activeChildren()
+        let exactMatches = children.filter {
+            $0.name.compare(query, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }
+        if !exactMatches.isEmpty {
+            return exactMatches
+        }
+        return children.filter { $0.name.localizedCaseInsensitiveContains(query) }
+    }
+
     @discardableResult
     func addChild(named name: String) throws -> Child {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -63,4 +84,3 @@ struct LedgerService {
         return try modelContext.fetch(descriptor)
     }
 }
-

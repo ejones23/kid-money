@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all three tests pass on an iOS 26.5 simulator. Phase 2 App Intents work has not started.
+Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented and ready for physical-device verification. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. Siri routing has not been verified.
 
 Latest verified capabilities:
 
@@ -25,6 +25,9 @@ Latest verified capabilities:
 - derive each child's balance from transactions
 - show active children and balances
 - manually add ten cents from child detail
+- resolve active children case-insensitively for App Intents
+- convert positive USD amounts to exact integer cents
+- run `GiveMoneyIntent` in the background and return spoken dialog
 
 ## Non-negotiable rules
 
@@ -68,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Implement the narrow Phase 2 proof of concept described in `docs/ROADMAP.md`. Stop after `GiveMoneyIntent` is ready for physical-device testing; do not proceed to the remaining intents until the Siri checkpoint has been exercised and its results recorded.
+Exercise the Phase 2 physical-device matrix in `docs/SIRI_TEST_PLAN.md` and record the results. Do not implement the remaining intents until the Siri checkpoint has been exercised and its behavior is understood.

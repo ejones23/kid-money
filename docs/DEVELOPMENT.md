@@ -11,7 +11,7 @@
 
 ## Xcode workflow
 
-Open `KidMoney.xcodeproj`, select the `KidMoney` scheme, and choose an iPhone simulator. A physical-device run additionally requires selecting an Apple development team and replacing the placeholder `com.example.KidMoney` bundle identifier with a unique identifier.
+Open `KidMoney.xcodeproj`, select the `KidMoney` scheme, and choose an iPhone simulator. A physical-device run additionally requires selecting an Apple development team. The committed bundle identifier is `io.github.ejones23.KidMoney`.
 
 Build and test from the command line:
 
@@ -50,7 +50,8 @@ The bridge provides native builds, tests, Issue Navigator diagnostics, previews,
 
 Do not commit a personal development-team identifier unless the owner explicitly wants it shared.
 
+Changing the bundle identifier makes iOS treat the build as a different app with a separate local data container. Avoid changing it after device testing begins unless a migration is planned.
+
 ## Logs
 
 Phase 2 should use `Logger`/OSLog around intent invocation, entity lookup, amount conversion, transaction persistence, and returned results. Keep logs useful without recording more family data than necessary.
-

@@ -12,7 +12,7 @@ treated as a finished personal-finance product.
 
 ## Current status
 
-Phase 1 is complete:
+Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical-device verification:
 
 - SwiftUI application targeting iOS 26+
 - SwiftData models for children and signed ledger transactions
@@ -20,11 +20,15 @@ Phase 1 is complete:
 - add-child flow
 - active-child list with derived USD balances
 - minimal manual `+$0.10` transaction action
-- unit coverage for signed balances, independent children, and exact formatting
+- `GiveMoneyIntent` with a background execution mode
+- case-insensitive App Entity lookup for active children
+- exact USD `Decimal` to integer-cents conversion
+- App Shortcut discovery phrases and focused intent logging
+- unit coverage for ledger behavior, store reopening, child lookup, formatting, and money conversion
 
-The project builds without errors or warnings in Xcode 26.6. All three current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
+The project builds without errors or warnings in Xcode 26.6. All seven current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
 
-Siri and App Intents have **not** been implemented yet. That is the next checkpoint.
+The App Intent and shortcut metadata compile successfully, but Siri routing has **not** yet been tested on a physical iPhone. Compilation does not prove that the desired utterance works.
 
 ## Requirements
 
@@ -81,13 +85,14 @@ docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
 
 ## Next milestone
 
-Phase 2 is a deliberately narrow Siri proof of concept:
+The next milestone is the physical-device checkpoint for the deliberately narrow Siri proof of concept:
 
-1. Add a `ChildEntity` and case-insensitive entity query.
-2. Add exact `Decimal`/`IntentCurrencyAmount` to cents conversion.
-3. Implement only `GiveMoneyIntent` and an `AppShortcutsProvider`.
-4. Install the app on a physical iPhone.
-5. Prove that one Siri utterance resolves a child and amount, persists `+$0.10`, and speaks the resulting balance.
+1. Install the app on a physical iPhone.
+2. Confirm that Give Money appears in Shortcuts with the user's active children.
+3. Test “Give Rebecca ten cents in Kid Money” and record whether Siri extracts both values or requests the amount in a follow-up.
+4. Confirm that `+$0.10` persists and Siri speaks the resulting balance.
+
+Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. Kid Money places the child parameter in its phrases and leaves the amount as a required intent parameter. Physical testing will determine how naturally Siri handles the complete utterance.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/SIRI_TEST_PLAN.md](docs/SIRI_TEST_PLAN.md) for the full checkpoint.
 
