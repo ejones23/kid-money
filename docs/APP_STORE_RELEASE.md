@@ -22,7 +22,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 ## 3. Privacy and compliance
 
 - [x] Draft public privacy and support pages.
-- [ ] Enable GitHub Pages from the repository's `docs` directory and verify every URL.
+- [x] Enable GitHub Pages from the repository's `docs` directory and verify every URL.
 - [ ] Audit the release build and third-party code before selecting “Data Not Collected.”
 - [ ] Complete the age-rating questionnaire.
 - [ ] Confirm the app is not designated Made for Kids; the operator is a parent or guardian.
