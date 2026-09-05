@@ -8,6 +8,7 @@
 - iOS 26.5 simulator runtime
 - Swift Testing
 - no third-party packages
+- TestFlight/App Store preparation in progress
 
 ## Xcode workflow
 
@@ -49,6 +50,8 @@ The bridge provides native builds, tests, Issue Navigator diagnostics, previews,
 5. Select the iPhone as the destination and run once.
 
 Do not commit a personal development-team identifier unless the owner explicitly wants it shared.
+
+For managed work phones, do not attempt to bypass an organization's local developer-app restrictions. Use an employer-approved distribution channel such as TestFlight or the App Store, and test direct development builds on a personal device instead.
 
 Changing the bundle identifier makes iOS treat the build as a different app with a separate local data container. Avoid changing it after device testing begins unless a migration is planned.
 

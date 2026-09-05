@@ -29,6 +29,8 @@ Exit criterion: Rebecca begins at $0.00; a Siri utterance reasonably close to â€
 
 Pause for the physical-device matrix in `SIRI_TEST_PLAN.md`. Do not claim success based on compilation alone.
 
+Direct development installation was attempted on a managed work iPhone, but the organization's developer-trust policy prevented launch. The development app, Developer Mode, and pairing were removed. The owner chose TestFlight/App Store distribution as the compliant route to this checkpoint; release preparation is tracked in `APP_STORE_RELEASE.md`.
+
 App Shortcut phrases can interpolate at most one intent parameter. The proof of concept interpolates the child; the amount remains required and may be extracted semantically or requested by Siri as a follow-up. Record the observed behavior rather than assuming one-shot routing.
 
 ## Phase 3 â€” Complete voice actions
@@ -62,4 +64,6 @@ Status: Planned
 
 ## Explicitly deferred
 
-CloudKit, authentication, family sharing, backend services, Android, recurring allowances, notifications, payments, subscriptions, analytics, advertising, gamification, and App Store release work.
+CloudKit, authentication, family sharing, backend services, Android, recurring allowances, notifications, payments, subscriptions, analytics, advertising, and gamification.
+
+Minimal TestFlight and App Store preparation is now active by explicit owner request, but later feature phases remain blocked on the physical Siri checkpoint.

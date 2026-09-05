@@ -1,6 +1,18 @@
-.DS_Store
-DerivedData/
-build/
+# Xcode user state and build output
 xcuserdata/
 *.xcuserstate
+DerivedData/
+build/
+*.xcarchive
+*.dSYM
+*.ipa
 
+# Signing material and local environment
+*.cer
+*.mobileprovision
+*.p12
+.env
+.env.*
+
+# macOS
+.DS_Store

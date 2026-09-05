@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented and ready for physical-device verification. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. Siri routing has not been verified.
+Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented and ready for physical-device verification. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. Siri routing has not been verified. Direct installation was blocked by policy on the owner's managed work phone, so a minimal TestFlight/App Store preparation track is active by explicit request.
 
 Latest verified capabilities:
 
@@ -40,7 +40,7 @@ Latest verified capabilities:
 - Do not hard-code child names or silently create a child after failed voice recognition.
 - Prefer current installed-SDK APIs. Inspect compiler/SDK documentation instead of copying obsolete SiriKit examples.
 - Preserve the phase order. Get to a real Siri test before building the rest of the UI.
-- Do not introduce third-party dependencies, a backend, accounts, CloudKit, schedules, notifications, or App Store work without an explicit request.
+- Do not introduce third-party dependencies, a backend, accounts, CloudKit, schedules, or notifications without an explicit request. Minimal App Store/TestFlight work is authorized to reach the physical Siri checkpoint.
 - Never commit real family ledger data, credentials, signing material, personal development-team identifiers, or device logs containing personal information.
 
 ## Verification expectations
@@ -71,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Exercise the Phase 2 physical-device matrix in `docs/SIRI_TEST_PLAN.md` and record the results. Do not implement the remaining intents until the Siri checkpoint has been exercised and its behavior is understood.
+Prepare and distribute a minimal TestFlight build, then exercise the Phase 2 physical-device matrix in `docs/SIRI_TEST_PLAN.md` and record the results. Do not implement the remaining intents until the Siri checkpoint has been exercised and its behavior is understood. Follow `docs/APP_STORE_RELEASE.md` for distribution work.

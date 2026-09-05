@@ -10,7 +10,7 @@ I use Codex extensively and am comfortable letting you make substantial changes 
 
 I have previously used AI to generate iOS application code, but I have never published an app to the App Store.
 
-This is initially a personal app for my family. Do not optimize for App Store publication yet.
+This began as a personal app for my family. On September 5, 2026, the owner explicitly authorized minimal TestFlight and App Store preparation so the physical Siri checkpoint can be tested through an approved distribution channel on a managed phone. Preserve the Siri-first phase order while doing that release work.
 
 ## The real-world problem
 

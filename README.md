@@ -10,6 +10,8 @@ This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
 treated as a finished personal-finance product.
 
+The project is also preparing a minimal TestFlight build so that its physical-device Siri checkpoint can be tested through an approved distribution channel rather than a locally signed app on a managed phone.
+
 ## Current status
 
 Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical-device verification:
@@ -69,9 +71,14 @@ The first simulator boot may spend several minutes performing data migration. Wa
 KidMoney/                     Application source
 KidMoneyTests/                Swift Testing domain tests
 docs/ARCHITECTURE.md          Domain and persistence design
+docs/APP_STORE_RELEASE.md     TestFlight and App Store checklist
+docs/APP_STORE_METADATA.md    Draft public listing copy
+docs/APP_ICON.md              Provisional icon notes and source prompt
 docs/DEVELOPMENT.md           Setup and verification workflow
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
+docs/privacy.md               Draft public privacy policy
+docs/support.md               Draft public support page
 ```
 
 ## Guiding constraints
@@ -95,6 +102,8 @@ The next milestone is the physical-device checkpoint for the deliberately narrow
 Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. Kid Money places the child parameter in its phrases and leaves the amount as a required intent parameter. Physical testing will determine how naturally Siri handles the complete utterance.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/SIRI_TEST_PLAN.md](docs/SIRI_TEST_PLAN.md) for the full checkpoint.
+
+Release preparation is tracked separately in [docs/APP_STORE_RELEASE.md](docs/APP_STORE_RELEASE.md). It exists to unblock the physical Siri test through TestFlight; it does not replace the Siri-first product phase order.
 
 ## Source of truth
 
