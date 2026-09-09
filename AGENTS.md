@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented and ready for physical-device verification. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. Siri routing has not been verified. Direct installation was blocked by policy on the owner's managed work phone, so a minimal TestFlight/App Store preparation track is active by explicit request.
+Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight builds `0.1 (1)` through `0.1 (3)` are available internally. On the managed iPhone, Siri successfully ran a user-created shortcut containing `GiveMoneyIntent`, but every automatically advertised App Shortcut phrase failed with an unsupported-capability response. Build 3 included validated localized shortcut resources and still failed, so the next discriminator is an unmanaged physical iPhone.
 
 Latest verified capabilities:
 
@@ -71,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Prepare and distribute a minimal TestFlight build, then exercise the Phase 2 physical-device matrix in `docs/SIRI_TEST_PLAN.md` and record the results. Do not implement the remaining intents until the Siri checkpoint has been exercised and its behavior is understood. Follow `docs/APP_STORE_RELEASE.md` for distribution work.
+Install TestFlight build `0.1 (3)` on an unmanaged physical iPhone and repeat the two advertised phrases in `docs/SIRI_TEST_PLAN.md`. If automatic routing also fails there, capture a fresh reproduction using Apple's App Intents and Siri diagnostic profiles and file it through Feedback Assistant. Do not implement the remaining intents until this routing behavior is understood.

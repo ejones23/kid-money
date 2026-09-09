@@ -85,4 +85,6 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 ### TestFlight 0.1 (3)
 
 - Distribution: archived successfully with validated localized App Shortcut resources and generated Siri/NLU training assets, then uploaded and assigned to the `Internal Testing` group.
-- Device verification: pending. Retest both shipped phrases after updating and opening the app once.
+- Device verification: both “Give money in Kid Money” and “Give Rebecca money in Kid Money” produced “Kid Money hasn't added support for that with Siri.” Siri asked no follow-up question and created no transaction.
+- Interpretation: adding the localized shortcut catalog did not change automatic phrase routing on the managed iPhone. Together with the successful Siri-invoked user shortcut in build 2, this isolates the failure to automatic App Shortcut registration or routing rather than the intent implementation.
+- Next discriminator: repeat the build 3 test on an unmanaged iPhone. If it also fails, capture a fresh reproduction through Feedback Assistant with App Intents/Siri diagnostics; if it succeeds, investigate managed-device policy or state.
