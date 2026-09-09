@@ -64,4 +64,5 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Ledger result: no transaction was created; Rebecca remained at `$0.00`.
 - Follow-up utterance: “Give Rebecca money in Kid Money.”
 - Follow-up result: Siri gave the same unsupported-capability response, asked no question, and left the balance at `$0.00`.
-- Interpretation: the shipped metadata contains `GiveMoneyIntent`, but the app updated its dynamic shortcut parameters only on the initial launch, before Rebecca existed. Force-quit and relaunch with Rebecca present, then retest the registered phrase to determine whether stale parameter registration is the cause.
+- Relaunch diagnostic: after force-quitting and relaunching Kid Money with Rebecca present, the registered phrase produced the same unsupported-capability response and `$0.00` balance.
+- Interpretation: stale child-parameter registration is not the primary cause. Check whether `Give Money` appears and runs in the Shortcuts app to distinguish shortcut-import failure from Siri-only routing failure.
