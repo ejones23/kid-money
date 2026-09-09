@@ -129,7 +129,6 @@ struct KidMoneyShortcuts: AppShortcutsProvider {
             intent: GiveMoneyIntent(),
             phrases: [
                 "Give \(\.$child) money in \(.applicationName)",
-                "Add money to \(\.$child) in \(.applicationName)",
                 "Give money in \(.applicationName)"
             ],
             shortTitle: "Give Money",

@@ -19,6 +19,7 @@
 		A10000000000000000000010 /* MoneyConversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000012 /* MoneyConversion.swift */; };
 		A10000000000000000000011 /* KidMoneyIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000013 /* KidMoneyIntents.swift */; };
 		A10000000000000000000012 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000014 /* Assets.xcassets */; };
+		A10000000000000000000013 /* AppShortcuts.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* AppShortcuts.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		A20000000000000000000013 /* KidMoneyIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KidMoneyIntents.swift; sourceTree = "<group>"; };
 		A20000000000000000000014 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A20000000000000000000015 /* KidMoney.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KidMoney.entitlements; sourceTree = "<group>"; };
+		A20000000000000000000016 /* AppShortcuts.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = AppShortcuts.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 				A20000000000000000000012 /* MoneyConversion.swift */,
 				A20000000000000000000013 /* KidMoneyIntents.swift */,
 				A20000000000000000000015 /* KidMoney.entitlements */,
+				A20000000000000000000016 /* AppShortcuts.xcstrings */,
 				A20000000000000000000014 /* Assets.xcassets */,
 				A20000000000000000000006 /* ChildListView.swift */,
 				A20000000000000000000007 /* AddChildView.swift */,
@@ -197,6 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000012 /* Assets.xcassets in Resources */,
+				A10000000000000000000013 /* AppShortcuts.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,7 +271,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KidMoney/KidMoney.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -291,7 +295,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = KidMoney/KidMoney.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Kid Money";
