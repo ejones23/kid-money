@@ -4,7 +4,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 
 ## 1. Account and app record
 
-- [ ] Enroll as an individual in the Apple Developer Program.
+- [x] Enroll as an individual in the Apple Developer Program.
 - [ ] Confirm that agreements are active in App Store Connect.
 - [ ] Create an iOS app record using bundle ID `io.github.ejones23.KidMoney`.
 - [ ] Confirm the public App Store name; `Kid Money Ledger` is the working choice.
@@ -40,9 +40,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 
 ## 5. TestFlight
 
-- [ ] Increment the build number.
-- [ ] Archive the app with automatic distribution signing.
-- [ ] Validate the archive and upload it to App Store Connect.
+- [x] Confirm the initial release version (`0.1`) and build number (`1`).
+- [x] Create a signed Release archive with automatic signing.
+- [ ] Validate the archive for App Store Connect distribution and upload it.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
