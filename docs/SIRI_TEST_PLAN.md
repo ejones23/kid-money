@@ -62,4 +62,6 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Utterance: “Give Rebecca ten cents in Kid Money.”
 - Result: Siri recognized Kid Money but reported that the app had not added support for the request and offered to open the app.
 - Ledger result: no transaction was created; Rebecca remained at `$0.00`.
-- Interpretation: the shipped metadata contains `GiveMoneyIntent`, but this utterance does not exactly match an advertised App Shortcut phrase. Test the registered phrase “Give Rebecca money in Kid Money” and observe whether Siri then requests the required amount.
+- Follow-up utterance: “Give Rebecca money in Kid Money.”
+- Follow-up result: Siri gave the same unsupported-capability response, asked no question, and left the balance at `$0.00`.
+- Interpretation: the shipped metadata contains `GiveMoneyIntent`, but the app updated its dynamic shortcut parameters only on the initial launch, before Rebecca existed. Force-quit and relaunch with Rebecca present, then retest the registered phrase to determine whether stale parameter registration is the cause.
