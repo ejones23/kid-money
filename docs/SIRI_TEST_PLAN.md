@@ -51,3 +51,15 @@ Test the core phrase with the app open, backgrounded, and terminated, and with t
 Capture the exact phrase, Siri transcript and response, clarification, foreground behavior, balance before/after, timestamped OSLog lines, device model, and iOS version.
 
 Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fallback only if physical-device evidence justifies it.
+
+## Recorded results
+
+### TestFlight 0.1 (1) — iPhone 15, iOS 26.6.1
+
+- Installation: managed work iPhone via internal TestFlight; app launched successfully.
+- Initial state: Rebecca existed with a `$0.00` balance.
+- Context: app in the background and phone unlocked.
+- Utterance: “Give Rebecca ten cents in Kid Money.”
+- Result: Siri recognized Kid Money but reported that the app had not added support for the request and offered to open the app.
+- Ledger result: no transaction was created; Rebecca remained at `$0.00`.
+- Interpretation: the shipped metadata contains `GiveMoneyIntent`, but this utterance does not exactly match an advertised App Shortcut phrase. Test the registered phrase “Give Rebecca money in Kid Money” and observe whether Siri then requests the required amount.
