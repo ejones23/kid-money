@@ -26,7 +26,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [ ] Audit the release build and third-party code before selecting “Data Not Collected.”
 - [ ] Complete the age-rating questionnaire.
 - [ ] Confirm the app is not designated Made for Kids; the operator is a parent or guardian.
-- [ ] Complete export-compliance questions based on the final binary.
+- [x] Declare that build `0.1 (1)` contains no encryption algorithms and add the matching Info.plist setting for future builds.
 - [ ] Verify that all user-facing claims match the shipped behavior.
 
 ## 4. Build verification
@@ -42,7 +42,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 
 - [x] Confirm the initial release version (`0.1`) and build number (`1`).
 - [x] Create a signed Release archive with automatic signing.
-- [ ] Validate the archive for App Store Connect distribution and upload it.
+- [x] Validate the archive for App Store Connect distribution and upload it.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
