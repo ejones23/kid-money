@@ -73,4 +73,8 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 ### TestFlight 0.1 (2)
 
 - Distribution: uploaded successfully and assigned to the `Internal Testing` group.
-- Verification status: awaiting installation and physical-device Siri retest.
+- Installation: updated successfully on the managed work iPhone.
+- Parameter-free Siri phrase: “Give money in Kid Money” still produced “Kid Money hasn't added support for that with Siri,” created no transaction, and left the balance unchanged.
+- Xcode phrase diagnostic: Product → App Shortcuts Preview matched the exact utterance “Give money in Kid Money” to `GiveMoneyIntent`.
+- Interpretation: the compiled phrase matches in Apple's development tool, while the installed app's action remains visible and runnable in Shortcuts. The remaining fault is device-side Siri registration/routing or an iOS defect, not phrase syntax or the Siri code-signing entitlement.
+- Next diagnostic: invoke a user-created shortcut containing the Kid Money action by its custom name. This bypasses automatic App Shortcut phrase registration and tests whether Siri may run Shortcuts that use the app at all.
