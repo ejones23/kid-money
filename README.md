@@ -10,7 +10,7 @@ This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
 treated as a finished personal-finance product.
 
-The project is also preparing a minimal TestFlight build so that its physical-device Siri checkpoint can be tested through an approved distribution channel rather than a locally signed app on a managed phone.
+The project uses internal TestFlight distribution so that its physical-device Siri checkpoint can be tested through an approved channel rather than a locally signed app on a managed phone.
 
 ## Current status
 
@@ -30,7 +30,7 @@ Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical
 
 The project builds without errors or warnings in Xcode 26.6. All seven current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
 
-The App Intent and shortcut metadata compile successfully, but Siri routing has **not** yet been tested on a physical iPhone. Compilation does not prove that the desired utterance works.
+TestFlight build `0.1 (1)` proved that the intent appears and runs in Shortcuts, but Siri did not route any advertised phrase to it. Build `0.1 (2)` enables the Siri capability explicitly, prompts for an amount when Shortcuts supplies a zero placeholder, and is available to the internal tester for the next physical-device check. Siri success remains unverified.
 
 ## Requirements
 
@@ -94,7 +94,7 @@ docs/support.md               Draft public support page
 
 The next milestone is the physical-device checkpoint for the deliberately narrow Siri proof of concept:
 
-1. Install the app on a physical iPhone.
+1. Update to TestFlight build `0.1 (2)` on the physical iPhone.
 2. Confirm that Give Money appears in Shortcuts with the user's active children.
 3. Test “Give Rebecca ten cents in Kid Money” and record whether Siri extracts both values or requests the amount in a follow-up.
 4. Confirm that `+$0.10` persists and Siri speaks the resulting balance.

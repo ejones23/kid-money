@@ -16,13 +16,14 @@ Status: **Complete**
 
 ## Phase 2 — Siri proof of concept
 
-Status: **Implemented; awaiting physical-device verification**
+Status: **Implemented; awaiting build 2 physical-device verification**
 
 - exact USD `Decimal`/`IntentCurrencyAmount` conversion with tests
 - lightweight `ChildEntity` and case-insensitive `EntityStringQuery`
 - `GiveMoneyIntent`
 - `AppShortcutsProvider` using valid current phrase syntax
 - focused OSLog instrumentation
+- Siri capability, usage description, and explicit missing-amount prompting in TestFlight build `0.1 (2)`
 - physical-device signing, installation, and one end-to-end Siri transaction — **remaining**
 
 Exit criterion: Rebecca begins at $0.00; a Siri utterance reasonably close to “Give Rebecca a dime in Kid Money” persists `+10` cents, Siri reports the balance, and the relaunched app shows $0.10.

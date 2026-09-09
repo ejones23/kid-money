@@ -69,3 +69,8 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Manual execution: selecting Rebecca ran the intent without collecting an amount, produced “The amount must be greater than zero,” and left the balance at `$0.00`.
 - Parameter-free Siri phrase: “Give money in Kid Money” produced the same unsupported-capability response without asking for a child.
 - Interpretation: shortcut extraction and import succeeded, so the unsupported Siri responses are a Siri-routing failure. Build 2 explicitly enables the Siri capability, requests a currency amount when Shortcuts supplies its zero-valued placeholder, and refreshes shortcut parameters when a child is added.
+
+### TestFlight 0.1 (2)
+
+- Distribution: uploaded successfully and assigned to the `Internal Testing` group.
+- Verification status: awaiting installation and physical-device Siri retest.
