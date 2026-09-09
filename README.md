@@ -30,7 +30,7 @@ Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical
 
 The project builds without errors or warnings in Xcode 26.6. All seven current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
 
-TestFlight build `0.1 (1)` proved that the intent appears and runs in Shortcuts, but Siri did not route any advertised phrase to it. Build `0.1 (2)` enables the Siri capability explicitly, prompts for an amount when Shortcuts supplies a zero placeholder, and is available to the internal tester for the next physical-device check. Siri success remains unverified.
+TestFlight builds `0.1 (1)` and `0.1 (2)` did not route an advertised phrase through Siri. A user-created shortcut containing the same action succeeded both when tapped and when invoked through Siri, proving that the intent, persistence, and Siri-to-Shortcuts execution path work. Build `0.1 (3)` adds Apple's recommended App Shortcut localization catalog and is available to the internal tester for the automatic-phrase retest.
 
 ## Requirements
 
@@ -94,10 +94,10 @@ docs/support.md               Draft public support page
 
 The next milestone is the physical-device checkpoint for the deliberately narrow Siri proof of concept:
 
-1. Update to TestFlight build `0.1 (2)` on the physical iPhone.
-2. Confirm that Give Money appears in Shortcuts with the user's active children.
-3. Test “Give Rebecca ten cents in Kid Money” and record whether Siri extracts both values or requests the amount in a follow-up.
-4. Confirm that `+$0.10` persists and Siri speaks the resulting balance.
+1. Update to TestFlight build `0.1 (3)` on the physical iPhone and open it once.
+2. Test “Give money in Kid Money” and record whether Siri requests a child and amount.
+3. Test “Give Rebecca money in Kid Money” and record whether Siri requests the amount.
+4. Confirm that the requested transaction persists and Siri speaks the resulting balance.
 
 Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. Kid Money places the child parameter in its phrases and leaves the amount as a required intent parameter. Physical testing will determine how naturally Siri handles the complete utterance.
 

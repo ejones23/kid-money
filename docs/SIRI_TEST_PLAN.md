@@ -81,3 +81,8 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Interpretation: the intent, data mutation, and Siri-to-Shortcuts execution path all work on the managed phone. The failure is isolated to automatic App Shortcut phrase registration or matching.
 - Build 3 diagnostic: add the specifically named `AppShortcuts.xcstrings` catalog recommended by Apple DTS so the advertised phrases are compiled as localized shortcut resources instead of using the build's `--no-app-shortcuts-localization` path.
 - Build 3 preflight: Xcode's App Shortcuts Preview matched both shipped phrases—“Give money in Kid Money” and “Give Rebecca money in Kid Money”—to `GiveMoneyIntent`. A third phrase variant that did not match was removed before distribution.
+
+### TestFlight 0.1 (3)
+
+- Distribution: archived successfully with validated localized App Shortcut resources and generated Siri/NLU training assets, then uploaded and assigned to the `Internal Testing` group.
+- Device verification: pending. Retest both shipped phrases after updating and opening the app once.
