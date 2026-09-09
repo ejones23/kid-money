@@ -5,10 +5,10 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 ## 1. Account and app record
 
 - [x] Enroll as an individual in the Apple Developer Program.
-- [ ] Confirm that agreements are active in App Store Connect.
-- [ ] Create an iOS app record using bundle ID `io.github.ejones23.KidMoney`.
-- [ ] Confirm the public App Store name; `Kid Money Ledger` is the working choice.
-- [ ] Record the assigned Apple ID and SKU here without adding credentials.
+- [x] Confirm that the Free Apps Agreement is active in App Store Connect.
+- [x] Create an iOS app record using bundle ID `io.github.ejones23.KidMoney`.
+- [x] Confirm the public App Store name: `Kid Money Ledger`.
+- [x] Record the App Store Connect Apple ID (`6810006476`) and SKU (`kid-money-ios`).
 
 ## 2. Release identity and assets
 
