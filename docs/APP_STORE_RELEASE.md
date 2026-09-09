@@ -43,6 +43,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Confirm the initial release version (`0.1`) and build number (`1`).
 - [x] Create a signed Release archive with automatic signing.
 - [x] Validate the archive for App Store Connect distribution and upload it.
+- [x] Create the `Internal Testing` group, add build `0.1 (1)`, and invite the account holder.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
