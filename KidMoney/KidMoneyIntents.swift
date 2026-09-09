@@ -90,9 +90,16 @@ struct GiveMoneyIntent: AppIntent {
         let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "GiveMoneyIntent")
         logger.info("Give Money intent invoked")
 
+        let requestedAmount: IntentCurrencyAmount
+        if amount.amount == .zero {
+            requestedAmount = try await $amount.requestValue("How much money should I add?")
+        } else {
+            requestedAmount = amount
+        }
+
         let cents = try MoneyConversion.usdCents(
-            from: amount.amount,
-            currencyCode: amount.currencyCode
+            from: requestedAmount.amount,
+            currencyCode: requestedAmount.currencyCode
         )
         logger.info("Validated a \(cents, privacy: .public)-cent adjustment")
 

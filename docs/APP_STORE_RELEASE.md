@@ -47,7 +47,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
-- [ ] Install from TestFlight on an allowed physical iPhone.
+- [x] Install from TestFlight on an allowed physical iPhone.
 - [ ] Execute and record `docs/SIRI_TEST_PLAN.md` before expanding the intent set.
 
 ## 6. Public release

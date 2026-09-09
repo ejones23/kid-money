@@ -67,4 +67,5 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Relaunch diagnostic: after force-quitting and relaunching Kid Money with Rebecca present, the registered phrase produced the same unsupported-capability response and `$0.00` balance.
 - Shortcuts discovery: `Give Money` appeared in Apple's Shortcuts app. Tapping it prompted for a child and displayed Rebecca as an option.
 - Manual execution: selecting Rebecca ran the intent without collecting an amount, produced “The amount must be greater than zero,” and left the balance at `$0.00`.
-- Interpretation: shortcut extraction and import succeeded, so the unsupported Siri responses are a phrase-routing failure. The intent also needs to request a currency amount explicitly when Shortcuts supplies its zero-valued placeholder.
+- Parameter-free Siri phrase: “Give money in Kid Money” produced the same unsupported-capability response without asking for a child.
+- Interpretation: shortcut extraction and import succeeded, so the unsupported Siri responses are a Siri-routing failure. Build 2 explicitly enables the Siri capability, requests a currency amount when Shortcuts supplies its zero-valued placeholder, and refreshes shortcut parameters when a child is added.

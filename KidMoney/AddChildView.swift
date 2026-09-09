@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import SwiftData
 
@@ -35,10 +36,10 @@ struct AddChildView: View {
     private func save() {
         do {
             try LedgerService(modelContext: modelContext).addChild(named: name)
+            KidMoneyShortcuts.updateAppShortcutParameters()
             dismiss()
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 }
-
