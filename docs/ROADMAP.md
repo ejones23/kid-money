@@ -16,7 +16,7 @@ Status: **Complete**
 
 ## Phase 2 — Siri proof of concept
 
-Status: **Core proof passed on managed and unmanaged iPhones; context matrix remains**
+Status: **Core proof passed on managed and unmanaged iPhones; open/background checks remain**
 
 - exact USD `Decimal`/`IntentCurrencyAmount` conversion with tests
 - lightweight `ChildEntity` and case-insensitive `EntityStringQuery`
@@ -29,7 +29,9 @@ Status: **Core proof passed on managed and unmanaged iPhones; context matrix rem
 - automatic App Shortcut phrase routing failed on the managed physical device in builds `0.1 (1)` through `0.1 (3)`
 - automatic App Shortcut routing and prompted parameters succeeded twice on an unmanaged iPhone SE with build `0.1 (3)`
 - automatic routing later succeeded on the unchanged managed-phone installation and persisted a twenty-cent transaction
-- termination/relaunch persistence and the remaining app-state/lock-state matrix — **remaining**
+- terminated and locked execution succeeded without requiring an unlock; termination/relaunch persistence is verified
+- amounts below ten cents were repeatedly rejected by Siri's currency resolver before intent execution
+- open/background context checks and amount-boundary characterization — **remaining**
 
 Exit criterion: Rebecca begins at $0.00; a Siri utterance reasonably close to “Give Rebecca a dime in Kid Money” persists `+10` cents, Siri reports the balance, and the relaunched app shows $0.10.
 

@@ -30,7 +30,7 @@ Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical
 
 The project builds without errors or warnings in Xcode 26.6. All seven current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
 
-TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone. Siri collects missing parameters, persists exact cent values, and reports the resulting balance. The managed phone initially returned an unsupported-capability response, then began routing the same installed build successfully without deleting its `$0.30` ledger; delayed device-side registration or cache propagation is the leading explanation. The remaining Phase 2 work is the app-state/lock-state matrix and a termination/relaunch persistence check.
+TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and executes from a terminated app while the work phone is locked without requiring an unlock. Termination/relaunch persistence is verified. The remaining Phase 2 work is the open/background context check. Device testing also discovered that Siri repeatedly rejects observed amounts below ten cents before invoking the intent; denomination and boundary testing will guide the Phase 3 fallback design.
 
 ## Requirements
 
@@ -94,10 +94,10 @@ docs/support.md               Draft public support page
 
 The next milestone is the physical-device checkpoint for the deliberately narrow Siri proof of concept:
 
-1. Record the managed work iPhone's current iOS version.
-2. Confirm Rebecca's `$0.50` balance survives force-quit and relaunch.
-3. Exercise the core phrase while Kid Money is open, backgrounded, and terminated.
-4. Repeat with the phone locked, recording whether Siri requires an unlock and whether it speaks and persists the result.
+1. Exercise “Give Rebecca money in Kid Money” with Kid Money open and answer “ten cents.”
+2. Put Kid Money in the background, repeat the phrase with ten cents, and confirm both transactions persist.
+3. Characterize Siri's currency resolver with “a dime,” “a nickel,” “a quarter,” “a dollar,” and arbitrary amounts around ten cents.
+4. Use those physical-device results to design a supplemental denomination intent without replacing arbitrary currency amounts.
 
 Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. Kid Money places the child parameter in its phrases and leaves the amount as a required intent parameter. Physical testing will determine how naturally Siri handles the complete utterance.
 

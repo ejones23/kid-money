@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone, collects missing parameters, persists exact cent values, and reports the resulting balance. The managed phone initially rejected the phrases, then began routing the unchanged installation successfully; delayed registration or cache propagation is the leading explanation, though the exact trigger is unconfirmed.
+Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2, collects missing parameters, persists exact cent values, and reports the resulting balance. Terminated and locked execution works without requiring an unlock, and termination/relaunch persistence is verified. Siri repeatedly rejects observed amounts below ten cents at its `IntentCurrencyAmount` prompt before invoking the intent.
 
 Latest verified capabilities:
 
@@ -71,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Record the managed phone's current iOS version, verify its `$0.50` balance survives termination and relaunch, and complete the open/background/terminated and unlocked/locked context matrix in `docs/SIRI_TEST_PLAN.md`. Do not implement the remaining intents until that matrix is recorded or a discovered context-specific failure is understood.
+Complete the open and background context variants in `docs/SIRI_TEST_PLAN.md` with a known-good ten-cent amount. Then characterize dime, nickel, quarter, dollar, and arbitrary amounts around the observed ten-cent boundary. Use the physical-device evidence to decide whether Phase 3 needs a supplemental `CoinDenomination` intent; do not replace the arbitrary `IntentCurrencyAmount` path.
