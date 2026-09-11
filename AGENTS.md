@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2, collects missing parameters, persists exact cent values, and reports the resulting balance. Terminated and locked execution works without requiring an unlock, and termination/relaunch persistence is verified. Siri repeatedly rejects observed amounts below ten cents at its `IntentCurrencyAmount` prompt before invoking the intent.
+Phases 1 and 2 are complete. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven Phase 2 tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes `GiveMoneyIntent` successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Physical testing passed with the app open, backgrounded, terminated, and locked, and termination/relaunch persistence is verified. Siri accepts numeric cent phrases such as “ten cents” and “twenty-five cents” but rejects observed sub-ten-cent values and coin wording such as dime and quarter before invoking the intent.
 
 Latest verified capabilities:
 
@@ -71,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Complete the open and background context variants in `docs/SIRI_TEST_PLAN.md` with a known-good ten-cent amount. Then characterize dime, nickel, quarter, dollar, and arbitrary amounts around the observed ten-cent boundary. Use the physical-device evidence to decide whether Phase 3 needs a supplemental `CoinDenomination` intent; do not replace the arbitrary `IntentCurrencyAmount` path.
+Implement Phase 3: `TakeMoneyIntent`, `GetBalanceIntent`, and an auditable `UndoLastTransactionIntent`, with focused domain tests and App Shortcut phrases. Add a supplemental coin-denomination path justified by the physical-device evidence, but do not replace the arbitrary `IntentCurrencyAmount` path. Build, test, inspect warnings and shortcut previews, then distribute the next internal TestFlight build for the Phase 3 voice matrix.

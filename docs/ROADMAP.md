@@ -16,7 +16,7 @@ Status: **Complete**
 
 ## Phase 2 — Siri proof of concept
 
-Status: **Core proof passed on managed and unmanaged iPhones; open/background checks remain**
+Status: **Complete**
 
 - exact USD `Decimal`/`IntentCurrencyAmount` conversion with tests
 - lightweight `ChildEntity` and case-insensitive `EntityStringQuery`
@@ -31,7 +31,7 @@ Status: **Core proof passed on managed and unmanaged iPhones; open/background ch
 - automatic routing later succeeded on the unchanged managed-phone installation and persisted a twenty-cent transaction
 - terminated and locked execution succeeded without requiring an unlock; termination/relaunch persistence is verified
 - amounts below ten cents were repeatedly rejected by Siri's currency resolver before intent execution
-- open/background context checks and amount-boundary characterization — **remaining**
+- open and background execution succeeded; numeric “ten cents” and “twenty-five cents” resolved, while dime and quarter wording did not
 
 Exit criterion: Rebecca begins at $0.00; a Siri utterance reasonably close to “Give Rebecca a dime in Kid Money” persists `+10` cents, Siri reports the balance, and the relaunched app shows $0.10.
 
@@ -43,7 +43,7 @@ App Shortcut phrases can interpolate at most one intent parameter. The proof of 
 
 ## Phase 3 — Complete voice actions
 
-Status: Planned
+Status: **In progress**
 
 - Take Money
 - Get Balance
@@ -51,7 +51,7 @@ Status: Planned
 - natural-language and coin-name experiments
 - voice-specific error handling
 
-Only add coin-denomination fallback intents if device testing shows `IntentCurrencyAmount` does not understand common coin names reliably.
+Physical testing showed that `IntentCurrencyAmount` does not understand dime or quarter wording reliably, so a supplemental denomination path is justified. Keep arbitrary currency amounts available.
 
 ## Phase 4 — Useful manual interface
 

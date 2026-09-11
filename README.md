@@ -14,7 +14,7 @@ The project uses internal TestFlight distribution so that its physical-device Si
 
 ## Current status
 
-Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical-device verification:
+Phases 1 and 2 are complete, and Phase 3 voice actions are next:
 
 - SwiftUI application targeting iOS 26+
 - SwiftData models for children and signed ledger transactions
@@ -30,7 +30,7 @@ Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical
 
 The project builds without errors or warnings in Xcode 26.6. All seven current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
 
-TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and executes from a terminated app while the work phone is locked without requiring an unlock. Termination/relaunch persistence is verified. The remaining Phase 2 work is the open/background context check. Device testing also discovered that Siri repeatedly rejects observed amounts below ten cents before invoking the intent; denomination and boundary testing will guide the Phase 3 fallback design.
+TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
 
 ## Requirements
 
@@ -92,12 +92,12 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-The next milestone is the physical-device checkpoint for the deliberately narrow Siri proof of concept:
+The next milestone is Phase 3's complete voice-action set:
 
-1. Exercise “Give Rebecca money in Kid Money” with Kid Money open and answer “ten cents.”
-2. Put Kid Money in the background, repeat the phrase with ten cents, and confirm both transactions persist.
-3. Characterize Siri's currency resolver with “a dime,” “a nickel,” “a quarter,” “a dollar,” and arbitrary amounts around ten cents.
-4. Use those physical-device results to design a supplemental denomination intent without replacing arbitrary currency amounts.
+1. Add Take Money, Check Balance, and auditable Undo Last Transaction intents.
+2. Add a supplemental coin-denomination path informed by the physical-device failures, while retaining arbitrary `IntentCurrencyAmount` input.
+3. Build and test the domain behavior and App Shortcut metadata.
+4. Distribute the next internal TestFlight build and exercise the new voice matrix on both phones.
 
 Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. Kid Money places the child parameter in its phrases and leaves the amount as a required intent parameter. Physical testing will determine how naturally Siri handles the complete utterance.
 
