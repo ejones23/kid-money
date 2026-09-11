@@ -46,7 +46,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Create the `Internal Testing` group, add build `0.1 (1)`, and invite the account holder.
 - [x] Upload build `0.1 (2)` with the Siri capability and add it to `Internal Testing`.
 - [x] Upload build `0.1 (3)` with localized App Shortcut phrase resources and add it to `Internal Testing`.
-- [ ] Upload build `0.1 (4)` with the Phase 3 voice-action set and add it to `Internal Testing`.
+- [x] Archive and upload build `0.1 (4)` with the Phase 3 voice-action set.
+- [ ] Add build `0.1 (4)` to `Internal Testing` after App Store Connect finishes processing it.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.

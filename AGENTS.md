@@ -74,4 +74,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Distribute TestFlight build `0.1 (4)` and exercise the Phase 3 matrix in `docs/SIRI_TEST_PLAN.md` on physical hardware. Record Siri routing, parameter clarification, spoken results, undo behavior, and persistence before beginning the Phase 4 manual interface.
+Add the uploaded TestFlight build `0.1 (4)` to the `Internal Testing` group once App Store Connect finishes processing it, then exercise the Phase 3 matrix in `docs/SIRI_TEST_PLAN.md` on physical hardware. Record Siri routing, parameter clarification, spoken results, undo behavior, and persistence before beginning the Phase 4 manual interface.
