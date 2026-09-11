@@ -52,6 +52,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Install from TestFlight on an allowed physical iPhone.
 - [x] Verify the action end to end through a Siri-invoked user-created shortcut.
 - [x] Verify both advertised App Shortcut phrases end to end on an unmanaged physical iPhone.
+- [x] Verify automatic App Shortcut routing and a persisted transaction on the managed physical iPhone.
 - [ ] Execute and record `docs/SIRI_TEST_PLAN.md` before expanding the intent set.
 
 ## 6. Public release

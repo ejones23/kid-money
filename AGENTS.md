@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` successfully routes both advertised phrases on an unmanaged iPhone SE running iOS 26.6.2, collects missing parameters, and persists transactions. On the managed work iPhone running iOS 26.6.1, the same phrases still fail, although Siri can run a user-created shortcut containing the intent. The next discriminators are a normal approved update to 26.6.2, if offered, and then a fresh build 3 installation because that phone was upgraded through earlier builds with incomplete Siri metadata.
+Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes its advertised phrases successfully on both an unmanaged iPhone SE and the managed work iPhone, collects missing parameters, persists exact cent values, and reports the resulting balance. The managed phone initially rejected the phrases, then began routing the unchanged installation successfully; delayed registration or cache propagation is the leading explanation, though the exact trigger is unconfirmed.
 
 Latest verified capabilities:
 
@@ -71,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-First retest on the managed work phone after a normal company-approved update from iOS 26.6.1 to 26.6.2, if offered. If routing still fails and the owner accepts loss of its local test ledger, install TestFlight build `0.1 (3)` fresh and repeat the advertised phrases in `docs/SIRI_TEST_PLAN.md`; record whether the one-time shortcut authorization prompt appears. If routing works, complete the app-state and lock-state matrix. If it still fails, treat device-management policy/state as the leading cause and coordinate diagnostics with the device administrator. Do not implement the remaining intents until this behavior is understood.
+Record the managed phone's current iOS version, verify its `$0.50` balance survives termination and relaunch, and complete the open/background/terminated and unlocked/locked context matrix in `docs/SIRI_TEST_PLAN.md`. Do not implement the remaining intents until that matrix is recorded or a discovered context-specific failure is understood.
