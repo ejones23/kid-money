@@ -16,7 +16,7 @@ Status: **Complete**
 
 ## Phase 2 — Siri proof of concept
 
-Status: **Implemented; automatic phrases failing on managed device, awaiting unmanaged-device comparison**
+Status: **Core proof passed on an unmanaged iPhone; managed-device compatibility and full matrix remain**
 
 - exact USD `Decimal`/`IntentCurrencyAmount` conversion with tests
 - lightweight `ChildEntity` and case-insensitive `EntityStringQuery`
@@ -27,7 +27,8 @@ Status: **Implemented; automatic phrases failing on managed device, awaiting unm
 - end-to-end Siri execution through a user-created shortcut on the managed iPhone
 - localized App Shortcut phrase resources in TestFlight build `0.1 (3)`
 - automatic App Shortcut phrase routing failed on the managed physical device in builds `0.1 (1)` through `0.1 (3)`
-- unmanaged-device comparison and, if necessary, Apple Feedback Assistant diagnostics — **remaining**
+- automatic App Shortcut routing and prompted parameters succeeded twice on an unmanaged iPhone SE with build `0.1 (3)`
+- clean-install comparison on the managed phone and the remaining app-state/lock-state matrix — **remaining**
 
 Exit criterion: Rebecca begins at $0.00; a Siri utterance reasonably close to “Give Rebecca a dime in Kid Money” persists `+10` cents, Siri reports the balance, and the relaunched app shows $0.10.
 

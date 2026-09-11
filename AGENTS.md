@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight builds `0.1 (1)` through `0.1 (3)` are available internally. On the managed iPhone, Siri successfully ran a user-created shortcut containing `GiveMoneyIntent`, but every automatically advertised App Shortcut phrase failed with an unsupported-capability response. Build 3 included validated localized shortcut resources and still failed, so the next discriminator is an unmanaged physical iPhone.
+Phase 1 is complete. The Phase 2 `GiveMoneyIntent` proof of concept is implemented. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` successfully routes both advertised phrases on an unmanaged iPhone SE running iOS 26.6.2, collects missing parameters, and persists transactions. On the managed work iPhone, the same phrases still fail, although Siri can run a user-created shortcut containing the intent. The next discriminator is a fresh build 3 installation on that phone because it was upgraded through earlier builds with incomplete Siri metadata.
 
 Latest verified capabilities:
 
@@ -71,4 +71,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Install TestFlight build `0.1 (3)` on an unmanaged physical iPhone and repeat the two advertised phrases in `docs/SIRI_TEST_PLAN.md`. If automatic routing also fails there, capture a fresh reproduction using Apple's App Intents and Siri diagnostic profiles and file it through Feedback Assistant. Do not implement the remaining intents until this routing behavior is understood.
+After the owner accepts loss of the managed phone's local test ledger, install TestFlight build `0.1 (3)` fresh there and repeat the two advertised phrases in `docs/SIRI_TEST_PLAN.md`. Record whether the one-time shortcut authorization prompt appears. If routing works, complete the app-state and lock-state matrix; if it still fails, treat device-management policy/state as the leading cause and coordinate diagnostics with the device administrator. Do not implement the remaining intents until this behavior is understood.

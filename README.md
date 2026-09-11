@@ -30,7 +30,7 @@ Phase 1 is complete, and the Phase 2 Siri proof of concept is ready for physical
 
 The project builds without errors or warnings in Xcode 26.6. All seven current tests pass on the iOS 26.5 iPhone 17 Pro simulator.
 
-TestFlight builds `0.1 (1)` through `0.1 (3)` did not route an advertised phrase through Siri on the managed test iPhone, including after adding Apple's recommended App Shortcut localization catalog. A user-created shortcut containing the same action succeeded both when tapped and when invoked through Siri, proving that the intent, persistence, and Siri-to-Shortcuts execution path work. The next diagnostic is to repeat build 3 on an unmanaged iPhone before filing an Apple feedback report with device diagnostics.
+TestFlight build `0.1 (3)` routes both advertised phrases successfully on an unmanaged iPhone SE running iOS 26.6.2. Siri collected the missing child and amount, and two ten-cent requests produced the expected `$0.20` balance. The same build still gives an unsupported-capability response on the managed work iPhone, although a Siri-invoked user-created shortcut can run the intent there. The next diagnostic is a clean build 3 installation on the managed phone to distinguish stale upgrade state from device-management policy.
 
 ## Requirements
 
@@ -94,10 +94,10 @@ docs/support.md               Draft public support page
 
 The next milestone is the physical-device checkpoint for the deliberately narrow Siri proof of concept:
 
-1. Install TestFlight build `0.1 (3)` on an unmanaged physical iPhone and open it once.
-2. Add Rebecca, then test “Give money in Kid Money.”
-3. Test “Give Rebecca money in Kid Money.”
-4. Record the exact Siri responses and balance changes. If the phrases still fail, capture a fresh reproduction with Apple's App Intents and Siri diagnostics for Feedback Assistant.
+1. Delete the test app from the managed work iPhone, understanding that this erases its local test ledger, then install TestFlight build `0.1 (3)` fresh.
+2. Open it once, add Rebecca, and test “Give money in Kid Money.”
+3. Record whether iOS offers the one-time shortcut authorization that appeared on the unmanaged phone.
+4. If automatic routing begins working, complete the app-state and lock-state matrix. If it still fails, involve the device administrator before adding diagnostic profiles or changing managed settings.
 
 Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. Kid Money places the child parameter in its phrases and leaves the amount as a required intent parameter. Physical testing will determine how naturally Siri handles the complete utterance.
 
