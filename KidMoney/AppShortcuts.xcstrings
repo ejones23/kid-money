@@ -1,6 +1,20 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Check ${child} balance in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Check ${child} balance in ${applicationName}",
+              "Check balance in ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
     "Give ${child} money in ${applicationName}" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -10,6 +24,64 @@
             "values" : [
               "Give ${child} money in ${applicationName}",
               "Give money in ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Give a ${denomination} in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Give a ${denomination} in ${applicationName}",
+              "Give ${child} a coin in ${applicationName}",
+              "Give a coin in ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Take a ${denomination} in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Take a ${denomination} in ${applicationName}",
+              "Take a coin from ${child} in ${applicationName}",
+              "Take a coin in ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Take money from ${child} in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Take money from ${child} in ${applicationName}",
+              "Take money in ${applicationName}"
+            ]
+          }
+        }
+      }
+    },
+    "Undo kid money in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Undo kid money in ${applicationName}",
+              "Undo the last transaction in ${applicationName}"
             ]
           }
         }

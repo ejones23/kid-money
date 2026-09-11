@@ -24,6 +24,7 @@ Archiving is preferred to destructive deletion so historical transactions remain
 - stable UUID and optional relationship to `Child`
 - signed `amountCents: Int64`
 - creation date, optional note, and persisted source
+- optional `reversesTransactionID` linking an undo entry to the transaction it compensates
 
 Amounts are signed: `+10` adds ten cents and `-25` removes a quarter. The balance is always the sum of a child's transactions.
 
@@ -37,20 +38,22 @@ The service is `@MainActor` because its `ModelContext` is main-actor-bound in th
 
 `AppModelContainer` creates the shared `ModelContainer` for production and an in-memory container for tests. The app entry point constructs the production container once and installs it into the SwiftUI environment.
 
-Phase 2 must confirm that background App Intent execution opens the same store safely. Do not create a separate intent-only database.
+Physical Phase 2 testing confirmed that background App Intent execution opens the same store safely and that values survive termination and relaunch. Do not create a separate intent-only database.
 
 ## Money
 
 Ledger values use `Int64` cents. `MoneyFormatter` converts integer cents to `Decimal` for localized USD display.
 
-`MoneyConversion` accepts USD only, uses `Decimal` arithmetic, requires exact whole cents, rejects zero and unsupported currency, and detects `Int64` overflow. `GiveMoneyIntent` converts the positive requested value before adding a signed ledger transaction.
+`MoneyConversion` accepts USD only, uses `Decimal` arithmetic, requires exact whole cents, rejects zero and unsupported currency, and detects `Int64` overflow. The arbitrary-amount give and take intents convert a positive requested value before adding a signed positive or negative ledger transaction.
 
 ## App Intents
 
 `ChildEntity` is a lightweight, sendable representation of a persisted child. `ChildEntityQuery` resolves identifiers, suggests active children, and delegates case-insensitive string matching to `LedgerService`. Duplicate exact names are returned together so the system can disambiguate rather than silently choosing one.
 
-`GiveMoneyIntent` uses iOS 26's background intent mode and opens the same local SwiftData store as the app. It validates the child and amount again immediately before persistence, records a `.siri` transaction, and returns a spoken/display dialog with the new balance.
+All ledger intents use iOS 26's background intent mode and open the same local SwiftData store as the app. `GiveMoneyIntent` and `TakeMoneyIntent` accept arbitrary USD amounts; `GetBalanceIntent` is read-only; and `UndoLastTransactionIntent` creates a compensating entry. Each validates persisted entities immediately before use and returns spoken/display dialog.
 
-## Undo direction
+`GiveCoinIntent` and `TakeCoinIntent` supplement—not replace—the arbitrary currency intents. Their `CoinDenomination` enum gives Siri a finite vocabulary for nickel, dime, quarter, half dollar, and dollar because physical testing showed that `IntentCurrencyAmount` rejected coin nouns before invoking the app.
 
-The preferred design is a compensating transaction rather than deletion. That retains an auditable history and makes the action explicit. The final choice should be implemented and documented during Phase 3, with tests for repeated undo behavior.
+## Undo
+
+Undo creates a signed compensating transaction and stores the original transaction's UUID in `reversesTransactionID`; it never deletes history. An undo entry is not itself undoable, and an already reversed original is skipped. Repeated undo therefore walks backward through the remaining unreversed original transactions across all children. Tests cover compensation, repetition, global newest-first selection, and an empty ledger.

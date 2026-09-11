@@ -43,7 +43,7 @@ App Shortcut phrases can interpolate at most one intent parameter. The proof of 
 
 ## Phase 3 — Complete voice actions
 
-Status: **In progress**
+Status: **Implemented; awaiting physical-device verification in TestFlight build 0.1 (4)**
 
 - Take Money
 - Get Balance
@@ -52,6 +52,8 @@ Status: **In progress**
 - voice-specific error handling
 
 Physical testing showed that `IntentCurrencyAmount` does not understand dime or quarter wording reliably, so a supplemental denomination path is justified. Keep arbitrary currency amounts available.
+
+Implementation preflight: all 11 tests pass, device and simulator builds succeed without warnings, and Xcode's App Shortcuts Preview maps the representative Phase 3 phrases to the intended actions. Completion still requires the physical-device matrix in `SIRI_TEST_PLAN.md`.
 
 ## Phase 4 — Useful manual interface
 

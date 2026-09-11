@@ -34,13 +34,29 @@ Record each as one-shot success, parameter clarification, wrong routing, failed 
 - “Give Rebecca ten cents.”
 - “Give Rebecca a dime.”
 
-### Later Phase 3 actions
+### Phase 3 actions
 
 - “Take ten cents from Rebecca in Kid Money.”
 - “Take a dime from Rebecca in Kid Money.”
 - “Subtract a quarter from Rebecca in Kid Money.”
 - “What is Rebecca's balance in Kid Money?”
 - “How much money does Rebecca have in Kid Money?”
+- “Undo kid money in Kid Money.”
+
+## Phase 3 build 4 matrix
+
+Before updating, record the existing build 3 balance (`$1.05` on the managed work phone at the end of Phase 2). After installing build 4, confirm that the same children, balance, and history remain; this exercises the lightweight SwiftData migration that adds the optional undo link. Then record the balance after every mutating action:
+
+1. “Take money from Rebecca in Kid Money.” Say “ten cents” if prompted. Confirm a `-$0.10` adjustment and spoken new balance.
+2. “Check Rebecca balance in Kid Money.” Confirm the spoken value agrees with the app and does not create a transaction.
+3. “Undo kid money in Kid Money.” Confirm it reverses the preceding take with a compensating transaction and reports the restored balance.
+4. “Give a dime in Kid Money.” Select Rebecca if prompted. Confirm `+$0.10`.
+5. “Give Rebecca a dime in Kid Money.” Record whether Siri supplies both parameters or asks a single clarification; confirm `+$0.10`.
+6. “Take a quarter in Kid Money.” Select Rebecca if prompted. Confirm `-$0.25`.
+7. Terminate the app, invoke Check Balance and one mutating action, then relaunch and confirm persistence.
+8. Repeat Undo twice after two different transactions and confirm it walks backward without toggling the prior undo.
+
+Xcode's App Shortcuts Preview resolves representative forms of all six actions, including the combined “Give Rebecca a dime in Kid Money” utterance. That is a development-tool preflight only; record real Siri behavior independently.
 
 ## Context variants
 

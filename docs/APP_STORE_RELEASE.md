@@ -46,6 +46,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Create the `Internal Testing` group, add build `0.1 (1)`, and invite the account holder.
 - [x] Upload build `0.1 (2)` with the Siri capability and add it to `Internal Testing`.
 - [x] Upload build `0.1 (3)` with localized App Shortcut phrase resources and add it to `Internal Testing`.
+- [ ] Upload build `0.1 (4)` with the Phase 3 voice-action set and add it to `Internal Testing`.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
@@ -55,6 +56,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Verify automatic App Shortcut routing and a persisted transaction on the managed physical iPhone.
 - [x] Verify terminated, locked-device execution and termination/relaunch persistence on the managed physical iPhone.
 - [x] Execute and record the Phase 2 portion of `docs/SIRI_TEST_PLAN.md` before expanding the intent set.
+- [ ] Execute and record the Phase 3 build 4 matrix on physical hardware.
 
 ## 6. Public release
 

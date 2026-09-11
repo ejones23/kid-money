@@ -99,4 +99,85 @@ struct LedgerServiceTests {
             )
         }
     }
+
+    @Test func undoCreatesACompensatingTransaction() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let rebecca = try service.addChild(named: "Rebecca")
+        let original = try service.addTransaction(cents: 25, to: rebecca)
+
+        let result = try service.undoLastTransaction(source: .siri)
+        let transactions = try service.transactions(for: rebecca)
+
+        #expect(result.child.id == rebecca.id)
+        #expect(result.originalAmountCents == 25)
+        #expect(result.newBalanceCents == 0)
+        #expect(transactions.count == 2)
+        let compensation = try #require(transactions.first { $0.reversesTransactionID == original.id })
+        #expect(compensation.amountCents == -25)
+        #expect(compensation.source == .siri)
+        #expect(transactions.contains { $0.id == original.id })
+    }
+
+    @Test func repeatedUndoWalksBackThroughUnreversedTransactions() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let rebecca = try service.addChild(named: "Rebecca")
+        let first = try service.addTransaction(cents: 10, to: rebecca, note: "First")
+        first.createdAt = Date(timeIntervalSince1970: 1)
+        let second = try service.addTransaction(cents: -5, to: rebecca, note: "Second")
+        second.createdAt = Date(timeIntervalSince1970: 2)
+        try context.save()
+
+        let firstUndo = try service.undoLastTransaction()
+        let secondUndo = try service.undoLastTransaction()
+
+        #expect(firstUndo.originalAmountCents == -5)
+        #expect(firstUndo.newBalanceCents == 10)
+        #expect(secondUndo.originalAmountCents == 10)
+        #expect(secondUndo.newBalanceCents == 0)
+        #expect(try service.transactions(for: rebecca).count == 4)
+        #expect(throws: LedgerError.nothingToUndo) {
+            try service.undoLastTransaction()
+        }
+    }
+
+    @Test func undoUsesTheMostRecentTransactionAcrossChildren() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let rebecca = try service.addChild(named: "Rebecca")
+        let daniel = try service.addChild(named: "Daniel")
+        try service.addTransaction(
+            cents: 10,
+            to: rebecca,
+            note: "Earlier",
+            source: .manual
+        ).createdAt = Date(timeIntervalSince1970: 1)
+        try service.addTransaction(
+            cents: 25,
+            to: daniel,
+            note: "Later",
+            source: .manual
+        ).createdAt = Date(timeIntervalSince1970: 2)
+        try context.save()
+
+        let result = try service.undoLastTransaction()
+
+        #expect(result.child.id == daniel.id)
+        #expect(result.originalAmountCents == 25)
+        #expect(service.balance(for: rebecca) == 10)
+        #expect(service.balance(for: daniel) == 0)
+    }
+
+    @Test func undoRejectsAnEmptyLedger() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let service = LedgerService(modelContext: ModelContext(container))
+
+        #expect(throws: LedgerError.nothingToUndo) {
+            try service.undoLastTransaction()
+        }
+    }
 }

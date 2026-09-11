@@ -1,16 +1,26 @@
 import Foundation
 import SwiftData
 
-enum LedgerError: LocalizedError {
+enum LedgerError: LocalizedError, Equatable {
     case emptyName
     case nonPositiveAmount
+    case nothingToUndo
+    case transactionAmountOutOfRange
 
     var errorDescription: String? {
         switch self {
         case .emptyName: "Enter a child's name."
         case .nonPositiveAmount: "The amount must be greater than zero."
+        case .nothingToUndo: "There are no transactions to undo."
+        case .transactionAmountOutOfRange: "That transaction cannot be reversed."
         }
     }
+}
+
+struct UndoResult {
+    let child: Child
+    let originalAmountCents: Int64
+    let newBalanceCents: Int64
 }
 
 @MainActor
@@ -62,10 +72,17 @@ struct LedgerService {
         cents: Int64,
         to child: Child,
         note: String? = nil,
-        source: TransactionSource = .manual
+        source: TransactionSource = .manual,
+        reversesTransactionID: UUID? = nil
     ) throws -> LedgerTransaction {
         guard cents != 0 else { throw LedgerError.nonPositiveAmount }
-        let transaction = LedgerTransaction(amountCents: cents, note: note, source: source, child: child)
+        let transaction = LedgerTransaction(
+            amountCents: cents,
+            note: note,
+            source: source,
+            reversesTransactionID: reversesTransactionID,
+            child: child
+        )
         modelContext.insert(transaction)
         try modelContext.save()
         return transaction
@@ -82,5 +99,35 @@ struct LedgerService {
             sortBy: [SortDescriptor(\LedgerTransaction.createdAt, order: .reverse)]
         )
         return try modelContext.fetch(descriptor)
+    }
+
+    func undoLastTransaction(source: TransactionSource = .manual) throws -> UndoResult {
+        let descriptor = FetchDescriptor<LedgerTransaction>(
+            sortBy: [SortDescriptor(\LedgerTransaction.createdAt, order: .reverse)]
+        )
+        let transactions = try modelContext.fetch(descriptor)
+        let reversedTransactionIDs = Set(transactions.compactMap(\.reversesTransactionID))
+        guard let original = transactions.first(where: {
+            $0.reversesTransactionID == nil
+                && !reversedTransactionIDs.contains($0.id)
+                && $0.child != nil
+        }), let child = original.child else {
+            throw LedgerError.nothingToUndo
+        }
+        guard original.amountCents != .min else {
+            throw LedgerError.transactionAmountOutOfRange
+        }
+
+        try addTransaction(
+            cents: -original.amountCents,
+            to: child,
+            source: source,
+            reversesTransactionID: original.id
+        )
+        return UndoResult(
+            child: child,
+            originalAmountCents: original.amountCents,
+            newBalanceCents: balance(for: child)
+        )
     }
 }

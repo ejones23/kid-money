@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 and 2 are complete. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all seven Phase 2 tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes `GiveMoneyIntent` successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Physical testing passed with the app open, backgrounded, terminated, and locked, and termination/relaunch persistence is verified. Siri accepts numeric cent phrases such as “ten cents” and “twenty-five cents” but rejects observed sub-ten-cent values and coin wording such as dime and quarter before invoking the intent.
+Phases 1 and 2 are complete. Phase 3 is implemented and awaiting physical-device verification in TestFlight build `0.1 (4)`. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 11 tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes `GiveMoneyIntent` successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Physical testing passed with the app open, backgrounded, terminated, and locked, and termination/relaunch persistence is verified. Siri accepts numeric cent phrases such as “ten cents” and “twenty-five cents” but rejects observed sub-ten-cent values and coin wording such as dime and quarter before invoking the arbitrary-currency intent.
 
 Latest verified capabilities:
 
@@ -28,6 +28,9 @@ Latest verified capabilities:
 - resolve active children case-insensitively for App Intents
 - convert positive USD amounts to exact integer cents
 - run `GiveMoneyIntent` in the background and return spoken dialog
+- take arbitrary USD amounts and report balances through App Intents
+- undo via auditable compensating transactions
+- give or take named US coin denominations through a supplemental App Enum path
 
 ## Non-negotiable rules
 
@@ -71,4 +74,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Implement Phase 3: `TakeMoneyIntent`, `GetBalanceIntent`, and an auditable `UndoLastTransactionIntent`, with focused domain tests and App Shortcut phrases. Add a supplemental coin-denomination path justified by the physical-device evidence, but do not replace the arbitrary `IntentCurrencyAmount` path. Build, test, inspect warnings and shortcut previews, then distribute the next internal TestFlight build for the Phase 3 voice matrix.
+Distribute TestFlight build `0.1 (4)` and exercise the Phase 3 matrix in `docs/SIRI_TEST_PLAN.md` on physical hardware. Record Siri routing, parameter clarification, spoken results, undo behavior, and persistence before beginning the Phase 4 manual interface.

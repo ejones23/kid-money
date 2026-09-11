@@ -35,6 +35,7 @@ final class LedgerTransaction {
     var createdAt: Date
     var note: String?
     var sourceRawValue: String
+    var reversesTransactionID: UUID?
     var child: Child?
 
     init(
@@ -43,6 +44,7 @@ final class LedgerTransaction {
         createdAt: Date = .now,
         note: String? = nil,
         source: TransactionSource,
+        reversesTransactionID: UUID? = nil,
         child: Child
     ) {
         self.id = id
@@ -50,6 +52,7 @@ final class LedgerTransaction {
         self.createdAt = createdAt
         self.note = note
         self.sourceRawValue = source.rawValue
+        self.reversesTransactionID = reversesTransactionID
         self.child = child
     }
 
@@ -62,4 +65,3 @@ enum TransactionSource: String, Codable, CaseIterable {
     case manual
     case siri
 }
-
