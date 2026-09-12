@@ -111,3 +111,12 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - App backgrounded and unlocked: “a quarter” was rejected; “twenty-five cents” succeeded and raised the balance to `$1.05`.
 - Interpretation: automatic App Shortcut routing, background execution, locked-device execution, parameter prompting, spoken confirmation, and persistence work on both phones. The iOS 26.6.2 update preceded the managed phone's recovery, but the evidence does not distinguish an OS fix from a registration refresh caused by the update. Siri's `IntentCurrencyAmount` resolver does not accept the observed sub-ten-cent responses, and the app never receives them.
 - Phase 2 result: complete. The context matrix, persistence, automatic routing, parameter clarification, spoken result, and locked-device behavior all passed on physical hardware. Numeric cent phrases at or above ten cents worked in the observed tests, while penny, dime, and quarter wording did not resolve; this justifies a supplemental denomination path in Phase 3 without replacing arbitrary currency amounts.
+
+### TestFlight 0.1 (4) — managed work iPhone, iOS 26.6.2
+
+- Upgrade migration: updating in place preserved Rebecca and her `$1.05` build 3 balance after the optional undo-link field was added to the SwiftData model.
+- Take Money: “Take money from Rebecca in Kid Money” routed successfully, removed `$0.10`, and reported the correct `$0.95` balance.
+- Check Balance: Siri returned the correct `$0.95` balance without changing it.
+- Undo: “Undo kid money in Kid Money” correctly compensated for the preceding ten-cent removal and reported the restored `$1.05` balance.
+- Exact response transcripts were not captured; repeating these successful cases solely for wording is unnecessary. Functional routing, mutation, read-only querying, spoken balance, and undo correctness are verified.
+- Remaining checkpoint: named-coin routing, terminated-app persistence, and repeated undo behavior.

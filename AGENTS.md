@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 and 2 are complete. Phase 3 is implemented and awaiting physical-device verification in TestFlight build `0.1 (4)`. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 11 tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes `GiveMoneyIntent` successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Physical testing passed with the app open, backgrounded, terminated, and locked, and termination/relaunch persistence is verified. Siri accepts numeric cent phrases such as “ten cents” and “twenty-five cents” but rejects observed sub-ten-cent values and coin wording such as dime and quarter before invoking the arbitrary-currency intent.
+Phases 1 and 2 are complete. Phase 3 is implemented and partially verified on the managed work phone in TestFlight build `0.1 (4)`: the upgrade preserved the `$1.05` balance, Take Money produced `$0.95`, Get Balance reported `$0.95`, and Undo restored `$1.05`. Named-coin routing, terminated-app persistence, and repeated undo remain. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 11 tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` routes `GiveMoneyIntent` successfully on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Physical testing passed with the app open, backgrounded, terminated, and locked, and termination/relaunch persistence is verified. Siri accepts numeric cent phrases such as “ten cents” and “twenty-five cents” but rejects observed sub-ten-cent values and coin wording such as dime and quarter before invoking the arbitrary-currency intent.
 
 Latest verified capabilities:
 
