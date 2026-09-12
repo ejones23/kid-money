@@ -43,7 +43,7 @@ App Shortcut phrases can interpolate at most one intent parameter. The proof of 
 
 ## Phase 3 — Complete voice actions
 
-Status: **Implemented; awaiting physical-device verification in TestFlight build 0.1 (4)**
+Status: **Complete**
 
 - Take Money
 - Get Balance
@@ -53,7 +53,7 @@ Status: **Implemented; awaiting physical-device verification in TestFlight build
 
 Physical testing showed that `IntentCurrencyAmount` does not understand dime or quarter wording reliably, so a supplemental denomination path is justified. Keep arbitrary currency amounts available.
 
-Implementation preflight: all 11 tests pass, device and simulator builds succeed without warnings, and Xcode's App Shortcuts Preview maps the representative Phase 3 phrases to the intended actions. Build 4 physical testing has verified upgrade migration, Take Money, Get Balance, Undo, and the supplemental dime/quarter path on the managed work phone. Coin utterances correctly supply the denomination but still require a child follow-up. Completion requires the terminated-app persistence and repeated-undo rows in `SIRI_TEST_PLAN.md`.
+All 11 tests pass, device and simulator builds succeed without warnings, and Xcode's App Shortcuts Preview maps the representative Phase 3 phrases to the intended actions. Build 4 physical testing verified upgrade migration, Take Money, Get Balance, Undo, the supplemental dime/quarter path, terminated execution, repeated undo, and relaunch persistence on the managed work phone. Coin utterances correctly supply the denomination but still require a child follow-up. One terminated “Give a dime” attempt routed to a web result before succeeding on retry; preserve this as a reliability finding.
 
 ## Phase 4 — Useful manual interface
 

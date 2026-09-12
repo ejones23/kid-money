@@ -14,7 +14,7 @@ The project uses internal TestFlight distribution so that its physical-device Si
 
 ## Current status
 
-Phases 1 and 2 are complete. Phase 3 is implemented and awaiting physical-device verification:
+Phases 1 through 3 are complete:
 
 - SwiftUI application targeting iOS 26+
 - SwiftData models for children and signed ledger transactions
@@ -33,6 +33,8 @@ Phases 1 and 2 are complete. Phase 3 is implemented and awaiting physical-device
 The project builds without errors or warnings in Xcode 26.6. All 11 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
 TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
+
+TestFlight build `0.1 (4)` completed Phase 3 on the managed work phone. It preserved the existing ledger during migration and verified take, balance, auditable undo, named dime and quarter actions, terminated execution, repeated undo, and relaunch persistence. Coin phrases still request the child separately, and one dime attempt intermittently routed to a web result before succeeding on retry.
 
 ## Requirements
 
@@ -94,14 +96,14 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-The next milestone is the Phase 3 physical-device checkpoint in TestFlight build `0.1 (4)`:
+The next milestone is Phase 4's useful manual interface:
 
-1. Verify Take Money, Check Balance, and Undo Last Transaction through Siri.
-2. Verify the supplemental named-coin path, including “Give Rebecca a dime in Kid Money.”
-3. Confirm all actions work while the app is backgrounded or terminated and preserve the ledger across relaunch.
-4. Record any Siri clarification or routing differences between the managed and unmanaged phones.
+1. Show transaction history and add quick coin buttons.
+2. Support arbitrary manual additions and subtractions.
+3. Add rename and archive-child flows.
+4. Improve empty, error, accessibility, and visual states without expanding the architecture unnecessarily.
 
-Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. The arbitrary-amount shortcuts advertise the child and let Siri request the amount; the coin shortcuts advertise either the denomination or the child and let flexible matching or a follow-up collect the other value. Physical testing will determine how naturally Siri handles complete utterances containing both.
+Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. The arbitrary-amount shortcuts advertise the child and let Siri request the amount; the coin shortcuts advertise either the denomination or the child and let flexible matching or a follow-up collect the other value. Physical testing showed that coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/SIRI_TEST_PLAN.md](docs/SIRI_TEST_PLAN.md) for the full checkpoint.
 

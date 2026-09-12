@@ -57,7 +57,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Verify automatic App Shortcut routing and a persisted transaction on the managed physical iPhone.
 - [x] Verify terminated, locked-device execution and termination/relaunch persistence on the managed physical iPhone.
 - [x] Execute and record the Phase 2 portion of `docs/SIRI_TEST_PLAN.md` before expanding the intent set.
-- [ ] Execute and record the Phase 3 build 4 matrix on physical hardware.
+- [x] Execute and record the Phase 3 build 4 matrix on physical hardware.
 
 ## 6. Public release
 
