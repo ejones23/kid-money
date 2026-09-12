@@ -53,7 +53,7 @@ Status: **Implemented; awaiting physical-device verification in TestFlight build
 
 Physical testing showed that `IntentCurrencyAmount` does not understand dime or quarter wording reliably, so a supplemental denomination path is justified. Keep arbitrary currency amounts available.
 
-Implementation preflight: all 11 tests pass, device and simulator builds succeed without warnings, and Xcode's App Shortcuts Preview maps the representative Phase 3 phrases to the intended actions. Build 4 physical testing has verified upgrade migration, Take Money, Get Balance, and Undo on the managed work phone. Completion still requires the named-coin, terminated-app persistence, and repeated-undo rows in `SIRI_TEST_PLAN.md`.
+Implementation preflight: all 11 tests pass, device and simulator builds succeed without warnings, and Xcode's App Shortcuts Preview maps the representative Phase 3 phrases to the intended actions. Build 4 physical testing has verified upgrade migration, Take Money, Get Balance, Undo, and the supplemental dime/quarter path on the managed work phone. Coin utterances correctly supply the denomination but still require a child follow-up. Completion requires the terminated-app persistence and repeated-undo rows in `SIRI_TEST_PLAN.md`.
 
 ## Phase 4 — Useful manual interface
 

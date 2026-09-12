@@ -118,5 +118,8 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Take Money: “Take money from Rebecca in Kid Money” routed successfully, removed `$0.10`, and reported the correct `$0.95` balance.
 - Check Balance: Siri returned the correct `$0.95` balance without changing it.
 - Undo: “Undo kid money in Kid Money” correctly compensated for the preceding ten-cent removal and reported the restored `$1.05` balance.
+- Give Coin with denomination only: “Give a dime in Kid Money” asked which child should receive money; selecting Rebecca added `$0.10` and produced `$1.15`.
+- Give Coin with child spoken: “Give Rebecca a dime in Kid Money” still asked which child should receive money; selecting Rebecca added `$0.10` and produced `$1.25`. Siri therefore routed the named denomination correctly but did not retain the child from a phrase whose advertised parameter is the denomination.
+- Take Coin: “Take a quarter in Kid Money” asked which child; selecting Rebecca removed `$0.25` and produced `$1.00`.
 - Exact response transcripts were not captured; repeating these successful cases solely for wording is unnecessary. Functional routing, mutation, read-only querying, spoken balance, and undo correctness are verified.
-- Remaining checkpoint: named-coin routing, terminated-app persistence, and repeated undo behavior.
+- Remaining checkpoint: terminated-app persistence and repeated undo behavior.
