@@ -100,6 +100,21 @@ struct LedgerServiceTests {
         }
     }
 
+    @Test func compositeSiriAmountRecognizesNaturalPhrases() {
+        let entity = LedgerAdjustmentEntity(
+            childID: UUID(),
+            childName: "Rebecca",
+            amount: .tenCents
+        )
+
+        #expect(entity.matches("Rebecca ten cents"))
+        #expect(entity.matches("Rebecca 10 cents"))
+        #expect(entity.matches("Rebecca a dime"))
+        #expect(entity.matches("ten cents from Rebecca"))
+        #expect(entity.matches("TEN-CENTS TO RÉBECCA"))
+        #expect(!entity.matches("Rebecca twenty cents"))
+    }
+
     @Test func undoCreatesACompensatingTransaction() throws {
         let container = try AppModelContainer.make(inMemory: true)
         let context = ModelContext(container)

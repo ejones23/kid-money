@@ -127,3 +127,19 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 - Relaunch persistence: terminating and relaunching preserved `$1.25`.
 - Exact response transcripts were not captured; repeating these successful cases solely for wording is unnecessary. Functional routing, mutation, read-only querying, spoken balance, and undo correctness are verified.
 - Phase 3 result: complete. Every build 4 matrix capability passed on physical hardware. Named-coin routing had one intermittent web-search miss before succeeding on retry, and combined coin phrases still requested the child separately; retain both findings as reliability inputs rather than treating preview matching as a guarantee.
+
+## Build 5 one-shot routing experiment
+
+Build 5 replaces the advertised coin shortcuts with a single dynamic child-and-amount App Entity. It is an experiment around Apple's one-parameter-per-App-Shortcut-phrase limit, not a claimed fix until it works on a physical iPhone. The common amounts are 1, 5, 10, 20, 25, 50, and 100 cents; penny, nickel, dime, quarter, half-dollar, and dollar synonyms are included. Arbitrary amounts still use the existing Give Money or Take Money follow-up flow.
+
+Before updating, record Rebecca's build 4 balance (`$1.25` at the end of the completed matrix). After updating, confirm the child and balance remain. Then test in order and record Siri's exact route, any Wallet disambiguation, clarification, spoken result, and balance:
+
+1. “Give Rebecca ten cents in Kid Money.” Expected one-shot adjustment: `+$0.10`.
+2. “In Kid Money, give Rebecca twenty cents.” Expected one-shot adjustment: `+$0.20`.
+3. “Give Rebecca a dime in Kid Money.” Expected one-shot adjustment: `+$0.10`.
+4. “Give Rebecca a dollar in Kid Money.” Expected one-shot adjustment: `+$1.00`.
+5. “Take twenty cents from Rebecca in Kid Money.” Expected one-shot adjustment: `-$0.20`.
+6. “Give Rebecca money in Kid Money.” Confirm the arbitrary-amount fallback still asks for an amount and succeeds with “thirty cents.”
+7. Terminate Kid Money and repeat steps 1 and 5; relaunch and confirm both persisted.
+
+If Siri offers Kid Money or Wallet, test the app-name-first form from step 2 as a routing comparison. Do not infer success from the generated catalog: Xcode's extracted metadata contains the new routes, but the local simulator's `linkd` helper failed to refresh the dynamic child-and-amount vocabulary for App Shortcuts Preview.

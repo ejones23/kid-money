@@ -53,7 +53,15 @@ Status: **Complete**
 
 Physical testing showed that `IntentCurrencyAmount` does not understand dime or quarter wording reliably, so a supplemental denomination path is justified. Keep arbitrary currency amounts available.
 
-All 11 tests pass, device and simulator builds succeed without warnings, and Xcode's App Shortcuts Preview maps the representative Phase 3 phrases to the intended actions. Build 4 physical testing verified upgrade migration, Take Money, Get Balance, Undo, the supplemental dime/quarter path, terminated execution, repeated undo, and relaunch persistence on the managed work phone. Coin utterances correctly supply the denomination but still require a child follow-up. One terminated “Give a dime” attempt routed to a web result before succeeding on retry; preserve this as a reliability finding.
+The then-current 11 tests passed, device and simulator builds succeeded without warnings, and Xcode's App Shortcuts Preview mapped the representative Phase 3 phrases to the intended actions. Build 4 physical testing verified upgrade migration, Take Money, Get Balance, Undo, the supplemental dime/quarter path, terminated execution, repeated undo, and relaunch persistence on the managed work phone. Coin utterances correctly supply the denomination but still require a child follow-up. One terminated “Give a dime” attempt routed to a web result before succeeding on retry; preserve this as a reliability finding.
+
+### Siri reliability experiment — build 5
+
+Status: **Implemented; physical verification pending**
+
+The user specifically requested one-shot forms such as “Give Rebecca ten cents in Kid Money” before beginning Phase 4. The installed SDK rejects `IntentCurrencyAmount` in an App Shortcut phrase and permits only `AppEntity` or `AppEnum` phrase parameters. Build 5 therefore combines an active child and a common amount into one dynamic `LedgerAdjustmentEntity`, which fits Apple's one-parameter limit. It advertises app-name-first and app-name-last give/take forms, retains the arbitrary-amount follow-up intents, and removes the overlapping coin App Shortcuts that Xcode's flexible matcher preferred over the full request. The underlying coin actions remain available in Shortcuts.
+
+All 12 tests pass and the simulator build has a clean Issue Navigator. The extracted App Intents metadata contains the new give/take routes. Xcode's simulator-side `linkd` helper failed to refresh dynamic shortcut parameters, so the preview could not resolve a child-specific utterance; this is not being treated as physical Siri verification. Execute the build 5 matrix in `SIRI_TEST_PLAN.md` before resuming Phase 4.
 
 ## Phase 4 — Useful manual interface
 

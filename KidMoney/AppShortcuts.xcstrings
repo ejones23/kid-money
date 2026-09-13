@@ -15,6 +15,20 @@
         }
       }
     },
+    "Give ${adjustment} in ${applicationName}" : {
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringSet" : {
+            "state" : "new",
+            "values" : [
+              "Give ${adjustment} in ${applicationName}",
+              "In ${applicationName}, give ${adjustment}"
+            ]
+          }
+        }
+      }
+    },
     "Give ${child} money in ${applicationName}" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
@@ -23,37 +37,22 @@
             "state" : "new",
             "values" : [
               "Give ${child} money in ${applicationName}",
+              "In ${applicationName}, give ${child} money",
               "Give money in ${applicationName}"
             ]
           }
         }
       }
     },
-    "Give a ${denomination} in ${applicationName}" : {
+    "Take ${adjustment} in ${applicationName}" : {
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringSet" : {
             "state" : "new",
             "values" : [
-              "Give a ${denomination} in ${applicationName}",
-              "Give ${child} a coin in ${applicationName}",
-              "Give a coin in ${applicationName}"
-            ]
-          }
-        }
-      }
-    },
-    "Take a ${denomination} in ${applicationName}" : {
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringSet" : {
-            "state" : "new",
-            "values" : [
-              "Take a ${denomination} in ${applicationName}",
-              "Take a coin from ${child} in ${applicationName}",
-              "Take a coin in ${applicationName}"
+              "Take ${adjustment} in ${applicationName}",
+              "In ${applicationName}, take ${adjustment}"
             ]
           }
         }
@@ -67,6 +66,7 @@
             "state" : "new",
             "values" : [
               "Take money from ${child} in ${applicationName}",
+              "In ${applicationName}, take money from ${child}",
               "Take money in ${applicationName}"
             ]
           }

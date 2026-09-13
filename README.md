@@ -25,12 +25,13 @@ Phases 1 through 3 are complete:
 - `GiveMoneyIntent` with a background execution mode
 - `TakeMoneyIntent`, `GetBalanceIntent`, and auditable `UndoLastTransactionIntent`
 - supplemental named-coin give/take intents for nickel, dime, quarter, half dollar, and dollar
+- a combined child-and-common-amount Siri vocabulary for one-shot give/take requests
 - case-insensitive App Entity lookup for active children
 - exact USD `Decimal` to integer-cents conversion
 - App Shortcut discovery phrases and focused intent logging
 - unit coverage for ledger behavior, store reopening, child lookup, formatting, money conversion, and repeated undo
 
-The project builds without errors or warnings in Xcode 26.6. All 11 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
+The project builds without errors or warnings in Xcode 26.6. All 12 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
 TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
 
@@ -96,14 +97,16 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-The next milestone is Phase 4's useful manual interface:
+Before Phase 4, TestFlight build `0.1 (5)` will test a focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the build presents each active child paired with a common amount as one dynamic App Entity. This is intended to support one-shot forms such as “Give Rebecca ten cents in Kid Money” and “Take twenty cents from Rebecca in Kid Money.” Supported preset amounts are one, five, ten, twenty, twenty-five, and fifty cents, plus one dollar, including common US coin synonyms. Arbitrary amounts remain available through the existing follow-up flow.
+
+After that device experiment, the next feature milestone is Phase 4's useful manual interface:
 
 1. Show transaction history and add quick coin buttons.
 2. Support arbitrary manual additions and subtractions.
 3. Add rename and archive-child flows.
 4. Improve empty, error, accessibility, and visual states without expanding the architecture unnecessarily.
 
-Apple currently permits at most one intent parameter in each App Shortcut trigger phrase. The arbitrary-amount shortcuts advertise the child and let Siri request the amount; the coin shortcuts advertise either the denomination or the child and let flexible matching or a follow-up collect the other value. Physical testing showed that coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance.
+Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/SIRI_TEST_PLAN.md](docs/SIRI_TEST_PLAN.md) for the full checkpoint.
 
