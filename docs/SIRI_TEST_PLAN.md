@@ -132,6 +132,8 @@ Test coin names only after arbitrary amounts work. Add a `CoinDenomination` fall
 
 Build 5 replaces the advertised coin shortcuts with a single dynamic child-and-amount App Entity. It is an experiment around Apple's one-parameter-per-App-Shortcut-phrase limit, not a claimed fix until it works on a physical iPhone. The common amounts are 1, 5, 10, 20, 25, 50, and 100 cents; penny, nickel, dime, quarter, half-dollar, and dollar synonyms are included. Arbitrary amounts still use the existing Give Money or Take Money follow-up flow.
 
+Distribution: TestFlight `0.1 (5)` was uploaded successfully and verified in the `Internal Testing` group.
+
 Before updating, record Rebecca's build 4 balance (`$1.25` at the end of the completed matrix). After updating, confirm the child and balance remain. Then test in order and record Siri's exact route, any Wallet disambiguation, clarification, spoken result, and balance:
 
 1. “Give Rebecca ten cents in Kid Money.” Expected one-shot adjustment: `+$0.10`.

@@ -97,7 +97,7 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-Before Phase 4, TestFlight build `0.1 (5)` will test a focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the build presents each active child paired with a common amount as one dynamic App Entity. This is intended to support one-shot forms such as “Give Rebecca ten cents in Kid Money” and “Take twenty cents from Rebecca in Kid Money.” Supported preset amounts are one, five, ten, twenty, twenty-five, and fifty cents, plus one dollar, including common US coin synonyms. Arbitrary amounts remain available through the existing follow-up flow.
+Before Phase 4, TestFlight build `0.1 (5)`, now available to the internal testing group, will test a focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the build presents each active child paired with a common amount as one dynamic App Entity. This is intended to support one-shot forms such as “Give Rebecca ten cents in Kid Money” and “Take twenty cents from Rebecca in Kid Money.” Supported preset amounts are one, five, ten, twenty, twenty-five, and fifty cents, plus one dollar, including common US coin synonyms. Arbitrary amounts remain available through the existing follow-up flow.
 
 After that device experiment, the next feature milestone is Phase 4's useful manual interface:
 

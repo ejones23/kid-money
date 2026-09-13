@@ -57,7 +57,7 @@ The then-current 11 tests passed, device and simulator builds succeeded without 
 
 ### Siri reliability experiment — build 5
 
-Status: **Implemented; physical verification pending**
+Status: **Distributed to internal TestFlight; physical verification pending**
 
 The user specifically requested one-shot forms such as “Give Rebecca ten cents in Kid Money” before beginning Phase 4. The installed SDK rejects `IntentCurrencyAmount` in an App Shortcut phrase and permits only `AppEntity` or `AppEnum` phrase parameters. Build 5 therefore combines an active child and a common amount into one dynamic `LedgerAdjustmentEntity`, which fits Apple's one-parameter limit. It advertises app-name-first and app-name-last give/take forms, retains the arbitrary-amount follow-up intents, and removes the overlapping coin App Shortcuts that Xcode's flexible matcher preferred over the full request. The underlying coin actions remain available in Shortcuts.
 
