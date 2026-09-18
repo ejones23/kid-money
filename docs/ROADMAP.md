@@ -65,9 +65,9 @@ Build 5 physical testing verified one-shot ten-cent, twenty-cent, and one-dollar
 
 ### Five-cent increment expansion — build 6
 
-Status: **Implemented; physical verification pending**
+Status: **Uploaded to App Store Connect; internal distribution and physical verification pending**
 
-Build 6 expands the combined entity from a few common values to every five-cent increment from `$0.05` through `$1.00`. One cent remains supported, and arbitrary values remain available through the prompted intents. All 13 tests pass and Xcode's Issue Navigator is clean. Complete the short locked-screen matrix in `SIRI_TEST_PLAN.md`; if it passes, resume Phase 4.
+Build 6 expands the combined entity from a few common values to every five-cent increment from `$0.05` through `$1.00`. One cent remains supported, and arbitrary values remain available through the prompted intents. All 13 tests pass, Xcode's Issue Navigator is clean, and the archive uploaded successfully to App Store Connect on September 17, 2026. Add it to the Internal Testing group after processing, then complete the short locked-screen matrix in `SIRI_TEST_PLAN.md`; if it passes, resume Phase 4.
 
 ## Phase 4 — Useful manual interface
 

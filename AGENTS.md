@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 3 are complete. TestFlight build `0.1 (4)` passed upgrade migration, Take Money, Get Balance, auditable Undo, supplemental dime/quarter actions, terminated execution, repeated undo, and relaunch persistence on the managed work phone. TestFlight build `0.1 (5)` physically verified its combined child-and-amount entity for one-shot numeric additions and subtraction, including locked-screen execution. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Coin words are no longer required. Build 6 expands the preset vocabulary to every five-cent increment through one dollar; physical verification is pending. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 13 tests pass on an iOS 26.5 simulator.
+Phases 1 through 3 are complete. TestFlight build `0.1 (4)` passed upgrade migration, Take Money, Get Balance, auditable Undo, supplemental dime/quarter actions, terminated execution, repeated undo, and relaunch persistence on the managed work phone. TestFlight build `0.1 (5)` physically verified its combined child-and-amount entity for one-shot numeric additions and subtraction, including locked-screen execution. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Coin words are no longer required. Build `0.1 (6)` expands the preset vocabulary to every five-cent increment through one dollar and has been uploaded to App Store Connect; internal-group assignment and physical verification are pending. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 13 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -75,4 +75,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Archive and upload TestFlight build `0.1 (6)`, add it to internal testing, and execute the short locked-screen five-cent increment matrix in `docs/SIRI_TEST_PLAN.md`. If it passes, record completion and resume Phase 4.
+Add uploaded TestFlight build `0.1 (6)` to internal testing after App Store Connect finishes processing it, then execute the short locked-screen five-cent increment matrix in `docs/SIRI_TEST_PLAN.md`. If it passes, record completion and resume Phase 4.

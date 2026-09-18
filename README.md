@@ -37,7 +37,7 @@ TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on b
 
 TestFlight build `0.1 (4)` completed Phase 3 on the managed work phone. It preserved the existing ledger during migration and verified take, balance, auditable undo, named dime and quarter actions, terminated execution, repeated undo, and relaunch persistence. Coin phrases still request the child separately, and one dime attempt intermittently routed to a web result before succeeding on retry.
 
-TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution, plus one-shot numeric subtraction. The stable wording is “Give/Take Rebecca twenty cents in Kid Money.” App-name-first forms can invoke Wallet disambiguation, and coin words remain unreliable; the owner accepted numeric amounts as the product grammar. Build 6 expands one-shot support to every five-cent increment through one dollar and is awaiting a short locked-screen check.
+TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution, plus one-shot numeric subtraction. The stable wording is “Give/Take Rebecca twenty cents in Kid Money.” App-name-first forms can invoke Wallet disambiguation, and coin words remain unreliable; the owner accepted numeric amounts as the product grammar. Build `0.1 (6)` expands one-shot support to every five-cent increment through one dollar. It has been uploaded to App Store Connect and is awaiting internal-group assignment and a short locked-screen check.
 
 ## Requirements
 
