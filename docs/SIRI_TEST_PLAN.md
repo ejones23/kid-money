@@ -171,7 +171,7 @@ Build 5 result: complete. For the combined entity, the reliable grammar is “Gi
 
 Build 6 expands the combined vocabulary to every five-cent increment from `$0.05` through `$1.00`, while retaining the separately supported one-cent value and coin synonyms. The preferred product grammar remains child first, numeric amount second, and app name last. Amounts outside this preset range remain available through the existing prompted arbitrary-amount actions.
 
-Distribution status: archive `0.1 (6)` uploaded successfully to App Store Connect on September 17, 2026. Assignment to the `Internal Testing` group is pending App Store Connect processing and a renewed web sign-in.
+Distribution status: archive `0.1 (6)` uploaded successfully and was added to the TestFlight `Internal Testing` group on September 17, 2026.
 
 After installing build 6, confirm Rebecca's build 5 balance remains `$2.15`. Lock the phone and test:
 
