@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 3 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. Phase 4's manual history, quick adds, arbitrary adjustments, rename, and archive flows are implemented for owner review. The app builds in Xcode 26.6 and all 14 tests pass on an iOS 26.5 simulator.
+Phases 1 through 3 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. Phase 4's manual history, quick adds, arbitrary adjustments, rename, and archive flows are available in internal TestFlight build `0.1 (7)` for owner review. The app builds in Xcode 26.6 and all 14 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -78,4 +78,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Review the Phase 4 manual interface on physical hardware, address any usability findings, then begin Phase 5 reliability work.
+Execute `docs/PHASE4_TEST_PLAN.md` with internal TestFlight build `0.1 (7)`, address any usability findings, then begin Phase 5 reliability work.

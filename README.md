@@ -84,6 +84,7 @@ docs/APP_STORE_RELEASE.md     TestFlight and App Store checklist
 docs/APP_STORE_METADATA.md    Draft public listing copy
 docs/APP_ICON.md              Provisional icon notes and source prompt
 docs/DEVELOPMENT.md           Setup and verification workflow
+docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
 docs/privacy.md               Draft public privacy policy
@@ -103,7 +104,7 @@ docs/support.md               Draft public support page
 
 Build 6 completed the focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available through the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow. Physical testing confirmed correct locked-screen execution after Siri's Kid Money/Wallet app choice.
 
-Phase 4's useful manual interface is implemented and awaiting owner review on physical hardware. The next engineering milestone is Phase 5 reliability work: broaden edge-case coverage and harden persistence, intent-store access, diagnostics, and accessibility based on observed behavior.
+Phase 4's useful manual interface is available as TestFlight build `0.1 (7)` and is awaiting the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). The next engineering milestone is Phase 5 reliability work: broaden edge-case coverage and harden persistence, intent-store access, diagnostics, and accessibility based on observed behavior.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

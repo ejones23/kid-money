@@ -77,6 +77,7 @@ Status: **In progress**
 - [x] arbitrary add/subtract input
 - [x] rename and archive children without deleting history
 - [x] stronger empty/error states and modest visual polish
+- [x] distribute the manual interface as TestFlight build `0.1 (7)`
 - [ ] owner review of the manual interface on physical hardware
 
 ## Phase 5 — Reliability

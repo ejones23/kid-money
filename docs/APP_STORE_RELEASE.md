@@ -51,6 +51,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Upload build `0.1 (5)` with the one-shot child-and-amount routing experiment and add it to `Internal Testing`.
 - [x] Archive and upload build `0.1 (6)` with every five-cent increment through one dollar.
 - [x] Add build `0.1 (6)` to `Internal Testing` after App Store Connect finishes processing it.
+- [x] Upload Phase 4 build `0.1 (7)` and add it to `Internal Testing` for manual-interface review.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
