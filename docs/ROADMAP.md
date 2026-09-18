@@ -65,18 +65,19 @@ Build 5 physical testing verified one-shot ten-cent, twenty-cent, and one-dollar
 
 ### Five-cent increment expansion — build 6
 
-Status: **Distributed to internal testing; physical verification pending**
+Status: **Complete**
 
-Build 6 expands the combined entity from a few common values to every five-cent increment from `$0.05` through `$1.00`. One cent remains supported, and arbitrary values remain available through the prompted intents. All 13 tests pass, Xcode's Issue Navigator is clean, and the archive was uploaded and added to the TestFlight `Internal Testing` group on September 17, 2026. Complete the short locked-screen matrix in `SIRI_TEST_PLAN.md`; if it passes, resume Phase 4.
+Build 6 expands the combined entity from a few common values to every five-cent increment from `$0.05` through `$1.00`. One cent remains supported, and arbitrary values remain available through the prompted intents. The locked-screen physical matrix passed for fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, with exact balances and relaunch persistence. Siri requested Kid Money/Wallet disambiguation for each phrase but asked no child or amount follow-up. The routing experiment is complete; the app-specific grammar is reliable after the system-level app choice.
 
 ## Phase 4 — Useful manual interface
 
-Status: Planned
+Status: **In progress**
 
-- transaction history and quick coin buttons
-- arbitrary add/subtract input
-- rename and archive children
-- stronger empty/error states and modest visual polish
+- [x] transaction history and quick coin buttons
+- [x] arbitrary add/subtract input
+- [x] rename and archive children without deleting history
+- [x] stronger empty/error states and modest visual polish
+- [ ] owner review of the manual interface on physical hardware
 
 ## Phase 5 — Reliability
 

@@ -37,7 +37,9 @@ TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on b
 
 TestFlight build `0.1 (4)` completed Phase 3 on the managed work phone. It preserved the existing ledger during migration and verified take, balance, auditable undo, named dime and quarter actions, terminated execution, repeated undo, and relaunch persistence. Coin phrases still request the child separately, and one dime attempt intermittently routed to a web result before succeeding on retry.
 
-TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution, plus one-shot numeric subtraction. The stable wording is “Give/Take Rebecca twenty cents in Kid Money.” App-name-first forms can invoke Wallet disambiguation, and coin words remain unreliable; the owner accepted numeric amounts as the product grammar. Build `0.1 (6)` expands one-shot support to every five-cent increment through one dollar. It is available in the TestFlight `Internal Testing` group and is awaiting a short locked-screen check.
+TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution, plus one-shot numeric subtraction. The stable wording is “Give/Take Rebecca twenty cents in Kid Money.” App-name-first forms can invoke Wallet disambiguation, and coin words remain unreliable; the owner accepted numeric amounts as the product grammar. Build `0.1 (6)` expanded the vocabulary to every five-cent increment through one dollar. Its locked-screen physical matrix passed for fifteen, twenty-five, and thirty-five cents with exact balances and relaunch persistence. Siri still requested Kid Money/Wallet disambiguation, but it extracted the child and amount without follow-up.
+
+Phase 4's manual interface is now implemented for review: child detail shows a newest-first transaction history, quick-add buttons, arbitrary add/subtract forms with optional notes, and rename/archive management that preserves ledger history.
 
 ## Requirements
 
@@ -99,14 +101,9 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-Before Phase 4, build 6 will complete a focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available one-shot using the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow.
+Build 6 completed the focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available through the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow. Physical testing confirmed correct locked-screen execution after Siri's Kid Money/Wallet app choice.
 
-After that device experiment, the next feature milestone is Phase 4's useful manual interface:
-
-1. Show transaction history and add quick coin buttons.
-2. Support arbitrary manual additions and subtractions.
-3. Add rename and archive-child flows.
-4. Improve empty, error, accessibility, and visual states without expanding the architecture unnecessarily.
+Phase 4's useful manual interface is implemented and awaiting owner review on physical hardware. The next engineering milestone is Phase 5 reliability work: broaden edge-case coverage and harden persistence, intent-store access, diagnostics, and accessibility based on observed behavior.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

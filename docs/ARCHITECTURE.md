@@ -30,7 +30,7 @@ Amounts are signed: `+10` adds ten cents and `-25` removes a quarter. The balanc
 
 ## Service boundary
 
-`LedgerService` owns domain mutations and queries. SwiftUI currently uses it to add children, add transactions, fetch history, and calculate balances. App Intents must reuse the same operations.
+`LedgerService` owns domain mutations and queries. SwiftUI uses it to add, rename, and archive children; add transactions; fetch history; and calculate balances. App Intents reuse the same operations. Archiving only changes the child's active flag and never deletes ledger history.
 
 The service is `@MainActor` because its `ModelContext` is main-actor-bound in the current small application. Revisit context ownership only if App Intent execution demonstrates a concrete concurrency need.
 

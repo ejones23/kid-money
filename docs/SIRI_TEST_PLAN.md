@@ -181,3 +181,13 @@ After installing build 6, confirm Rebecca's build 5 balance remains `$2.15`. Loc
 4. Relaunch Kid Money and confirm `$2.40` persists.
 
 Record any Wallet question, parameter clarification, unsupported-capability response, or web result. Coin-word testing is no longer necessary.
+
+### Recorded build 6 results — managed work iPhone, locked
+
+- Upgrade persistence: Rebecca began at the expected build 5 balance of `$2.15`.
+- “Give Rebecca fifteen cents in Kid Money” requested Kid Money/Wallet disambiguation. Choosing Kid Money added `$0.15`; Siri reported “Gave $0.15 in Kid Money. Rebecca now has $2.30.”
+- “Take Rebecca twenty-five cents in Kid Money” requested Kid Money/Wallet disambiguation. Choosing Kid Money removed `$0.25`; Siri reported “Removed $0.25 in Kid Money. Rebecca now has $2.05.”
+- “Give Rebecca thirty-five cents in Kid Money” requested Kid Money/Wallet disambiguation. Choosing Kid Money added `$0.35`; Siri reported “Added $0.35 to Rebecca. Rebecca now has $2.40.”
+- Relaunch persistence: terminating and relaunching Kid Money preserved `$2.40`.
+- Interpretation: all tested five-cent increments supplied both the child and amount from one utterance, executed from the locked screen, produced the exact expected ledger values, and persisted. Siri still required system-level app disambiguation against Wallet, even with the app name last, but asked no child or amount clarification.
+- Build 6 result: complete. Resume Phase 4; retain Wallet disambiguation as a platform-routing limitation rather than an app correctness failure.

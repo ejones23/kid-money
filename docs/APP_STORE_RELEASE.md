@@ -62,7 +62,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Execute and record the Phase 2 portion of `docs/SIRI_TEST_PLAN.md` before expanding the intent set.
 - [x] Execute and record the Phase 3 build 4 matrix on physical hardware.
 - [x] Execute and record the build 5 one-shot routing matrix on physical hardware.
-- [ ] Execute and record the build 6 locked-screen increment matrix on physical hardware.
+- [x] Execute and record the build 6 locked-screen increment matrix on physical hardware.
 
 ## 6. Public release
 

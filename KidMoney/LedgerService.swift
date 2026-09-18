@@ -67,6 +67,19 @@ struct LedgerService {
         return child
     }
 
+    func renameChild(_ child: Child, to name: String) throws {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { throw LedgerError.emptyName }
+
+        child.name = trimmedName
+        try modelContext.save()
+    }
+
+    func archiveChild(_ child: Child) throws {
+        child.isArchived = true
+        try modelContext.save()
+    }
+
     @discardableResult
     func addTransaction(
         cents: Int64,

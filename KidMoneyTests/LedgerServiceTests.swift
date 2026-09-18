@@ -32,6 +32,24 @@ struct LedgerServiceTests {
         #expect(service.balance(for: daniel) == 25)
     }
 
+    @Test func renameAndArchivePreserveLedgerHistory() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        try service.addTransaction(cents: 25, to: child, note: "Dishwasher")
+
+        try service.renameChild(child, to: "  Becca  ")
+        #expect(child.name == "Becca")
+        #expect(try service.children(matching: "becca").map(\.id) == [child.id])
+
+        try service.archiveChild(child)
+        #expect(try service.activeChildren().isEmpty)
+        #expect(try service.children(matching: "Becca").isEmpty)
+        #expect(service.balance(for: child) == 25)
+        #expect(try service.transactions(for: child).count == 1)
+    }
+
     @Test func childLookupIsCaseInsensitiveAndExcludesArchivedChildren() throws {
         let container = try AppModelContainer.make(inMemory: true)
         let context = ModelContext(container)
