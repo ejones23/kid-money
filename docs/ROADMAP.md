@@ -57,11 +57,11 @@ The then-current 11 tests passed, device and simulator builds succeeded without 
 
 ### Siri reliability experiment — build 5
 
-Status: **Distributed to internal TestFlight; physical verification pending**
+Status: **Partially verified on physical hardware; take-route diagnostic pending**
 
 The user specifically requested one-shot forms such as “Give Rebecca ten cents in Kid Money” before beginning Phase 4. The installed SDK rejects `IntentCurrencyAmount` in an App Shortcut phrase and permits only `AppEntity` or `AppEnum` phrase parameters. Build 5 therefore combines an active child and a common amount into one dynamic `LedgerAdjustmentEntity`, which fits Apple's one-parameter limit. It advertises app-name-first and app-name-last give/take forms, retains the arbitrary-amount follow-up intents, and removes the overlapping coin App Shortcuts that Xcode's flexible matcher preferred over the full request. The underlying coin actions remain available in Shortcuts.
 
-All 12 tests pass and the simulator build has a clean Issue Navigator. The extracted App Intents metadata contains the new give/take routes. Xcode's simulator-side `linkd` helper failed to refresh dynamic shortcut parameters, so the preview could not resolve a child-specific utterance; this is not being treated as physical Siri verification. Execute the build 5 matrix in `SIRI_TEST_PLAN.md` before resuming Phase 4.
+All 12 tests pass and the simulator build has a clean Issue Navigator. The extracted App Intents metadata contains the new give/take routes. Physical testing verified one-shot ten-cent, twenty-cent, and one-dollar additions, plus ten cents from a locked screen. The dime form twice routed to Nicole Kidman web results, and the combined take form produced Siri's unsupported-capability response. Turning off Apple Cash and Wallet Siri suggestions did not remove Wallet disambiguation. Execute the focused take and app-first-dime diagnostics in `SIRI_TEST_PLAN.md` before deciding whether another routing build is justified or Phase 4 can resume.
 
 ## Phase 4 — Useful manual interface
 

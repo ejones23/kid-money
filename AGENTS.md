@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 3 are complete. TestFlight build `0.1 (4)` passed upgrade migration, Take Money, Get Balance, auditable Undo, supplemental dime/quarter actions, terminated execution, repeated undo, and relaunch persistence on the managed work phone. Coin phrases supplied the denomination but still requested the child separately, including when Rebecca was spoken in the combined utterance; one terminated dime request routed to a web result before succeeding on retry. TestFlight build `0.1 (5)` is in the `Internal Testing` group with a one-shot routing experiment that combines an active child and common amount into the one App Entity parameter permitted in an App Shortcut phrase; physical verification is pending. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 12 tests pass on an iOS 26.5 simulator. TestFlight build `0.1 (3)` also established `GiveMoneyIntent` routing on an unmanaged iPhone SE and the managed work phone after both reached iOS 26.6.2, including open, backgrounded, terminated, and locked contexts.
+Phases 1 through 3 are complete. TestFlight build `0.1 (4)` passed upgrade migration, Take Money, Get Balance, auditable Undo, supplemental dime/quarter actions, terminated execution, repeated undo, and relaunch persistence on the managed work phone. TestFlight build `0.1 (5)` physically verified its combined child-and-amount entity for one-shot ten-cent, twenty-cent, and one-dollar additions, including locked-screen execution. The combined take phrase still produced Siri's unsupported-capability response, and two dime attempts routed to Nicole Kidman web results. Turning off Apple Cash and Wallet Siri suggestions did not remove Kid Money/Wallet disambiguation. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 12 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -31,7 +31,7 @@ Latest verified capabilities:
 - take arbitrary USD amounts and report balances through App Intents
 - undo via auditable compensating transactions
 - give or take named US coin denominations through a supplemental App Enum path
-- resolve common child-and-amount combinations through a dynamic App Entity for one-shot Siri phrases (simulator-tested; physical Siri verification pending)
+- resolve common child-and-amount combinations through a dynamic App Entity for one-shot give phrases (physically verified for numeric cents and one dollar; take routing pending)
 
 ## Non-negotiable rules
 
@@ -75,4 +75,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Install TestFlight build `0.1 (5)` and execute the one-shot routing matrix in `docs/SIRI_TEST_PLAN.md`. Record physical Siri behavior without inferring success from compilation or metadata. Resume Phase 4 only after this focused reliability experiment is understood.
+Execute the four focused build 5 diagnostic phrases in `docs/SIRI_TEST_PLAN.md`: two composite take word orders, the existing prompted take fallback, and the app-first dime form. Record physical Siri behavior, then decide whether another routing build is justified or Phase 4 can resume.

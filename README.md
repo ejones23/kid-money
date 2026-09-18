@@ -37,6 +37,8 @@ TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on b
 
 TestFlight build `0.1 (4)` completed Phase 3 on the managed work phone. It preserved the existing ledger during migration and verified take, balance, auditable undo, named dime and quarter actions, terminated execution, repeated undo, and relaunch persistence. Coin phrases still request the child separately, and one dime attempt intermittently routed to a web result before succeeding on retry.
 
+TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution. Its combined take phrase still failed Siri routing, and two dime attempts routed to Nicole Kidman web results. Turning off Apple Cash and Wallet Siri suggestions did not eliminate Siri's Kid Money/Wallet disambiguation. A small diagnostic phrase matrix remains before Phase 4 resumes.
+
 ## Requirements
 
 - macOS with Xcode 26.6 or a compatible newer Xcode

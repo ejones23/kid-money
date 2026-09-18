@@ -145,3 +145,22 @@ Before updating, record Rebecca's build 4 balance (`$1.25` at the end of the com
 7. Terminate Kid Money and repeat steps 1 and 5; relaunch and confirm both persisted.
 
 If Siri offers Kid Money or Wallet, test the app-name-first form from step 2 as a routing comparison. Do not infer success from the generated catalog: Xcode's extracted metadata contains the new routes, but the local simulator's `linkd` helper failed to refresh the dynamic child-and-amount vocabulary for App Shortcuts Preview.
+
+### Recorded build 5 results — managed work iPhone
+
+- Upgrade persistence: Rebecca began at the expected build 4 balance of `$1.25`.
+- Numeric give, app name last: “Give Rebecca ten cents in Kid Money” ran without clarification, added `$0.10`, and reported the correct `$1.35` balance.
+- Numeric give, app name first: “In Kid Money, give Rebecca twenty cents” asked the user to choose Kid Money or Wallet. Choosing Kid Money added `$0.20` and reported the correct `$1.55` balance.
+- Coin synonym: two attempts at “Give Rebecca a dime in Kid Money” produced web results about Nicole Kidman and made no ledger change. Siri therefore failed before the Kid Money intent or entity resolver ran.
+- Dollar synonym: “Give Rebecca a dollar in Kid Money” ran without clarification, added `$1.00`, and reported the correct `$2.55` balance.
+- Take composite: “Take twenty cents from Rebecca in Kid Money” produced “Kid Money hasn't added support for that with Siri,” offered to open the app, and made no ledger change.
+- Locked numeric give: from the locked screen, “Give Rebecca ten cents in Kid Money” added `$0.10`, reported the correct `$2.65` balance, and the app showed the same value afterward.
+- Wallet controls: turning off Apple Cash did not remove the Kid Money/Wallet disambiguation for the app-name-first twenty-cent phrase. Disabling all Wallet Siri suggestions also did not remove it.
+- Interpretation: the combined App Entity is physically verified for one-shot numeric-cent and dollar additions, including locked execution. Coin-name recognition remains unreliable before app routing, and the combined take route remains unverified. Wallet disambiguation is unaffected by the tested Apple Cash and suggestion settings.
+
+Follow-up diagnostic phrases, in order:
+
+1. “In Kid Money, take Rebecca twenty cents.” This matches the advertised app-first phrase and composite entity title order exactly.
+2. “Take Rebecca twenty cents in Kid Money.” This tests the same entity order with the app name last.
+3. “Take money from Rebecca in Kid Money.” If prompted, answer “twenty cents.” This confirms the existing arbitrary-amount fallback was not regressed.
+4. “In Kid Money, give Rebecca a dime.” This checks whether naming the app first prevents the Nicole Kidman web route.
