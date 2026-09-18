@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 3 are complete. TestFlight build `0.1 (4)` passed upgrade migration, Take Money, Get Balance, auditable Undo, supplemental dime/quarter actions, terminated execution, repeated undo, and relaunch persistence on the managed work phone. TestFlight build `0.1 (5)` physically verified its combined child-and-amount entity for one-shot ten-cent, twenty-cent, and one-dollar additions, including locked-screen execution. The combined take phrase still produced Siri's unsupported-capability response, and two dime attempts routed to Nicole Kidman web results. Turning off Apple Cash and Wallet Siri suggestions did not remove Kid Money/Wallet disambiguation. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 12 tests pass on an iOS 26.5 simulator.
+Phases 1 through 3 are complete. TestFlight build `0.1 (4)` passed upgrade migration, Take Money, Get Balance, auditable Undo, supplemental dime/quarter actions, terminated execution, repeated undo, and relaunch persistence on the managed work phone. TestFlight build `0.1 (5)` physically verified its combined child-and-amount entity for one-shot numeric additions and subtraction, including locked-screen execution. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Coin words are no longer required. Build 6 expands the preset vocabulary to every five-cent increment through one dollar; physical verification is pending. The app builds in Xcode 26.6, Xcode's Issue Navigator is clean, and all 13 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -31,7 +31,7 @@ Latest verified capabilities:
 - take arbitrary USD amounts and report balances through App Intents
 - undo via auditable compensating transactions
 - give or take named US coin denominations through a supplemental App Enum path
-- resolve common child-and-amount combinations through a dynamic App Entity for one-shot give phrases (physically verified for numeric cents and one dollar; take routing pending)
+- resolve child-and-numeric-amount combinations through a dynamic App Entity for one-shot give and take phrases
 
 ## Non-negotiable rules
 
@@ -75,4 +75,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Execute the four focused build 5 diagnostic phrases in `docs/SIRI_TEST_PLAN.md`: two composite take word orders, the existing prompted take fallback, and the app-first dime form. Record physical Siri behavior, then decide whether another routing build is justified or Phase 4 can resume.
+Archive and upload TestFlight build `0.1 (6)`, add it to internal testing, and execute the short locked-screen five-cent increment matrix in `docs/SIRI_TEST_PLAN.md`. If it passes, record completion and resume Phase 4.

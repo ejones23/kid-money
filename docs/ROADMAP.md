@@ -57,11 +57,17 @@ The then-current 11 tests passed, device and simulator builds succeeded without 
 
 ### Siri reliability experiment — build 5
 
-Status: **Partially verified on physical hardware; take-route diagnostic pending**
+Status: **Complete**
 
 The user specifically requested one-shot forms such as “Give Rebecca ten cents in Kid Money” before beginning Phase 4. The installed SDK rejects `IntentCurrencyAmount` in an App Shortcut phrase and permits only `AppEntity` or `AppEnum` phrase parameters. Build 5 therefore combines an active child and a common amount into one dynamic `LedgerAdjustmentEntity`, which fits Apple's one-parameter limit. It advertises app-name-first and app-name-last give/take forms, retains the arbitrary-amount follow-up intents, and removes the overlapping coin App Shortcuts that Xcode's flexible matcher preferred over the full request. The underlying coin actions remain available in Shortcuts.
 
-All 12 tests pass and the simulator build has a clean Issue Navigator. The extracted App Intents metadata contains the new give/take routes. Physical testing verified one-shot ten-cent, twenty-cent, and one-dollar additions, plus ten cents from a locked screen. The dime form twice routed to Nicole Kidman web results, and the combined take form produced Siri's unsupported-capability response. Turning off Apple Cash and Wallet Siri suggestions did not remove Wallet disambiguation. Execute the focused take and app-first-dime diagnostics in `SIRI_TEST_PLAN.md` before deciding whether another routing build is justified or Phase 4 can resume.
+Build 5 physical testing verified one-shot ten-cent, twenty-cent, and one-dollar additions, ten cents from a locked screen, and one-shot twenty-cent subtraction when the child precedes the amount. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” App-name-first forms can invoke Wallet disambiguation, amount-first take wording can fail, and coin language remains unreliable. Turning off Apple Cash and Wallet Siri suggestions did not remove Wallet disambiguation. The owner explicitly accepted numeric cent language instead of coin names.
+
+### Five-cent increment expansion — build 6
+
+Status: **Implemented; physical verification pending**
+
+Build 6 expands the combined entity from a few common values to every five-cent increment from `$0.05` through `$1.00`. One cent remains supported, and arbitrary values remain available through the prompted intents. All 13 tests pass and Xcode's Issue Navigator is clean. Complete the short locked-screen matrix in `SIRI_TEST_PLAN.md`; if it passes, resume Phase 4.
 
 ## Phase 4 — Useful manual interface
 

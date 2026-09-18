@@ -31,13 +31,13 @@ Phases 1 through 3 are complete:
 - App Shortcut discovery phrases and focused intent logging
 - unit coverage for ledger behavior, store reopening, child lookup, formatting, money conversion, and repeated undo
 
-The project builds without errors or warnings in Xcode 26.6. All 12 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
+The project builds without errors or warnings in Xcode 26.6. All 13 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
 TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
 
 TestFlight build `0.1 (4)` completed Phase 3 on the managed work phone. It preserved the existing ledger during migration and verified take, balance, auditable undo, named dime and quarter actions, terminated execution, repeated undo, and relaunch persistence. Coin phrases still request the child separately, and one dime attempt intermittently routed to a web result before succeeding on retry.
 
-TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution. Its combined take phrase still failed Siri routing, and two dime attempts routed to Nicole Kidman web results. Turning off Apple Cash and Wallet Siri suggestions did not eliminate Siri's Kid Money/Wallet disambiguation. A small diagnostic phrase matrix remains before Phase 4 resumes.
+TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution, plus one-shot numeric subtraction. The stable wording is “Give/Take Rebecca twenty cents in Kid Money.” App-name-first forms can invoke Wallet disambiguation, and coin words remain unreliable; the owner accepted numeric amounts as the product grammar. Build 6 expands one-shot support to every five-cent increment through one dollar and is awaiting a short locked-screen check.
 
 ## Requirements
 
@@ -99,7 +99,7 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-Before Phase 4, TestFlight build `0.1 (5)`, now available to the internal testing group, will test a focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the build presents each active child paired with a common amount as one dynamic App Entity. This is intended to support one-shot forms such as “Give Rebecca ten cents in Kid Money” and “Take twenty cents from Rebecca in Kid Money.” Supported preset amounts are one, five, ten, twenty, twenty-five, and fifty cents, plus one dollar, including common US coin synonyms. Arbitrary amounts remain available through the existing follow-up flow.
+Before Phase 4, build 6 will complete a focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available one-shot using the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow.
 
 After that device experiment, the next feature milestone is Phase 4's useful manual interface:
 

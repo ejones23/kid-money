@@ -101,18 +101,31 @@ struct LedgerServiceTests {
     }
 
     @Test func compositeSiriAmountRecognizesNaturalPhrases() {
-        let entity = LedgerAdjustmentEntity(
+        let tenCentEntity = LedgerAdjustmentEntity(
             childID: UUID(),
             childName: "Rebecca",
             amount: .tenCents
         )
+        let fifteenCentEntity = LedgerAdjustmentEntity(
+            childID: UUID(),
+            childName: "Rebecca",
+            amount: .fifteenCents
+        )
 
-        #expect(entity.matches("Rebecca ten cents"))
-        #expect(entity.matches("Rebecca 10 cents"))
-        #expect(entity.matches("Rebecca a dime"))
-        #expect(entity.matches("ten cents from Rebecca"))
-        #expect(entity.matches("TEN-CENTS TO RÉBECCA"))
-        #expect(!entity.matches("Rebecca twenty cents"))
+        #expect(tenCentEntity.matches("Rebecca ten cents"))
+        #expect(tenCentEntity.matches("Rebecca 10 cents"))
+        #expect(tenCentEntity.matches("Rebecca a dime"))
+        #expect(tenCentEntity.matches("ten cents from Rebecca"))
+        #expect(tenCentEntity.matches("TEN-CENTS TO RÉBECCA"))
+        #expect(!tenCentEntity.matches("Rebecca twenty cents"))
+        #expect(fifteenCentEntity.matches("Rebecca fifteen cents"))
+        #expect(fifteenCentEntity.matches("15 cents from Rebecca"))
+    }
+
+    @Test func compositeSiriAmountsCoverEveryFiveCentsThroughOneDollar() {
+        for cents in stride(from: 5, through: 100, by: 5) {
+            #expect(LedgerVoiceAmount(rawValue: Int64(cents)) != nil)
+        }
     }
 
     @Test func undoCreatesACompensatingTransaction() throws {

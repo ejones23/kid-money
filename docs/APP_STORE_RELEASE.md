@@ -49,6 +49,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Archive and upload build `0.1 (4)` with the Phase 3 voice-action set.
 - [x] Add build `0.1 (4)` to `Internal Testing` after App Store Connect finishes processing it.
 - [x] Upload build `0.1 (5)` with the one-shot child-and-amount routing experiment and add it to `Internal Testing`.
+- [ ] Upload build `0.1 (6)` with every five-cent increment through one dollar and add it to `Internal Testing`.
 - [ ] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [ ] Submit the first external build for Beta App Review.
@@ -59,7 +60,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Verify terminated, locked-device execution and termination/relaunch persistence on the managed physical iPhone.
 - [x] Execute and record the Phase 2 portion of `docs/SIRI_TEST_PLAN.md` before expanding the intent set.
 - [x] Execute and record the Phase 3 build 4 matrix on physical hardware.
-- [ ] Execute and record the build 5 one-shot routing matrix on physical hardware.
+- [x] Execute and record the build 5 one-shot routing matrix on physical hardware.
+- [ ] Execute and record the build 6 locked-screen increment matrix on physical hardware.
 
 ## 6. Public release
 

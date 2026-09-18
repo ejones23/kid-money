@@ -156,11 +156,26 @@ If Siri offers Kid Money or Wallet, test the app-name-first form from step 2 as 
 - Take composite: “Take twenty cents from Rebecca in Kid Money” produced “Kid Money hasn't added support for that with Siri,” offered to open the app, and made no ledger change.
 - Locked numeric give: from the locked screen, “Give Rebecca ten cents in Kid Money” added `$0.10`, reported the correct `$2.65` balance, and the app showed the same value afterward.
 - Wallet controls: turning off Apple Cash did not remove the Kid Money/Wallet disambiguation for the app-name-first twenty-cent phrase. Disabling all Wallet Siri suggestions also did not remove it.
-- Interpretation: the combined App Entity is physically verified for one-shot numeric-cent and dollar additions, including locked execution. Coin-name recognition remains unreliable before app routing, and the combined take route remains unverified. Wallet disambiguation is unaffected by the tested Apple Cash and suggestion settings.
+- Interpretation after the initial matrix: the combined App Entity is physically verified for one-shot numeric-cent and dollar additions, including locked execution. Coin-name recognition remains unreliable before app routing. Wallet disambiguation is unaffected by the tested Apple Cash and suggestion settings.
 
-Follow-up diagnostic phrases, in order:
+Follow-up diagnostic results:
 
-1. “In Kid Money, take Rebecca twenty cents.” This matches the advertised app-first phrase and composite entity title order exactly.
-2. “Take Rebecca twenty cents in Kid Money.” This tests the same entity order with the app name last.
-3. “Take money from Rebecca in Kid Money.” If prompted, answer “twenty cents.” This confirms the existing arbitrary-amount fallback was not regressed.
-4. “In Kid Money, give Rebecca a dime.” This checks whether naming the app first prevents the Nicole Kidman web route.
+1. “In Kid Money, take Rebecca twenty cents” requested Kid Money/Wallet disambiguation. Choosing Kid Money removed `$0.20` and reported the correct `$2.45` balance.
+2. “Take Rebecca twenty cents in Kid Money” ran one-shot without clarification, removed `$0.20`, and reported the correct `$2.25` balance.
+3. “Take money from Rebecca in Kid Money” requested Kid Money/Wallet disambiguation, then asked for the child despite Rebecca being spoken. Selecting Rebecca removed `$0.20` and reported the correct `$2.05` balance, confirming that the arbitrary-amount fallback still works.
+4. “In Kid Money, give Rebecca a dime” requested Wallet/Kid Money disambiguation and then asked for an amount. “A dime” twice produced no response; “ten cents” succeeded, added `$0.10`, and reported the correct `$2.15` balance.
+
+Build 5 result: complete. For the combined entity, the reliable grammar is “Give/Take [child] [numeric amount] in Kid Money.” App-name-first forms can invoke Wallet disambiguation; amount-first take wording can fail routing. Coin language is no longer a product requirement and should not block progress.
+
+## Build 6 five-cent increment expansion
+
+Build 6 expands the combined vocabulary to every five-cent increment from `$0.05` through `$1.00`, while retaining the separately supported one-cent value and coin synonyms. The preferred product grammar remains child first, numeric amount second, and app name last. Amounts outside this preset range remain available through the existing prompted arbitrary-amount actions.
+
+After installing build 6, confirm Rebecca's build 5 balance remains `$2.15`. Lock the phone and test:
+
+1. “Give Rebecca fifteen cents in Kid Money.” Expected one-shot adjustment: `+$0.15` and balance `$2.30`.
+2. “Take Rebecca twenty-five cents in Kid Money.” Expected one-shot adjustment: `-$0.25` and balance `$2.05`.
+3. “Give Rebecca thirty-five cents in Kid Money.” Expected one-shot adjustment: `+$0.35` and balance `$2.40`.
+4. Relaunch Kid Money and confirm `$2.40` persists.
+
+Record any Wallet question, parameter clarification, unsupported-capability response, or web result. Coin-word testing is no longer necessary.

@@ -104,9 +104,23 @@ enum LedgerVoiceAmount: Int64, CaseIterable, Sendable {
     case oneCent = 1
     case fiveCents = 5
     case tenCents = 10
+    case fifteenCents = 15
     case twentyCents = 20
     case twentyFiveCents = 25
+    case thirtyCents = 30
+    case thirtyFiveCents = 35
+    case fortyCents = 40
+    case fortyFiveCents = 45
     case fiftyCents = 50
+    case fiftyFiveCents = 55
+    case sixtyCents = 60
+    case sixtyFiveCents = 65
+    case seventyCents = 70
+    case seventyFiveCents = 75
+    case eightyCents = 80
+    case eightyFiveCents = 85
+    case ninetyCents = 90
+    case ninetyFiveCents = 95
     case oneDollar = 100
 
     var primaryPhrase: String {
@@ -114,23 +128,52 @@ enum LedgerVoiceAmount: Int64, CaseIterable, Sendable {
         case .oneCent: "one cent"
         case .fiveCents: "five cents"
         case .tenCents: "ten cents"
+        case .fifteenCents: "fifteen cents"
         case .twentyCents: "twenty cents"
         case .twentyFiveCents: "twenty-five cents"
+        case .thirtyCents: "thirty cents"
+        case .thirtyFiveCents: "thirty-five cents"
+        case .fortyCents: "forty cents"
+        case .fortyFiveCents: "forty-five cents"
         case .fiftyCents: "fifty cents"
+        case .fiftyFiveCents: "fifty-five cents"
+        case .sixtyCents: "sixty cents"
+        case .sixtyFiveCents: "sixty-five cents"
+        case .seventyCents: "seventy cents"
+        case .seventyFiveCents: "seventy-five cents"
+        case .eightyCents: "eighty cents"
+        case .eightyFiveCents: "eighty-five cents"
+        case .ninetyCents: "ninety cents"
+        case .ninetyFiveCents: "ninety-five cents"
         case .oneDollar: "one dollar"
         }
     }
 
     var spokenForms: [String] {
-        switch self {
-        case .oneCent: [primaryPhrase, "1 cent", "a cent", "one penny", "a penny"]
-        case .fiveCents: [primaryPhrase, "5 cents", "a nickel", "one nickel"]
-        case .tenCents: [primaryPhrase, "10 cents", "a dime", "one dime"]
-        case .twentyCents: [primaryPhrase, "20 cents"]
-        case .twentyFiveCents: [primaryPhrase, "25 cents", "twenty five cents", "a quarter", "one quarter"]
-        case .fiftyCents: [primaryPhrase, "50 cents", "a half dollar", "one half dollar"]
-        case .oneDollar: [primaryPhrase, "1 dollar", "a dollar"]
+        var forms = [primaryPhrase]
+
+        if self == .oneDollar {
+            forms.append(contentsOf: ["1 dollar", "one hundred cents", "100 cents", "a dollar"])
+        } else {
+            forms.append("\(rawValue) \(rawValue == 1 ? "cent" : "cents")")
         }
+
+        switch self {
+        case .oneCent:
+            forms.append(contentsOf: ["a cent", "one penny", "a penny"])
+        case .fiveCents:
+            forms.append(contentsOf: ["a nickel", "one nickel"])
+        case .tenCents:
+            forms.append(contentsOf: ["a dime", "one dime"])
+        case .twentyFiveCents:
+            forms.append(contentsOf: ["twenty five cents", "a quarter", "one quarter"])
+        case .fiftyCents:
+            forms.append(contentsOf: ["a half dollar", "one half dollar"])
+        default:
+            break
+        }
+
+        return forms
     }
 }
 
@@ -157,67 +200,13 @@ struct LedgerAdjustmentEntity: AppEntity, Sendable {
             return DisplayRepresentation(title: "\(childName) money")
         }
 
-        switch amount {
-        case .oneCent:
-            return DisplayRepresentation(
-                title: "\(childName) one cent",
-                synonyms: [
-                    "\(childName) 1 cent", "\(childName) a cent", "\(childName) one penny", "\(childName) a penny",
-                    "one cent to \(childName)", "one cent for \(childName)", "one cent from \(childName)"
-                ]
-            )
-        case .fiveCents:
-            return DisplayRepresentation(
-                title: "\(childName) five cents",
-                synonyms: [
-                    "\(childName) 5 cents", "\(childName) a nickel", "\(childName) one nickel",
-                    "five cents to \(childName)", "five cents for \(childName)", "five cents from \(childName)"
-                ]
-            )
-        case .tenCents:
-            return DisplayRepresentation(
-                title: "\(childName) ten cents",
-                synonyms: [
-                    "\(childName) 10 cents", "\(childName) a dime", "\(childName) one dime",
-                    "ten cents to \(childName)", "ten cents for \(childName)", "ten cents from \(childName)"
-                ]
-            )
-        case .twentyCents:
-            return DisplayRepresentation(
-                title: "\(childName) twenty cents",
-                synonyms: [
-                    "\(childName) 20 cents", "twenty cents to \(childName)",
-                    "twenty cents for \(childName)", "twenty cents from \(childName)"
-                ]
-            )
-        case .twentyFiveCents:
-            return DisplayRepresentation(
-                title: "\(childName) twenty-five cents",
-                synonyms: [
-                    "\(childName) 25 cents", "\(childName) twenty five cents",
-                    "\(childName) a quarter", "\(childName) one quarter",
-                    "twenty-five cents to \(childName)", "twenty-five cents for \(childName)",
-                    "twenty-five cents from \(childName)"
-                ]
-            )
-        case .fiftyCents:
-            return DisplayRepresentation(
-                title: "\(childName) fifty cents",
-                synonyms: [
-                    "\(childName) 50 cents", "\(childName) a half dollar", "\(childName) one half dollar",
-                    "fifty cents to \(childName)", "fifty cents for \(childName)", "fifty cents from \(childName)"
-                ]
-            )
-        case .oneDollar:
-            return DisplayRepresentation(
-                title: "\(childName) one dollar",
-                synonyms: [
-                    "\(childName) 1 dollar", "\(childName) a dollar", "one dollar to \(childName)",
-                    "one dollar for \(childName)",
-                    "one dollar from \(childName)"
-                ]
-            )
+        let title = LocalizedStringResource(
+            stringLiteral: "\(childName) \(amount.primaryPhrase)"
+        )
+        let synonyms = recognizedPhrases.dropFirst().map {
+            LocalizedStringResource(stringLiteral: $0)
         }
+        return DisplayRepresentation(title: title, synonyms: synonyms)
     }
 
     func matches(_ query: String) -> Bool {
