@@ -2,7 +2,10 @@
 
 ## Overview
 
-Kid Money is currently a single-process, local iOS application. SwiftUI and App Intents share a SwiftData store and a small domain service. There is no networking or remote identity layer in the shipping implementation yet.
+Kid Money's ledger is currently local-first. SwiftUI and App Intents share a
+SwiftData store and a small domain service. An isolated CloudKit connection
+probe exists for Phase 6 validation, but it does not read or synchronize the
+ledger.
 
 ```text
 SwiftUI views ──────┐
@@ -47,14 +50,20 @@ automatic synchronization stack.
 
 Physical Phase 2 testing confirmed that background App Intent execution opens the same store safely and that values survive termination and relaunch. Do not create a separate intent-only database.
 
-## Planned family sharing boundary
+## Family sharing boundary
 
-Private parent-to-parent sharing is planned but not implemented. SwiftData will
-remain the local working store and `LedgerService` will remain the mutation
-boundary. A direct CloudKit layer will synchronize deterministic records through
-one private, zone-wide `CKShare`; it will not use SwiftData's automatic CloudKit
-mode or an additional Core Data container. See `FAMILY_SHARING_DESIGN.md` for
-the proposed queue, conflict, authentication, and migration rules.
+Private parent-to-parent sharing is being introduced in two stages. The current
+`FamilySharingProbe` validates iCloud account availability, private custom-zone
+creation, invitation acceptance, and two-way writes with one disposable
+counter. It has no path to `AppModelContainer` or `LedgerService`, so enabling
+the probe cannot upload names, balances, notes, or transactions.
+
+After that physical checkpoint passes, SwiftData will remain the local working
+store and `LedgerService` will remain the mutation boundary. A direct CloudKit
+layer will synchronize deterministic records through one private, zone-wide
+`CKShare`; it will not use SwiftData's automatic CloudKit mode or an additional
+Core Data container. See `FAMILY_SHARING_DESIGN.md` for the approved queue,
+conflict, authentication, and migration rules.
 
 ## Money
 

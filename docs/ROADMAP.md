@@ -101,9 +101,13 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **Design proposed; implementation not started**
+Status: **In progress — isolated connection prototype awaiting physical test**
 
-- preserve SwiftData as the local-first working store
+- [x] approve the persistence, authentication, and migration design
+- [x] preserve SwiftData as the local-first working store
+- [x] add the CloudKit container and private zone-sharing capability
+- [x] implement a disposable counter-only invitation and two-way-write probe
+- [ ] verify the probe on two physical devices using different iCloud accounts
 - add direct CloudKit synchronization with a durable pending-change queue
 - create one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
@@ -115,9 +119,9 @@ Status: **Design proposed; implementation not started**
   restrictions
 - update the privacy policy and App Store disclosures before distribution
 
-See `FAMILY_SHARING_DESIGN.md` for the proposed persistence, authentication,
-migration, and validation design. Owner approval is required before coding this
-phase.
+See `FAMILY_SHARING_DESIGN.md` for the approved persistence, authentication,
+migration, and validation design. The probe procedure and strict no-ledger-data
+boundary are recorded in `PHASE6_CONNECTION_TEST.md`.
 
 ## Explicitly deferred
 
@@ -125,6 +129,7 @@ Application-managed accounts, a custom backend, Android, recurring allowances,
 notifications, payments, subscriptions, analytics, advertising, and
 gamification.
 
-CloudKit-based private family sharing is now planned by explicit owner request.
-It is not yet implemented. Minimal TestFlight and App Store preparation remains
-active for physical-device validation.
+CloudKit-based private family sharing is in progress by explicit owner request.
+The current prototype shares only a disposable counter; real ledger records and
+offline synchronization remain unimplemented. Minimal TestFlight and App Store
+preparation remains active for physical-device validation.

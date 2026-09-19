@@ -1,11 +1,11 @@
 # Family sharing design proposal
 
-Status: **Proposed; not yet implemented**
+Status: **Approved; connection prototype implemented, real-ledger sync pending**
 
-This document records the intended design for letting two parents use their own
-Apple Accounts and devices to manage one Kid Money ledger. It is deliberately a
-design checkpoint: implementation should begin only after the owner approves
-the product and data-migration choices below.
+This document records the approved design for letting two parents use their own
+Apple Accounts and devices to manage one Kid Money ledger. Implementation begins
+with an isolated two-account connection test before any real ledger data is
+uploaded.
 
 ## Goals
 
@@ -160,7 +160,8 @@ cloud synchronization is distributed.
    but avoid further local-only persistence assumptions.
 2. Add sync invariants and migration tests before enabling CloudKit.
 3. Build a disposable two-account prototype for zone creation, invitation,
-   acceptance, and two-way transaction sync.
+   acceptance, and two-way counter sync. **Implemented in build 8; physical
+   verification pending.**
 4. Add the durable queue, merge rules, sync status, and existing-ledger upload.
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
@@ -169,7 +170,7 @@ cloud synchronization is distributed.
 7. Update privacy disclosures, promote the CloudKit production schema, and ship
    through TestFlight before any App Store release.
 
-## Approval questions for implementation
+## Approved implementation assumptions
 
 The proposal assumes:
 
@@ -179,7 +180,15 @@ The proposal assumes:
 - iCloud is an acceptable requirement for shared mode, while local-only mode
   remains available for people who do not enable it.
 
-These assumptions should be confirmed before implementation starts.
+The owner confirmed these assumptions on September 19, 2026.
+
+## Connection-test boundary
+
+The first Phase 6 build uses a separate custom zone containing one disposable
+`FamilySharingProbe` record and its zone-wide share. The record holds only a
+counter, timestamp, and last-writer role. It does not read from or upload the
+SwiftData ledger. See [PHASE6_CONNECTION_TEST.md](PHASE6_CONNECTION_TEST.md)
+for the two-device validation procedure.
 
 ## Apple references
 

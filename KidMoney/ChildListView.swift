@@ -28,6 +28,13 @@ struct ChildListView: View {
             }
             .navigationTitle("Kid Money")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink {
+                        FamilySharingProbeView()
+                    } label: {
+                        Label("Family Sharing Test", systemImage: "person.2")
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Add Child", systemImage: "plus") { isShowingAddChild = true }
                 }

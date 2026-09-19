@@ -3,6 +3,7 @@ import SwiftData
 
 @main
 struct KidMoneyApp: App {
+    @UIApplicationDelegateAdaptor(KidMoneyAppDelegate.self) private var appDelegate
     private let modelContainer: ModelContainer
 
     init() {

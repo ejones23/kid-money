@@ -4,12 +4,13 @@ Kid Money is a small, local-first iPhone ledger for tracking money owed to child
 
 > “Give Rebecca a dime in Kid Money.”
 
-The current app is intentionally simple: no backend, accounts, third-party
-dependencies, or cloud synchronization. A child's balance is derived from an
+The current ledger is intentionally simple: no custom backend, application
+accounts, or third-party dependencies. A child's balance is derived from an
 auditable transaction ledger rather than stored as a mutable total. Private
-iCloud sharing between invited parents is now a planned feature; its proposed
+iCloud sharing between invited parents is now in development; its approved
 design preserves the local-first ledger and does not introduce a Kid Money
-login or custom backend.
+login or custom backend. Build 8 contains only a disposable CloudKit connection
+probe and does not upload ledger data.
 
 This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
@@ -19,7 +20,7 @@ The project uses internal TestFlight distribution so that its physical-device Si
 
 ## Current status
 
-Phases 1 through 4 are complete:
+Phases 1 through 5 are complete, and Phase 6 has begun:
 
 - SwiftUI application targeting iOS 26+
 - SwiftData models for children and signed ledger transactions
@@ -38,6 +39,7 @@ Phases 1 through 4 are complete:
 - unit coverage for ledger behavior, store reopening, multi-context stress,
   child lookup, formatting, localized money conversion, overflow rejection, and
   repeated undo
+- a counter-only private CloudKit sharing probe for two-account validation
 
 The project builds without errors or warnings in Xcode 26.6. All 19 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -93,6 +95,7 @@ docs/APP_STORE_METADATA.md    Draft public listing copy
 docs/APP_ICON.md              Provisional icon notes and source prompt
 docs/DEVELOPMENT.md           Setup and verification workflow
 docs/FAMILY_SHARING_DESIGN.md Proposed shared-ledger persistence and identity design
+docs/PHASE6_CONNECTION_TEST.md Two-device CloudKit connection-test procedure
 docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
@@ -115,12 +118,15 @@ Build 6 completed the focused Siri-routing improvement. Apple permits only one i
 
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 
-After Phase 5, the planned Phase 6 adds a private shared household ledger so two
-parents can manage the same children from separate Apple Accounts. The proposed
+Phase 6 adds a private shared household ledger so two parents can manage the
+same children from separate Apple Accounts. The approved
 local-first SwiftData plus direct CloudKit/`CKShare` design, authentication
 model, migration rules, and two-device test plan are documented in
-[docs/FAMILY_SHARING_DESIGN.md](docs/FAMILY_SHARING_DESIGN.md). No shared-data
-code has been implemented yet.
+[docs/FAMILY_SHARING_DESIGN.md](docs/FAMILY_SHARING_DESIGN.md). Build 8 adds a
+strictly isolated counter-only prototype. The next checkpoint is invite
+acceptance and two-way writes on both physical phones using
+[docs/PHASE6_CONNECTION_TEST.md](docs/PHASE6_CONNECTION_TEST.md); the real
+ledger will remain local until that test passes.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 
