@@ -1,6 +1,7 @@
 import Foundation
 
 enum MoneyConversionError: LocalizedError, Equatable, Sendable {
+    case invalidAmount
     case unsupportedCurrency(String)
     case amountMustBePositive
     case fractionalCent
@@ -8,6 +9,8 @@ enum MoneyConversionError: LocalizedError, Equatable, Sendable {
 
     var errorDescription: String? {
         switch self {
+        case .invalidAmount:
+            "Enter a valid dollar amount, such as 0.25."
         case .unsupportedCurrency:
             "Kid Money currently supports US dollars only."
         case .amountMustBePositive:
@@ -21,6 +24,14 @@ enum MoneyConversionError: LocalizedError, Equatable, Sendable {
 }
 
 enum MoneyConversion {
+    static func usdCents(from input: String, locale: Locale = .current) throws -> Int64 {
+        let trimmedInput = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let amount = Decimal(string: trimmedInput, locale: locale) else {
+            throw MoneyConversionError.invalidAmount
+        }
+        return try usdCents(from: amount, currencyCode: "USD")
+    }
+
     static func usdCents(from amount: Decimal, currencyCode: String) throws -> Int64 {
         guard currencyCode.caseInsensitiveCompare("USD") == .orderedSame else {
             throw MoneyConversionError.unsupportedCurrency(currencyCode)

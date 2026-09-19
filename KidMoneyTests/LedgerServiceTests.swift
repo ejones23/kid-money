@@ -64,6 +64,20 @@ struct LedgerServiceTests {
         #expect(try service.children(matching: "").isEmpty)
     }
 
+    @Test func duplicateExactNamesAreReturnedTogetherBeforePartialMatches() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let firstRebecca = try service.addChild(named: "Rebecca")
+        let secondRebecca = try service.addChild(named: "REBECCA")
+        _ = try service.addChild(named: "Rebecca Ann")
+
+        #expect(Set(try service.children(matching: "rebecca").map(\.id)) == [
+            firstRebecca.id,
+            secondRebecca.id
+        ])
+    }
+
     @Test func balanceSurvivesStoreReopen() throws {
         let storeURL = FileManager.default.temporaryDirectory
             .appending(path: "KidMoneyTests-\(UUID().uuidString).store")
@@ -98,6 +112,23 @@ struct LedgerServiceTests {
     @Test func usdAmountsConvertToExactCents() throws {
         #expect(try MoneyConversion.usdCents(from: Decimal(string: "0.10")!, currencyCode: "USD") == 10)
         #expect(try MoneyConversion.usdCents(from: Decimal(string: "12.34")!, currencyCode: "usd") == 1_234)
+    }
+
+    @Test func manualAmountTextUsesLocaleAndExactCentValidation() throws {
+        #expect(try MoneyConversion.usdCents(
+            from: " 12.34 ",
+            locale: Locale(identifier: "en_US")
+        ) == 1_234)
+        #expect(try MoneyConversion.usdCents(
+            from: "12,34",
+            locale: Locale(identifier: "de_DE")
+        ) == 1_234)
+        #expect(throws: MoneyConversionError.invalidAmount) {
+            try MoneyConversion.usdCents(from: "not money", locale: Locale(identifier: "en_US"))
+        }
+        #expect(throws: MoneyConversionError.fractionalCent) {
+            try MoneyConversion.usdCents(from: "0.001", locale: Locale(identifier: "en_US"))
+        }
     }
 
     @Test func invalidMoneyAmountsAreRejected() {
@@ -164,6 +195,34 @@ struct LedgerServiceTests {
         #expect(compensation.amountCents == -25)
         #expect(compensation.source == .siri)
         #expect(transactions.contains { $0.id == original.id })
+    }
+
+    @Test func transactionRejectsBalanceOverflowWithoutPersisting() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+
+        try service.addTransaction(cents: .max, to: child)
+        #expect(throws: LedgerError.balanceOutOfRange) {
+            try service.addTransaction(cents: 1, to: child)
+        }
+        #expect(service.balance(for: child) == .max)
+        #expect(try service.transactions(for: child).count == 1)
+    }
+
+    @Test func undoRejectsMinimumIntegerWithoutWritingCompensation() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+
+        try service.addTransaction(cents: .min, to: child)
+        #expect(throws: LedgerError.transactionAmountOutOfRange) {
+            try service.undoLastTransaction()
+        }
+        #expect(service.balance(for: child) == .min)
+        #expect(try service.transactions(for: child).count == 1)
     }
 
     @Test func repeatedUndoWalksBackThroughUnreversedTransactions() throws {

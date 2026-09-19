@@ -16,7 +16,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 3 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. Phase 4's manual history, quick adds, arbitrary adjustments, rename, and archive flows are available in internal TestFlight build `0.1 (7)` for owner review. The app builds in Xcode 26.6 and all 14 tests pass on an iOS 26.5 simulator.
+Phases 1 through 4 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 reliability work is in progress; exact locale-aware input, duplicate-name matching, balance overflow, and minimum-integer undo edge cases are covered. The app builds in Xcode 26.6 and all 18 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -78,4 +78,4 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Execute `docs/PHASE4_TEST_PLAN.md` with internal TestFlight build `0.1 (7)`, address any usability findings, then begin Phase 5 reliability work.
+Continue Phase 5 reliability work with App Intent store-access stress coverage, diagnostics, and accessibility review. Preserve the physically verified Siri grammar while hardening internals.

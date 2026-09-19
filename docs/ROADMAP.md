@@ -71,22 +71,25 @@ Build 6 expands the combined entity from a few common values to every five-cent 
 
 ## Phase 4 — Useful manual interface
 
-Status: **In progress**
+Status: **Complete**
 
 - [x] transaction history and quick coin buttons
 - [x] arbitrary add/subtract input
 - [x] rename and archive children without deleting history
 - [x] stronger empty/error states and modest visual polish
 - [x] distribute the manual interface as TestFlight build `0.1 (7)`
-- [ ] owner review of the manual interface on physical hardware
+- [x] owner review of the manual interface on physical hardware
 
 ## Phase 5 — Reliability
 
-Status: Planned
+Status: **In progress**
 
-- expanded conversion, lookup, undo, and persistence tests
-- concurrency and App Intent store-access hardening
-- logging, diagnostics, and device-discovered edge cases
+- [x] locale-aware manual-input conversion tests
+- [x] duplicate exact-name lookup coverage for Siri disambiguation
+- [x] reject transactions that would overflow an `Int64` balance
+- [x] verify an `Int64.min` transaction cannot create an invalid undo entry
+- [ ] expanded persistence and App Intent store-access stress coverage
+- [ ] logging, diagnostics, accessibility, and device-discovered edge cases
 
 ## Explicitly deferred
 

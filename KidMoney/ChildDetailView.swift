@@ -227,11 +227,7 @@ private struct ManualAdjustmentView: View {
 
     private func save() {
         do {
-            let trimmedAmount = amount.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard let decimal = Decimal(string: trimmedAmount, locale: .current) else {
-                throw ManualAdjustmentError.invalidAmount
-            }
-            let cents = try MoneyConversion.usdCents(from: decimal, currencyCode: "USD")
+            let cents = try MoneyConversion.usdCents(from: amount)
             let trimmedNote = note.trimmingCharacters(in: .whitespacesAndNewlines)
             try LedgerService(modelContext: modelContext).addTransaction(
                 cents: cents * mode.sign,
@@ -295,14 +291,6 @@ private struct RenameChildView: View {
         } catch {
             errorMessage = error.localizedDescription
         }
-    }
-}
-
-private enum ManualAdjustmentError: LocalizedError {
-    case invalidAmount
-
-    var errorDescription: String? {
-        "Enter a valid dollar amount, such as 0.25."
     }
 }
 

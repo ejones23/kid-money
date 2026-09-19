@@ -4,6 +4,7 @@ import SwiftData
 enum LedgerError: LocalizedError, Equatable {
     case emptyName
     case nonPositiveAmount
+    case balanceOutOfRange
     case nothingToUndo
     case transactionAmountOutOfRange
 
@@ -11,6 +12,7 @@ enum LedgerError: LocalizedError, Equatable {
         switch self {
         case .emptyName: "Enter a child's name."
         case .nonPositiveAmount: "The amount must be greater than zero."
+        case .balanceOutOfRange: "That transaction would make the balance too large."
         case .nothingToUndo: "There are no transactions to undo."
         case .transactionAmountOutOfRange: "That transaction cannot be reversed."
         }
@@ -89,6 +91,9 @@ struct LedgerService {
         reversesTransactionID: UUID? = nil
     ) throws -> LedgerTransaction {
         guard cents != 0 else { throw LedgerError.nonPositiveAmount }
+        guard !balance(for: child).addingReportingOverflow(cents).overflow else {
+            throw LedgerError.balanceOutOfRange
+        }
         let transaction = LedgerTransaction(
             amountCents: cents,
             note: note,

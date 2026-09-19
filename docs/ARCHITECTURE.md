@@ -32,6 +32,8 @@ Amounts are signed: `+10` adds ten cents and `-25` removes a quarter. The balanc
 
 `LedgerService` owns domain mutations and queries. SwiftUI uses it to add, rename, and archive children; add transactions; fetch history; and calculate balances. App Intents reuse the same operations. Archiving only changes the child's active flag and never deletes ledger history.
 
+Before inserting a transaction, the service verifies that adding its signed cents to the current derived balance cannot overflow `Int64`. A rejected transaction is not inserted or saved.
+
 The service is `@MainActor` because its `ModelContext` is main-actor-bound in the current small application. Revisit context ownership only if App Intent execution demonstrates a concrete concurrency need.
 
 ## Persistence
@@ -44,7 +46,7 @@ Physical Phase 2 testing confirmed that background App Intent execution opens th
 
 Ledger values use `Int64` cents. `MoneyFormatter` converts integer cents to `Decimal` for localized USD display.
 
-`MoneyConversion` accepts USD only, uses `Decimal` arithmetic, requires exact whole cents, rejects zero and unsupported currency, and detects `Int64` overflow. The arbitrary-amount give and take intents convert a positive requested value before adding a signed positive or negative ledger transaction.
+`MoneyConversion` accepts USD only, uses `Decimal` arithmetic, requires exact whole cents, rejects zero and unsupported currency, and detects `Int64` overflow. It also parses manual text using the device locale before applying the same exact conversion rules. The arbitrary-amount give and take intents convert a positive requested value before adding a signed positive or negative ledger transaction.
 
 ## App Intents
 
