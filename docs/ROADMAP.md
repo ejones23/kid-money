@@ -82,17 +82,22 @@ Status: **Complete**
 
 ## Phase 5 — Reliability
 
-Status: **In progress**
+Status: **Complete**
 
 - [x] locale-aware manual-input conversion tests
 - [x] duplicate exact-name lookup coverage for Siri disambiguation
 - [x] reject transactions that would overflow an `Int64` balance
 - [x] verify an `Int64.min` transaction cannot create an invalid undo entry
-- [ ] expanded persistence and App Intent store-access stress coverage
-- [ ] logging, diagnostics, accessibility, and device-discovered edge cases
+- [x] expanded persistence and App Intent store-access stress coverage
+- [x] privacy-conscious logging and diagnostics
+- [x] focused VoiceOver descriptions for balance and transaction rows
+- [x] one process-wide production `ModelContainer` shared by the app and intents
+- [x] explicitly disable SwiftData-managed CloudKit discovery before adding a
+  direct CloudKit sync layer
 
-Phase 5 should also establish the idempotency and migration invariants needed by
-the planned shared ledger. Avoid adding new local-only persistence assumptions.
+Phase 5 also established the store boundary needed by the planned shared ledger.
+Cloud synchronization can attach to the one local replica without creating a
+second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 

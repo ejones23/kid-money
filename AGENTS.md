@@ -17,7 +17,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 4 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 reliability work is in progress; exact locale-aware input, duplicate-name matching, balance overflow, and minimum-integer undo edge cases are covered. Private CloudKit family sharing is now planned for Phase 6; its design is awaiting owner approval and no shared-data code exists yet. The app builds in Xcode 26.6 and all 18 tests pass on an iOS 26.5 simulator.
+Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 added locale-aware exact input, duplicate-name matching, balance-overflow and minimum-integer undo protection, a 100-write multi-context persistence test, privacy-conscious logging, focused accessibility improvements, one process-wide production `ModelContainer`, and an explicit opt-out from SwiftData-managed CloudKit synchronization. Private CloudKit family sharing is approved for Phase 6, but no shared-data code exists yet. The app builds in Xcode 26.6 and all 19 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -83,7 +83,7 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Obtain owner approval for `docs/FAMILY_SHARING_DESIGN.md`, then finish the narrow
-Phase 5 reliability work with App Intent store-access stress coverage,
-diagnostics, accessibility review, and sharing-related idempotency invariants.
-Preserve the physically verified Siri grammar while hardening internals.
+Begin Phase 6 with the smallest two-account CloudKit prototype: add the private
+custom zone and `CKShare` capability, preserve the local SwiftData replica, and
+verify invite acceptance plus two-way synchronization before migrating the
+owner's real ledger. Preserve the physically verified Siri grammar.

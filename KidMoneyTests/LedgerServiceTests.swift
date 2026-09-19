@@ -104,6 +104,35 @@ struct LedgerServiceTests {
         }
     }
 
+    @Test func manyContextsShareOnePersistentStoreWithoutLosingTransactions() throws {
+        let storeURL = FileManager.default.temporaryDirectory
+            .appending(path: "KidMoneyStress-\(UUID().uuidString).store")
+        defer {
+            for suffix in ["", "-shm", "-wal"] {
+                try? FileManager.default.removeItem(atPath: storeURL.path + suffix)
+            }
+        }
+
+        let container = try AppModelContainer.make(storeURL: storeURL)
+        let setupService = LedgerService(modelContext: ModelContext(container))
+        let childID = try setupService.addChild(named: "Rebecca").id
+
+        for _ in 0..<100 {
+            let context = ModelContext(container)
+            let service = LedgerService(modelContext: context)
+            let persistedChild = try service.child(id: childID)
+            let child = try #require(persistedChild)
+            try service.addTransaction(cents: 1, to: child, source: .siri)
+        }
+
+        let verificationContext = ModelContext(container)
+        let verificationService = LedgerService(modelContext: verificationContext)
+        let persistedChild = try verificationService.child(id: childID)
+        let child = try #require(persistedChild)
+        #expect(verificationService.balance(for: child) == 100)
+        #expect(try verificationService.transactions(for: child).count == 100)
+    }
+
     @Test func moneyFormattingDoesNotUseFloatingPoint() {
         #expect(MoneyFormatter.string(cents: 5, locale: Locale(identifier: "en_US")) == "$0.05")
         #expect(MoneyFormatter.string(cents: 135, locale: Locale(identifier: "en_US")) == "$1.35")

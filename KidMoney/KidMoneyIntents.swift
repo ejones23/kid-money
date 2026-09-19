@@ -26,7 +26,7 @@ struct ChildEntityQuery: EntityStringQuery, Sendable {
 
     @MainActor
     func entities(matching string: String) async throws -> [ChildEntity] {
-        let container = try AppModelContainer.make()
+        let container = try AppModelContainer.shared()
         return try LedgerService(modelContext: ModelContext(container))
             .children(matching: string)
             .map(ChildEntity.init)
@@ -39,7 +39,7 @@ struct ChildEntityQuery: EntityStringQuery, Sendable {
 
     @MainActor
     private func activeChildren() throws -> [Child] {
-        let container = try AppModelContainer.make()
+        let container = try AppModelContainer.shared()
         return try LedgerService(modelContext: ModelContext(container)).activeChildren()
     }
 }
@@ -254,7 +254,7 @@ struct LedgerAdjustmentEntityQuery: EntityStringQuery, Sendable {
 
     @MainActor
     private func availableEntities() throws -> [LedgerAdjustmentEntity] {
-        let container = try AppModelContainer.make()
+        let container = try AppModelContainer.shared()
         let children = try LedgerService(modelContext: ModelContext(container)).activeChildren()
         return children.flatMap { child in
             LedgerVoiceAmount.allCases.map {
@@ -266,7 +266,7 @@ struct LedgerAdjustmentEntityQuery: EntityStringQuery, Sendable {
 
 @MainActor
 private func intentLedger(for entity: ChildEntity) throws -> (LedgerService, Child) {
-    let container = try AppModelContainer.make()
+    let container = try AppModelContainer.shared()
     let service = LedgerService(modelContext: ModelContext(container))
     guard let child = try service.child(id: entity.id) else {
         throw KidMoneyIntentError.childNotFound
@@ -276,7 +276,7 @@ private func intentLedger(for entity: ChildEntity) throws -> (LedgerService, Chi
 
 @MainActor
 private func intentLedger(for entity: LedgerAdjustmentEntity) throws -> (LedgerService, Child) {
-    let container = try AppModelContainer.make()
+    let container = try AppModelContainer.shared()
     let service = LedgerService(modelContext: ModelContext(container))
     guard let child = try service.child(id: entity.childID) else {
         throw KidMoneyIntentError.childNotFound
@@ -302,11 +302,11 @@ struct GivePresetMoneyIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "GivePresetMoneyIntent")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "GivePresetMoneyIntent")
         let (service, persistedChild) = try intentLedger(for: adjustment)
         try service.addTransaction(cents: adjustment.amountCents, to: persistedChild, source: .siri)
         let balance = service.balance(for: persistedChild)
-        logger.info("Saved preset Siri transaction; new balance is \(balance, privacy: .public) cents")
+        logger.info("Saved preset Siri transaction; new balance is \(balance, privacy: .private) cents")
         return .result(
             dialog: "Added \(MoneyFormatter.string(cents: adjustment.amountCents)) to \(persistedChild.name). \(persistedChild.name) now has \(MoneyFormatter.string(cents: balance))."
         )
@@ -331,11 +331,11 @@ struct TakePresetMoneyIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "TakePresetMoneyIntent")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "TakePresetMoneyIntent")
         let (service, persistedChild) = try intentLedger(for: adjustment)
         try service.addTransaction(cents: -adjustment.amountCents, to: persistedChild, source: .siri)
         let balance = service.balance(for: persistedChild)
-        logger.info("Saved preset Siri subtraction; new balance is \(balance, privacy: .public) cents")
+        logger.info("Saved preset Siri subtraction; new balance is \(balance, privacy: .private) cents")
         return .result(
             dialog: "Removed \(MoneyFormatter.string(cents: adjustment.amountCents)) from \(persistedChild.name). \(persistedChild.name) now has \(MoneyFormatter.string(cents: balance))."
         )
@@ -371,7 +371,7 @@ struct GiveMoneyIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "GiveMoneyIntent")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "GiveMoneyIntent")
         logger.info("Give Money intent invoked")
 
         let requestedAmount: IntentCurrencyAmount
@@ -385,13 +385,13 @@ struct GiveMoneyIntent: AppIntent {
             from: requestedAmount.amount,
             currencyCode: requestedAmount.currencyCode
         )
-        logger.info("Validated a \(cents, privacy: .public)-cent adjustment")
+        logger.info("Validated a \(cents, privacy: .private)-cent adjustment")
 
         let (service, persistedChild) = try intentLedger(for: child)
 
         try service.addTransaction(cents: cents, to: persistedChild, source: .siri)
         let balance = service.balance(for: persistedChild)
-        logger.info("Saved Siri transaction; new balance is \(balance, privacy: .public) cents")
+        logger.info("Saved Siri transaction; new balance is \(balance, privacy: .private) cents")
 
         let adjustmentText = MoneyFormatter.string(cents: cents)
         let balanceText = MoneyFormatter.string(cents: balance)
@@ -430,7 +430,7 @@ struct TakeMoneyIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "TakeMoneyIntent")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "TakeMoneyIntent")
         logger.info("Take Money intent invoked")
 
         let requestedAmount: IntentCurrencyAmount
@@ -444,12 +444,12 @@ struct TakeMoneyIntent: AppIntent {
             from: requestedAmount.amount,
             currencyCode: requestedAmount.currencyCode
         )
-        logger.info("Validated a \(cents, privacy: .public)-cent subtraction")
+        logger.info("Validated a \(cents, privacy: .private)-cent subtraction")
 
         let (service, persistedChild) = try intentLedger(for: child)
         try service.addTransaction(cents: -cents, to: persistedChild, source: .siri)
         let balance = service.balance(for: persistedChild)
-        logger.info("Saved Siri transaction; new balance is \(balance, privacy: .public) cents")
+        logger.info("Saved Siri transaction; new balance is \(balance, privacy: .private) cents")
 
         return .result(
             dialog: "Removed \(MoneyFormatter.string(cents: cents)) from \(persistedChild.name). \(persistedChild.name) now has \(MoneyFormatter.string(cents: balance))."
@@ -479,12 +479,12 @@ struct GetBalanceIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "GetBalanceIntent")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "GetBalanceIntent")
         logger.info("Check Balance intent invoked")
 
         let (service, persistedChild) = try intentLedger(for: child)
         let balance = service.balance(for: persistedChild)
-        logger.info("Returning a \(balance, privacy: .public)-cent balance")
+        logger.info("Returning a \(balance, privacy: .private)-cent balance")
         return .result(
             dialog: "\(persistedChild.name) has \(MoneyFormatter.string(cents: balance))."
         )
@@ -502,17 +502,17 @@ struct UndoLastTransactionIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "UndoLastTransactionIntent")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "UndoLastTransactionIntent")
         logger.info("Undo Last Transaction intent invoked")
 
-        let container = try AppModelContainer.make()
+        let container = try AppModelContainer.shared()
         let service = LedgerService(modelContext: ModelContext(container))
         let result = try service.undoLastTransaction(source: .siri)
         let magnitude = result.originalAmountCents > 0
             ? result.originalAmountCents
             : -result.originalAmountCents
         let action = result.originalAmountCents > 0 ? "adding" : "removing"
-        logger.info("Saved undo transaction; new balance is \(result.newBalanceCents, privacy: .public) cents")
+        logger.info("Saved undo transaction; new balance is \(result.newBalanceCents, privacy: .private) cents")
 
         return .result(
             dialog: "Undid \(action) \(MoneyFormatter.string(cents: magnitude)) for \(result.child.name). \(result.child.name) now has \(MoneyFormatter.string(cents: result.newBalanceCents))."
@@ -549,8 +549,8 @@ struct GiveCoinIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "GiveCoinIntent")
-        logger.info("Give Coin intent invoked with \(denomination.cents, privacy: .public) cents")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "GiveCoinIntent")
+        logger.info("Give Coin intent invoked with \(denomination.cents, privacy: .private) cents")
         let (service, persistedChild) = try intentLedger(for: child)
         try service.addTransaction(cents: denomination.cents, to: persistedChild, source: .siri)
         let balance = service.balance(for: persistedChild)
@@ -589,8 +589,8 @@ struct TakeCoinIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
-        let logger = Logger(subsystem: "com.ejones23.KidMoney", category: "TakeCoinIntent")
-        logger.info("Take Coin intent invoked with \(denomination.cents, privacy: .public) cents")
+        let logger = Logger(subsystem: "io.github.ejones23.KidMoney", category: "TakeCoinIntent")
+        logger.info("Take Coin intent invoked with \(denomination.cents, privacy: .private) cents")
         let (service, persistedChild) = try intentLedger(for: child)
         try service.addTransaction(cents: -denomination.cents, to: persistedChild, source: .siri)
         let balance = service.balance(for: persistedChild)

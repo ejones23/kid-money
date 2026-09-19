@@ -152,9 +152,9 @@ private struct TransactionRow: View {
             Text(signedAmount)
                 .font(.headline.monospacedDigit())
                 .foregroundStyle(transaction.amountCents >= 0 ? Color.green : Color.primary)
-                .accessibilityLabel(transaction.amountCents >= 0 ? "Added" : "Removed")
-                .accessibilityValue(MoneyFormatter.string(cents: transaction.amountCents.magnitudeAsInt64))
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityDescription)
     }
 
     private var signedAmount: String {
@@ -162,6 +162,28 @@ private struct TransactionRow: View {
             return "+\(MoneyFormatter.string(cents: transaction.amountCents))"
         }
         return MoneyFormatter.string(cents: transaction.amountCents)
+    }
+
+    private var accessibilityDescription: String {
+        let action: String
+        if transaction.reversesTransactionID != nil {
+            action = "Undo"
+        } else if transaction.amountCents > 0 {
+            action = "Added"
+        } else {
+            action = "Removed"
+        }
+
+        let amount = MoneyFormatter.string(cents: transaction.amountCents).replacingOccurrences(
+            of: "-",
+            with: ""
+        )
+        let note = transaction.note.map { ", note: \($0)" } ?? ""
+        let date = transaction.createdAt.formatted(date: .abbreviated, time: .shortened)
+        if transaction.reversesTransactionID != nil {
+            return "\(action) \(amount), \(date)\(note)"
+        }
+        return "\(action) \(amount), \(transaction.source.displayName), \(date)\(note)"
     }
 }
 
@@ -300,11 +322,5 @@ private extension TransactionSource {
         case .manual: "Manual adjustment"
         case .siri: "Siri"
         }
-    }
-}
-
-private extension Int64 {
-    var magnitudeAsInt64: Int64 {
-        self == .min ? .max : Swift.abs(self)
     }
 }

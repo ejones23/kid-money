@@ -35,9 +35,11 @@ Phases 1 through 4 are complete:
 - case-insensitive App Entity lookup for active children
 - exact USD `Decimal` to integer-cents conversion
 - App Shortcut discovery phrases and focused intent logging
-- unit coverage for ledger behavior, store reopening, child lookup, formatting, localized money conversion, overflow rejection, and repeated undo
+- unit coverage for ledger behavior, store reopening, multi-context stress,
+  child lookup, formatting, localized money conversion, overflow rejection, and
+  repeated undo
 
-The project builds without errors or warnings in Xcode 26.6. All 18 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
+The project builds without errors or warnings in Xcode 26.6. All 19 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
 TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
 
@@ -111,7 +113,7 @@ docs/support.md               Draft public support page
 
 Build 6 completed the focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available through the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow. Physical testing confirmed correct locked-screen execution after Siri's Kid Money/Wallet app choice.
 
-Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is now underway: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, and the minimum-integer undo edge case are covered. Remaining work centers on App Intent store-access stress coverage, diagnostics, and accessibility.
+Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 
 After Phase 5, the planned Phase 6 adds a private shared household ledger so two
 parents can manage the same children from separate Apple Accounts. The proposed

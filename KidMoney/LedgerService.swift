@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 import SwiftData
 
 enum LedgerError: LocalizedError, Equatable {
@@ -27,6 +28,11 @@ struct UndoResult {
 
 @MainActor
 struct LedgerService {
+    private static let logger = Logger(
+        subsystem: "io.github.ejones23.KidMoney",
+        category: "Ledger"
+    )
+
     let modelContext: ModelContext
 
     func activeChildren() throws -> [Child] {
@@ -66,6 +72,7 @@ struct LedgerService {
         let child = Child(name: trimmedName, sortOrder: try activeChildren().count)
         modelContext.insert(child)
         try modelContext.save()
+        Self.logger.info("Saved child creation")
         return child
     }
 
@@ -75,11 +82,13 @@ struct LedgerService {
 
         child.name = trimmedName
         try modelContext.save()
+        Self.logger.info("Saved child rename")
     }
 
     func archiveChild(_ child: Child) throws {
         child.isArchived = true
         try modelContext.save()
+        Self.logger.info("Saved child archive")
     }
 
     @discardableResult
@@ -91,7 +100,9 @@ struct LedgerService {
         reversesTransactionID: UUID? = nil
     ) throws -> LedgerTransaction {
         guard cents != 0 else { throw LedgerError.nonPositiveAmount }
-        guard !balance(for: child).addingReportingOverflow(cents).overflow else {
+        let addition = balance(for: child).addingReportingOverflow(cents)
+        guard !addition.overflow else {
+            Self.logger.error("Rejected transaction because the resulting balance overflowed")
             throw LedgerError.balanceOutOfRange
         }
         let transaction = LedgerTransaction(
@@ -103,6 +114,9 @@ struct LedgerService {
         )
         modelContext.insert(transaction)
         try modelContext.save()
+        Self.logger.info(
+            "Saved \(cents, privacy: .private) cent \(source.rawValue, privacy: .public) transaction"
+        )
         return transaction
     }
 
@@ -133,6 +147,7 @@ struct LedgerService {
             throw LedgerError.nothingToUndo
         }
         guard original.amountCents != .min else {
+            Self.logger.error("Rejected undo of minimum Int64 transaction")
             throw LedgerError.transactionAmountOutOfRange
         }
 
@@ -142,10 +157,12 @@ struct LedgerService {
             source: source,
             reversesTransactionID: original.id
         )
-        return UndoResult(
+        let result = UndoResult(
             child: child,
             originalAmountCents: original.amountCents,
             newBalanceCents: balance(for: child)
         )
+        Self.logger.info("Saved compensating undo transaction")
+        return result
     }
 }

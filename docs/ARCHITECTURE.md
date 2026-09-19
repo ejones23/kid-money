@@ -38,7 +38,12 @@ The service is `@MainActor` because its `ModelContext` is main-actor-bound in th
 
 ## Persistence
 
-`AppModelContainer` creates the shared `ModelContainer` for production and an in-memory container for tests. The app entry point constructs the production container once and installs it into the SwiftUI environment.
+`AppModelContainer` lazily creates one process-wide `ModelContainer` for
+production and can create isolated in-memory or URL-based containers for tests.
+The app, App Entity queries, and App Intents all use that shared production
+container. Its `ModelConfiguration` explicitly sets `cloudKitDatabase: .none`
+so future CloudKit entitlements cannot cause SwiftData to start an independent
+automatic synchronization stack.
 
 Physical Phase 2 testing confirmed that background App Intent execution opens the same store safely and that values survive termination and relaunch. Do not create a separate intent-only database.
 

@@ -46,13 +46,15 @@ private struct ChildRow: View {
     let child: Child
 
     var body: some View {
+        let balance = MoneyFormatter.string(cents: child.transactions.reduce(0) { $0 + $1.amountCents })
         HStack {
             Text(child.name)
             Spacer()
-            Text(MoneyFormatter.string(cents: child.transactions.reduce(0) { $0 + $1.amountCents }))
+            Text(balance)
                 .font(.headline.monospacedDigit())
                 .foregroundStyle(.secondary)
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(child.name), balance \(balance)")
     }
 }
-
