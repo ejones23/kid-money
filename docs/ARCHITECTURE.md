@@ -2,7 +2,7 @@
 
 ## Overview
 
-Kid Money is a single-process, local iOS application. SwiftUI and App Intents share a SwiftData store and a small domain service. There is deliberately no networking or remote identity layer.
+Kid Money is currently a single-process, local iOS application. SwiftUI and App Intents share a SwiftData store and a small domain service. There is no networking or remote identity layer in the shipping implementation yet.
 
 ```text
 SwiftUI views ──────┐
@@ -41,6 +41,15 @@ The service is `@MainActor` because its `ModelContext` is main-actor-bound in th
 `AppModelContainer` creates the shared `ModelContainer` for production and an in-memory container for tests. The app entry point constructs the production container once and installs it into the SwiftUI environment.
 
 Physical Phase 2 testing confirmed that background App Intent execution opens the same store safely and that values survive termination and relaunch. Do not create a separate intent-only database.
+
+## Planned family sharing boundary
+
+Private parent-to-parent sharing is planned but not implemented. SwiftData will
+remain the local working store and `LedgerService` will remain the mutation
+boundary. A direct CloudKit layer will synchronize deterministic records through
+one private, zone-wide `CKShare`; it will not use SwiftData's automatic CloudKit
+mode or an additional Core Data container. See `FAMILY_SHARING_DESIGN.md` for
+the proposed queue, conflict, authentication, and migration rules.
 
 ## Money
 

@@ -4,7 +4,12 @@ Kid Money is a small, local-first iPhone ledger for tracking money owed to child
 
 > “Give Rebecca a dime in Kid Money.”
 
-The app is intentionally simple: no backend, accounts, third-party dependencies, or cloud synchronization. A child's balance is derived from an auditable transaction ledger rather than stored as a mutable total.
+The current app is intentionally simple: no backend, accounts, third-party
+dependencies, or cloud synchronization. A child's balance is derived from an
+auditable transaction ledger rather than stored as a mutable total. Private
+iCloud sharing between invited parents is now a planned feature; its proposed
+design preserves the local-first ledger and does not introduce a Kid Money
+login or custom backend.
 
 This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
@@ -85,6 +90,7 @@ docs/APP_STORE_RELEASE.md     TestFlight and App Store checklist
 docs/APP_STORE_METADATA.md    Draft public listing copy
 docs/APP_ICON.md              Provisional icon notes and source prompt
 docs/DEVELOPMENT.md           Setup and verification workflow
+docs/FAMILY_SHARING_DESIGN.md Proposed shared-ledger persistence and identity design
 docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
@@ -106,6 +112,13 @@ docs/support.md               Draft public support page
 Build 6 completed the focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available through the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow. Physical testing confirmed correct locked-screen execution after Siri's Kid Money/Wallet app choice.
 
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is now underway: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, and the minimum-integer undo edge case are covered. Remaining work centers on App Intent store-access stress coverage, diagnostics, and accessibility.
+
+After Phase 5, the planned Phase 6 adds a private shared household ledger so two
+parents can manage the same children from separate Apple Accounts. The proposed
+local-first SwiftData plus direct CloudKit/`CKShare` design, authentication
+model, migration rules, and two-device test plan are documented in
+[docs/FAMILY_SHARING_DESIGN.md](docs/FAMILY_SHARING_DESIGN.md). No shared-data
+code has been implemented yet.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

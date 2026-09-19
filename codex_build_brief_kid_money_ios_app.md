@@ -645,10 +645,7 @@ Add/fix:
 
 Do NOT build these unless I later ask:
 
-- CloudKit
-- iCloud synchronization
-- accounts/login
-- family sharing
+- application-managed accounts/login
 - backend/API
 - Android
 - subscriptions
@@ -662,6 +659,16 @@ Do NOT build these unless I later ask:
 - ads
 - elaborate architecture
 - third-party packages
+
+### Scope update — September 19, 2026
+
+The owner has now requested private iCloud family sharing so two parents can
+manage the same household ledger. Phase 6 is reserved for this work. The
+proposed design uses the parents' existing iCloud Apple Accounts, direct
+CloudKit synchronization, and a private `CKShare`; it does not add a Kid Money
+password, public data, or a custom backend. See
+`docs/FAMILY_SHARING_DESIGN.md`. Implementation must wait for owner approval of
+that design and preserve all money and ledger invariants in this brief.
 
 ---
 

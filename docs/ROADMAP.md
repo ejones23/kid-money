@@ -91,8 +91,35 @@ Status: **In progress**
 - [ ] expanded persistence and App Intent store-access stress coverage
 - [ ] logging, diagnostics, accessibility, and device-discovered edge cases
 
+Phase 5 should also establish the idempotency and migration invariants needed by
+the planned shared ledger. Avoid adding new local-only persistence assumptions.
+
+## Phase 6 — Shared family ledger
+
+Status: **Design proposed; implementation not started**
+
+- preserve SwiftData as the local-first working store
+- add direct CloudKit synchronization with a durable pending-change queue
+- create one private custom record zone and zone-wide `CKShare` per household
+- use each participant's existing iCloud Apple Account for authentication
+- invite a spouse with read-write access through Apple's system sharing UI
+- upload the existing local ledger without destructive migration
+- define deterministic conflict and same-transaction undo behavior
+- verify two-way manual and Siri changes across two physical devices
+- verify offline/reconnect, invite revocation, iCloud sign-out, and managed-device
+  restrictions
+- update the privacy policy and App Store disclosures before distribution
+
+See `FAMILY_SHARING_DESIGN.md` for the proposed persistence, authentication,
+migration, and validation design. Owner approval is required before coding this
+phase.
+
 ## Explicitly deferred
 
-CloudKit, authentication, family sharing, backend services, Android, recurring allowances, notifications, payments, subscriptions, analytics, advertising, and gamification.
+Application-managed accounts, a custom backend, Android, recurring allowances,
+notifications, payments, subscriptions, analytics, advertising, and
+gamification.
 
-Minimal TestFlight and App Store preparation is now active by explicit owner request, but later feature phases remain blocked on the physical Siri checkpoint.
+CloudKit-based private family sharing is now planned by explicit owner request.
+It is not yet implemented. Minimal TestFlight and App Store preparation remains
+active for physical-device validation.

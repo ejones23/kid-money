@@ -13,10 +13,11 @@ Read these before substantial work:
 3. `docs/ARCHITECTURE.md` — current domain boundaries.
 4. `docs/ROADMAP.md` — phase ordering and definition of the next checkpoint.
 5. `docs/SIRI_TEST_PLAN.md` — device validation protocol.
+6. `docs/FAMILY_SHARING_DESIGN.md` — proposed Phase 6 sync and identity design.
 
 ## Current state
 
-Phases 1 through 4 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 reliability work is in progress; exact locale-aware input, duplicate-name matching, balance overflow, and minimum-integer undo edge cases are covered. The app builds in Xcode 26.6 and all 18 tests pass on an iOS 26.5 simulator.
+Phases 1 through 4 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 reliability work is in progress; exact locale-aware input, duplicate-name matching, balance overflow, and minimum-integer undo edge cases are covered. Private CloudKit family sharing is now planned for Phase 6; its design is awaiting owner approval and no shared-data code exists yet. The app builds in Xcode 26.6 and all 18 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -47,7 +48,11 @@ Latest verified capabilities:
 - Do not hard-code child names or silently create a child after failed voice recognition.
 - Prefer current installed-SDK APIs. Inspect compiler/SDK documentation instead of copying obsolete SiriKit examples.
 - Preserve the phase order. Get to a real Siri test before building the rest of the UI.
-- Do not introduce third-party dependencies, a backend, accounts, CloudKit, schedules, or notifications without an explicit request. Minimal App Store/TestFlight work is authorized to reach the physical Siri checkpoint.
+- Private CloudKit family sharing is explicitly requested and planned for Phase
+  6. Do not begin implementation until the proposal in
+  `docs/FAMILY_SHARING_DESIGN.md` is approved. Do not introduce third-party
+  dependencies, a custom backend, application-managed accounts, schedules, or
+  notifications without another explicit request.
 - Never commit real family ledger data, credentials, signing material, personal development-team identifiers, or device logs containing personal information.
 
 ## Verification expectations
@@ -78,4 +83,7 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Continue Phase 5 reliability work with App Intent store-access stress coverage, diagnostics, and accessibility review. Preserve the physically verified Siri grammar while hardening internals.
+Obtain owner approval for `docs/FAMILY_SHARING_DESIGN.md`, then finish the narrow
+Phase 5 reliability work with App Intent store-access stress coverage,
+diagnostics, accessibility review, and sharing-related idempotency invariants.
+Preserve the physically verified Siri grammar while hardening internals.
