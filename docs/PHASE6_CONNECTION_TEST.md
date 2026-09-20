@@ -1,11 +1,14 @@
 # Phase 6 family-sharing connection test
 
-Status: **Implementation complete; physical two-account verification pending**
+Status: **Build 8 available to internal testers; physical two-account verification pending**
 
 TestFlight build `0.1 (8)` contains an isolated CloudKit probe. It shares only
 an integer counter, a timestamp, and whether the last writer was the owner or
 participant. It does **not** upload child names, balances, notes, or ledger
 transactions. The existing local ledger continues to work exactly as before.
+
+The matching counter-only schema has been deployed to CloudKit production, and
+build 8 is assigned to the `Internal Testing` TestFlight group.
 
 This checkpoint answers one question before the real sync layer is built: can
 the managed work phone and a second parent's Apple Account accept a private

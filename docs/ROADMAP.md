@@ -107,6 +107,7 @@ Status: **In progress — isolated connection prototype awaiting physical test**
 - [x] preserve SwiftData as the local-first working store
 - [x] add the CloudKit container and private zone-sharing capability
 - [x] implement a disposable counter-only invitation and two-way-write probe
+- [x] deploy the probe schema and distribute build 8 to internal testers
 - [ ] verify the probe on two physical devices using different iCloud accounts
 - add direct CloudKit synchronization with a durable pending-change queue
 - create one private custom record zone and zone-wide `CKShare` per household
