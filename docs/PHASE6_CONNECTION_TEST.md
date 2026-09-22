@@ -1,6 +1,6 @@
 # Phase 6 family-sharing connection test
 
-Status: **Build 8 available to internal testers; physical two-account verification pending**
+Status: **Build 9 active in internal and family TestFlight groups; physical two-account verification pending**
 
 TestFlight build `0.1 (8)` contains an isolated CloudKit probe. It shares only
 an integer counter, a timestamp, and whether the last writer was the owner or
@@ -8,7 +8,17 @@ participant. It does **not** upload child names, balances, notes, or ledger
 transactions. The existing local ledger continues to work exactly as before.
 
 The matching counter-only schema has been deployed to CloudKit production, and
-build 8 is assigned to the `Internal Testing` TestFlight group.
+the system-generated `cloudkit.share` type has been deployed to Production.
+Build 9 adds safe recovery for an incomplete build 8 setup attempt and is
+available in both the `Internal Testing` and external `Family Test` groups.
+
+The first production attempt established the custom zone but failed before the
+counter and share saved because Production did not yet contain
+`cloudkit.share`. Build 8 had already persisted the zone identifier locally, so
+it subsequently reported `Record not found`. Build 9 detects the exact owner
+state where both the probe record and share are absent, clears only that
+disposable local pointer, and presents **Create Connection Test** again. It does
+not clear children, transactions, balances, or any other ledger state.
 
 This checkpoint answers one question before the real sync layer is built: can
 the managed work phone and a second parent's Apple Account accept a private
@@ -16,7 +26,8 @@ CloudKit share and both write to it?
 
 ## Prerequisites
 
-- Install the same TestFlight build on both phones.
+- Install TestFlight build 9 on the owner phone and the same or newer approved
+  build on the participant phone.
 - Each phone must be signed into iCloud with a different Apple Account.
 - Keep iCloud Drive enabled if the device permits it.
 - Run the steps sequentially so that this connection test does not intentionally
@@ -29,10 +40,12 @@ not have to be the same account.
 
 1. Open Kid Money and tap the two-person button at the upper left.
 2. Confirm **Account** says `iCloud is available`.
-3. Tap **Create Connection Test**.
-4. In Apple's sharing sheet, invite the other parent's Apple Account with
+3. If an upgrade-recovery alert appears, dismiss it and confirm the screen now
+   offers **Create Connection Test**.
+4. Tap **Create Connection Test**.
+5. In Apple's sharing sheet, invite the other parent's Apple Account with
    private, read-write access. Messages or Mail are both acceptable.
-5. After sending the invitation, note the displayed shared-counter value.
+6. After sending the invitation, note the displayed shared-counter value.
 
 Do not enter or change any ledger data as part of this test.
 

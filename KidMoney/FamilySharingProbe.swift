@@ -5,6 +5,7 @@ import SwiftUI
 import UIKit
 
 enum FamilySharingProbeError: LocalizedError {
+    case incompleteOwnerSetupReset
     case iCloudUnavailable(CKAccountStatus)
     case invalidSavedState
     case missingCloudResult
@@ -13,6 +14,8 @@ enum FamilySharingProbeError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
+        case .incompleteOwnerSetupReset:
+            "The earlier connection test did not finish, so Kid Money reset only the test connection. Tap Create Connection Test to try again."
         case .iCloudUnavailable(let status):
             switch status {
             case .noAccount:
@@ -108,7 +111,14 @@ final class FamilySharingProbe {
                 throw FamilySharingProbeError.iCloudUnavailable(status)
             }
             if self.hasConnection {
-                try await self.fetchProbeRecord()
+                do {
+                    try await self.fetchProbeRecord()
+                } catch {
+                    if try await self.recoverIncompleteOwnerSetupIfNeeded(after: error) {
+                        throw FamilySharingProbeError.incompleteOwnerSetupReset
+                    }
+                    throw error
+                }
             }
         }
     }
@@ -125,11 +135,12 @@ final class FamilySharingProbe {
                 throw FamilySharingProbeError.invalidSavedState
             }
 
-            let zoneID = self.ensureOwnerZoneID()
+            let zoneID = self.ownerZoneIDForPreparation()
             let database = self.container.privateCloudDatabase
             try await self.saveZoneIfNeeded(zoneID, in: database)
 
             if let existingShare = try await self.fetchShare(in: database, zoneID: zoneID) {
+                self.persist(role: .owner, zoneID: zoneID)
                 self.preparedShare = existingShare
                 try await self.fetchProbeRecord()
                 return
@@ -157,6 +168,7 @@ final class FamilySharingProbe {
                 throw FamilySharingProbeError.unexpectedRecordType
             }
 
+            self.persist(role: .owner, zoneID: zoneID)
             self.preparedShare = savedShare
             self.counter = 0
             self.lastUpdatedAt = probe["updatedAt"] as? Date
@@ -240,17 +252,34 @@ final class FamilySharingProbe {
         }
     }
 
-    private func ensureOwnerZoneID() -> CKRecordZone.ID {
+    private func ownerZoneIDForPreparation() -> CKRecordZone.ID {
         if let zoneName, let zoneOwnerName {
             return CKRecordZone.ID(zoneName: zoneName, ownerName: zoneOwnerName)
         }
 
-        let zoneID = CKRecordZone.ID(
+        return CKRecordZone.ID(
             zoneName: "KidMoneyProbe-\(UUID().uuidString)",
             ownerName: CKCurrentUserDefaultName
         )
-        persist(role: .owner, zoneID: zoneID)
-        return zoneID
+    }
+
+    private func recoverIncompleteOwnerSetupIfNeeded(after error: any Error) async throws -> Bool {
+        guard role == .owner,
+              let cloudKitError = error as? CKError,
+              cloudKitError.code == .unknownItem
+        else {
+            return false
+        }
+
+        let zoneID = try savedZoneID()
+        let database = container.privateCloudDatabase
+        guard try await fetchShare(in: database, zoneID: zoneID) == nil else {
+            return false
+        }
+
+        clearPersistedConnection()
+        Self.logger.notice("Cleared incomplete family-sharing test setup")
+        return true
     }
 
     private func saveZoneIfNeeded(_ zoneID: CKRecordZone.ID, in database: CKDatabase) async throws {
@@ -317,6 +346,18 @@ final class FamilySharingProbe {
         defaults.set(role.rawValue, forKey: DefaultsKey.role)
         defaults.set(zoneID.zoneName, forKey: DefaultsKey.zoneName)
         defaults.set(zoneID.ownerName, forKey: DefaultsKey.zoneOwnerName)
+    }
+
+    private func clearPersistedConnection() {
+        role = nil
+        zoneName = nil
+        zoneOwnerName = nil
+        counter = nil
+        lastUpdatedAt = nil
+        preparedShare = nil
+        defaults.removeObject(forKey: DefaultsKey.role)
+        defaults.removeObject(forKey: DefaultsKey.zoneName)
+        defaults.removeObject(forKey: DefaultsKey.zoneOwnerName)
     }
 
     private static func savedRecord(

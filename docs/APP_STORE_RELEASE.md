@@ -55,9 +55,12 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Upload build `0.1 (8)` with the isolated family-sharing connection probe.
 - [x] Deploy the counter-only CloudKit production schema and add build `0.1 (8)`
   to `Internal Testing`.
-- [ ] Complete beta description, feedback contact, and review information.
+- [x] Generate and deploy the missing `cloudkit.share` system schema.
+- [x] Upload build `0.1 (9)` with incomplete-probe recovery.
+- [x] Add build `0.1 (9)` to `Internal Testing` and `Family Test`.
+- [x] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
-- [ ] Submit the first external build for Beta App Review.
+- [x] Submit the first external build for Beta App Review.
 - [x] Install from TestFlight on an allowed physical iPhone.
 - [x] Verify the action end to end through a Siri-invoked user-created shortcut.
 - [x] Verify both advertised App Shortcut phrases end to end on an unmanaged physical iPhone.

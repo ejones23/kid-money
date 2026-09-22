@@ -108,6 +108,9 @@ Status: **In progress — isolated connection prototype awaiting physical test**
 - [x] add the CloudKit container and private zone-sharing capability
 - [x] implement a disposable counter-only invitation and two-way-write probe
 - [x] deploy the probe schema and distribute build 8 to internal testers
+- [x] generate and deploy CloudKit's `cloudkit.share` production schema
+- [x] recover an incomplete build 8 probe without touching ledger data
+- [x] distribute recovery build 9 to internal and family external testers
 - [ ] verify the probe on two physical devices using different iCloud accounts
 - add direct CloudKit synchronization with a durable pending-change queue
 - create one private custom record zone and zone-wide `CKShare` per household

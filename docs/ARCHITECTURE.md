@@ -58,6 +58,12 @@ creation, invitation acceptance, and two-way writes with one disposable
 counter. It has no path to `AppModelContainer` or `LedgerService`, so enabling
 the probe cannot upload names, balances, notes, or transactions.
 
+Probe connection metadata is persisted only after the initial counter and
+zone-wide share both save successfully. On upgrade from build 8, the probe also
+recognizes the narrow incomplete-owner state where the counter and share are
+both absent and clears only its disposable `UserDefaults` pointer. Ledger
+models and the SwiftData container are not involved in that recovery.
+
 After that physical checkpoint passes, SwiftData will remain the local working
 store and `LedgerService` will remain the mutation boundary. A direct CloudKit
 layer will synchronize deterministic records through one private, zone-wide
