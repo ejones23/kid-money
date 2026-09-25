@@ -1,6 +1,6 @@
 # Phase 6 family-sharing connection test
 
-Status: **Invitation acceptance and two-way writes passed; final durability checks pending**
+Status: **Complete — build 9 passed the full two-account physical matrix**
 
 TestFlight build `0.1 (8)` contains an isolated CloudKit probe. It shares only
 an integer counter, a timestamp, and whether the last writer was the owner or
@@ -94,9 +94,11 @@ accepted it on an iPhone signed into a different iCloud Apple Account.
   phone displayed 2.
 
 This physically verifies invitation acceptance, participant authorization, and
-CloudKit writes in both directions, including on the managed work phone. The
-termination/relaunch and unchanged-local-ledger checks remain outstanding, so
-the disposable probe should remain in place until those are confirmed.
+CloudKit writes in both directions, including on the managed work phone. After
+both apps were terminated and relaunched, each still displayed counter 2. The
+owner's local ledger still displayed `Rebecca: $2.50`, while the participant's
+phone still had no children. The full probe matrix therefore passed without
+uploading, merging, or modifying real ledger data.
 
 ## After the test
 

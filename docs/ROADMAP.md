@@ -101,7 +101,7 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — two-way connection passed; final durability checks pending**
+Status: **In progress — physical connection prototype complete; real ledger sync next**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -113,8 +113,8 @@ Status: **In progress — two-way connection passed; final durability checks pen
 - [x] distribute recovery build 9 to internal and family external testers
 - [x] accept the private share using a second iCloud Apple Account
 - [x] verify owner-to-participant and participant-to-owner writes on physical devices
-- [ ] verify probe persistence after terminating and relaunching both apps
-- [ ] confirm the existing local ledger remains unchanged on both devices
+- [x] verify counter 2 persists after terminating and relaunching both apps
+- [x] confirm the owner's `Rebecca: $2.50` ledger and participant's empty ledger remain unchanged
 - add direct CloudKit synchronization with a durable pending-change queue
 - create one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication

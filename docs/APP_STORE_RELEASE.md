@@ -58,6 +58,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Generate and deploy the missing `cloudkit.share` system schema.
 - [x] Upload build `0.1 (9)` with incomplete-probe recovery.
 - [x] Add build `0.1 (9)` to `Internal Testing` and `Family Test`.
+- [x] Complete the two-account physical CloudKit connection matrix with build `0.1 (9)`.
 - [x] Complete beta description, feedback contact, and review information.
 - [ ] Add the owner's non-managed Apple Account as an external tester if necessary.
 - [x] Submit the first external build for Beta App Review.

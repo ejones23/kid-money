@@ -64,9 +64,10 @@ successfully. This recovery does not read or modify the local ledger.
 On September 24, 2026, build 9 physically passed invitation acceptance and
 two-way writes across two iPhones signed into different iCloud Apple Accounts.
 The owner increment was observed as counter 1 on the participant phone, and the
-participant increment was observed as counter 2 on the owner phone. Relaunch
-persistence and unchanged-ledger confirmation remain before the probe matrix is
-formally complete.
+participant increment was observed as counter 2 on the owner phone. Counter 2
+survived termination and relaunch on both phones. The isolated test also left
+the owner's `Rebecca: $2.50` ledger and the participant's empty ledger unchanged,
+completing the physical connection-probe matrix.
 
 ## Requirements
 

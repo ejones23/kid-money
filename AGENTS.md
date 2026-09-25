@@ -17,7 +17,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 added locale-aware exact input, duplicate-name matching, balance-overflow and minimum-integer undo protection, a 100-write multi-context persistence test, privacy-conscious logging, focused accessibility improvements, one process-wide production `ModelContainer`, and an explicit opt-out from SwiftData-managed CloudKit synchronization. Private CloudKit family sharing is approved for Phase 6. TestFlight build `0.1 (8)` exposed two CloudKit bootstrap findings on the owner phone: Production initially lacked the system-generated `cloudkit.share` type, and the failed atomic save left a stale local probe pointer. A development-signed share generated the missing type, which was deployed to Production. Build `0.1 (9)` recovered that incomplete state, created a private share, accepted it under a second iCloud Apple Account, and physically verified writes in both directions between the managed work phone and the spouse's iPhone. The counter advanced from 0 to 1 after the owner's write and from 1 to 2 after the participant's write. Termination/relaunch persistence and unchanged local-ledger checks remain before the probe matrix is formally complete. The app builds in Xcode 26.6 and all 19 tests pass on an iOS 26.5 simulator.
+Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 added locale-aware exact input, duplicate-name matching, balance-overflow and minimum-integer undo protection, a 100-write multi-context persistence test, privacy-conscious logging, focused accessibility improvements, one process-wide production `ModelContainer`, and an explicit opt-out from SwiftData-managed CloudKit synchronization. Private CloudKit family sharing is approved for Phase 6. TestFlight build `0.1 (8)` exposed two CloudKit bootstrap findings on the owner phone: Production initially lacked the system-generated `cloudkit.share` type, and the failed atomic save left a stale local probe pointer. A development-signed share generated the missing type, which was deployed to Production. Build `0.1 (9)` recovered that incomplete state and passed the full two-account physical probe on September 24, 2026: the managed work phone created a private share, the spouse accepted it under a second iCloud Apple Account, writes succeeded in both directions, counter 2 survived termination and relaunch on both phones, and the isolated test left the owner's `Rebecca: $2.50` ledger and the participant's empty ledger unchanged. The app builds in Xcode 26.6 and all 19 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -83,9 +83,9 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Complete the final build `0.1 (9)` probe checks in
-`docs/PHASE6_CONNECTION_TEST.md`: terminate and relaunch both apps, refresh to
-confirm counter 2 persists, and confirm existing local ledger data remains
-unchanged. Then begin the durable shared-ledger synchronization layer described
-in `docs/FAMILY_SHARING_DESIGN.md`. Preserve the physically verified Siri
-grammar.
+Begin the durable shared-ledger synchronization layer described in
+`docs/FAMILY_SHARING_DESIGN.md`. Start with tested deterministic CloudKit record
+mappings and a durable pending-change model while keeping the existing ledger
+local and untouched. Preserve the physically verified Siri grammar and do not
+migrate real family data until the migration path and failure recovery are
+covered by tests.
