@@ -12,7 +12,9 @@ design preserves the local-first ledger and does not introduce a Kid Money
 login or custom backend. Build 8 contains only a disposable CloudKit connection
 probe and does not upload ledger data. The real sync foundation now defines
 deterministic CloudKit records, a durable local pending-change queue, and tested
-remote decode/merge rules, but no network synchronization is enabled yet.
+remote decode/merge rules. A tested queue processor now adds persisted sync
+status, retry/backoff, iCloud account gating, and optimistic conflict handling,
+but no live CloudKit transport is started yet.
 
 This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
@@ -46,8 +48,10 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   that remains dormant until a household is explicitly active
 - strict CloudKit record decoding and atomic, idempotent remote merging with
   deterministic child conflicts and durable out-of-order transaction deferral
+- restart-safe queue draining with account gating, bounded retry/backoff, and
+  optimistic conflict handling behind an injected CloudKit transport boundary
 
-The project builds without errors or warnings in Xcode 26.6. All 31 current
+The project builds without errors or warnings in Xcode 26.6. All 37 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -152,10 +156,12 @@ and two-device test plan are documented in
 the isolated invitation and two-way-write checkpoint in
 [docs/PHASE6_CONNECTION_TEST.md](docs/PHASE6_CONNECTION_TEST.md). The code now
 has deterministic Household, Child, and LedgerTransaction record mappings, a
-durable local pending-change queue, and an atomic remote merge service. The
-next checkpoint is safely draining and retrying the queue through CloudKit;
-real family data remains local until the non-destructive migration and recovery
-path is complete.
+durable local pending-change queue, an atomic remote merge service, and a tested
+queue processor with persisted sync state, account gating, exponential backoff,
+and deterministic conflict handling. The next checkpoint is adapting that
+processor to live `CKSyncEngine` send/fetch events and persisting the engine's
+opaque state. Real family data remains local until the non-destructive migration
+and recovery path is complete.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

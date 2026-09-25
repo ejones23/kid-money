@@ -783,6 +783,234 @@ struct LedgerServiceTests {
         #expect(service.balance(for: child) == 0)
     }
 
+    @Test func queueDrainSavesEveryChangeAndPersistsSyncedState() async throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        try service.addTransaction(cents: 20, to: child)
+        let transport = CloudLedgerQueueTransportStub(actions: [.save, .save])
+        let now = Date(timeIntervalSinceReferenceDate: 500)
+
+        let result = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+            sharedLedger: sharedLedger,
+            transport: transport,
+            now: now
+        )
+        let state = try #require(context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first)
+        let saveCount = await transport.saveCount
+
+        #expect(result.savedChanges == 2)
+        #expect(result.remainingChanges == 0)
+        #expect(result.status == .synced)
+        #expect(state.status == .synced)
+        #expect(state.lastSuccessAt == now)
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+        #expect(saveCount == 2)
+    }
+
+    @Test func queueRetryBackoffSurvivesStoreReopen() async throws {
+        let storeURL = FileManager.default.temporaryDirectory
+            .appending(path: "KidMoneyRetry-\(UUID().uuidString).store")
+        defer {
+            for suffix in ["", "-shm", "-wal"] {
+                try? FileManager.default.removeItem(atPath: storeURL.path + suffix)
+            }
+        }
+        let now = Date(timeIntervalSinceReferenceDate: 1_000)
+        let householdID: UUID
+
+        do {
+            let container = try AppModelContainer.make(storeURL: storeURL)
+            let context = ModelContext(container)
+            let sharedLedger = try makeSharedLedger(context: context)
+            householdID = sharedLedger.householdID
+            _ = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+            let transport = CloudLedgerQueueTransportStub(actions: [
+                .retry(after: nil, code: "network")
+            ])
+
+            let result = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+                sharedLedger: sharedLedger,
+                transport: transport,
+                now: now
+            )
+            let pending = try #require(
+                context.fetch(FetchDescriptor<PendingCloudChange>()).first
+            )
+            let state = try #require(
+                context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first
+            )
+
+            #expect(result.status == .pending)
+            #expect(pending.attemptCount == 1)
+            #expect(pending.lastErrorCode == "network")
+            #expect(state.nextRetryAt == now.addingTimeInterval(5))
+        }
+
+        do {
+            let container = try AppModelContainer.make(storeURL: storeURL)
+            let context = ModelContext(container)
+            let sharedLedger = try #require(
+                context.fetch(FetchDescriptor<SharedLedgerState>()).first {
+                    $0.householdID == householdID
+                }
+            )
+            let transport = CloudLedgerQueueTransportStub(actions: [.save])
+            let early = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+                sharedLedger: sharedLedger,
+                transport: transport,
+                now: now.addingTimeInterval(4)
+            )
+            let earlySaveCount = await transport.saveCount
+            #expect(early.remainingChanges == 1)
+            #expect(earlySaveCount == 0)
+
+            let completed = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+                sharedLedger: sharedLedger,
+                transport: transport,
+                now: now.addingTimeInterval(5)
+            )
+            let completedSaveCount = await transport.saveCount
+            #expect(completed.status == .synced)
+            #expect(completed.remainingChanges == 0)
+            #expect(completedSaveCount == 1)
+        }
+    }
+
+    @Test func restrictedAccountStopsSyncAndSharedMutations() async throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let transport = CloudLedgerQueueTransportStub(
+            accountState: .restricted,
+            actions: []
+        )
+
+        let result = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+            sharedLedger: sharedLedger,
+            transport: transport
+        )
+        let saveCount = await transport.saveCount
+
+        #expect(result.status == .attentionRequired)
+        #expect(sharedLedger.phase == .attentionRequired)
+        #expect(throws: LedgerError.sharedLedgerUnavailable) {
+            try service.addTransaction(cents: 10, to: child)
+        }
+        #expect(saveCount == 0)
+    }
+
+    @Test func serverWinningChildConflictUpdatesLocalAndCompletesChange() async throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        child.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 10)
+        try context.save()
+        let serverChild = Child(
+            id: child.id,
+            name: "Becca",
+            createdAt: child.createdAt,
+            sortOrder: child.sortOrder
+        )
+        serverChild.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 20)
+        let serverRecord = CloudLedgerRecordMapper.child(
+            serverChild,
+            zoneID: sharedLedger.zoneID
+        )
+        let transport = CloudLedgerQueueTransportStub(actions: [.conflict(serverRecord)])
+
+        let result = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+            sharedLedger: sharedLedger,
+            transport: transport
+        )
+        let saveCount = await transport.saveCount
+
+        #expect(result.resolvedConflicts == 1)
+        #expect(result.remainingChanges == 0)
+        #expect(child.name == "Becca")
+        #expect(saveCount == 1)
+    }
+
+    @Test func localWinningChildConflictRetriesUsingServerRecord() async throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        child.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 20)
+        try context.save()
+        let serverChild = Child(
+            id: child.id,
+            name: "Older Name",
+            createdAt: child.createdAt,
+            sortOrder: child.sortOrder
+        )
+        serverChild.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 10)
+        let serverRecord = CloudLedgerRecordMapper.child(
+            serverChild,
+            zoneID: sharedLedger.zoneID
+        )
+        let transport = CloudLedgerQueueTransportStub(actions: [
+            .conflict(serverRecord),
+            .save
+        ])
+
+        let result = try await CloudLedgerQueueProcessor(modelContext: context).drain(
+            sharedLedger: sharedLedger,
+            transport: transport
+        )
+        let received = await transport.receivedRecords
+        let retriedChild = try CloudLedgerRecordDecoder.child(try #require(received.last))
+
+        #expect(result.resolvedConflicts == 1)
+        #expect(result.savedChanges == 1)
+        #expect(result.remainingChanges == 0)
+        #expect(received.count == 2)
+        #expect(retriedChild.name == "Rebecca")
+        #expect(retriedChild.lastModifiedAt == child.lastModifiedAt)
+    }
+
+    @Test func immutableQueueConflictRequiresAttentionAndPreservesChange() async throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let transaction = try service.addTransaction(cents: 10, to: child)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let recordName = CloudLedgerRecordName.transaction(
+            id: transaction.id,
+            reversesTransactionID: nil
+        )
+        context.insert(PendingCloudChange(
+            householdID: sharedLedger.householdID,
+            operation: .save,
+            recordType: .ledgerTransaction,
+            recordName: recordName
+        ))
+        try context.save()
+        let serverRecord = try #require(
+            CloudLedgerRecordMapper.transaction(transaction, zoneID: sharedLedger.zoneID)
+        )
+        serverRecord[CloudLedgerSchema.Field.amountCents] = NSNumber(value: 20)
+        let transport = CloudLedgerQueueTransportStub(actions: [.conflict(serverRecord)])
+
+        await #expect(throws: CloudLedgerQueueProcessorError.immutableConflict(transaction.id)) {
+            try await CloudLedgerQueueProcessor(modelContext: context).drain(
+                sharedLedger: sharedLedger,
+                transport: transport
+            )
+        }
+
+        #expect(sharedLedger.phase == .attentionRequired)
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).count == 1)
+        let state = try #require(context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first)
+        #expect(state.status == .attentionRequired)
+    }
+
     private func makeSharedLedger(context: ModelContext) throws -> SharedLedgerState {
         let householdID = UUID()
         let sharedLedger = SharedLedgerState(
@@ -798,5 +1026,45 @@ struct LedgerServiceTests {
         context.insert(sharedLedger)
         try context.save()
         return sharedLedger
+    }
+}
+
+private enum CloudLedgerQueueTransportStubAction: @unchecked Sendable {
+    case save
+    case conflict(CKRecord)
+    case retry(after: TimeInterval?, code: String)
+    case attention(code: String)
+}
+
+private actor CloudLedgerQueueTransportStub: CloudLedgerQueueTransport {
+    let configuredAccountState: CloudLedgerTransportAccountState
+    var actions: [CloudLedgerQueueTransportStubAction]
+    var receivedRecords: [CKRecord] = []
+
+    init(
+        accountState: CloudLedgerTransportAccountState = .available,
+        actions: [CloudLedgerQueueTransportStubAction]
+    ) {
+        self.configuredAccountState = accountState
+        self.actions = actions
+    }
+
+    var saveCount: Int { receivedRecords.count }
+
+    func accountState() async -> CloudLedgerTransportAccountState {
+        configuredAccountState
+    }
+
+    func save(_ record: CKRecord) async -> CloudLedgerTransportSaveResult {
+        receivedRecords.append(record)
+        guard !actions.isEmpty else {
+            return .attentionRequired(code: "unexpected-save")
+        }
+        switch actions.removeFirst() {
+        case .save: return .saved(record)
+        case .conflict(let serverRecord): return .conflict(serverRecord)
+        case .retry(let retryAfter, let code): return .retry(after: retryAfter, code: code)
+        case .attention(let code): return .attentionRequired(code: code)
+        }
     }
 }

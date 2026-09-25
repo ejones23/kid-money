@@ -8,6 +8,7 @@ enum LedgerError: LocalizedError, Equatable {
     case balanceOutOfRange
     case nothingToUndo
     case transactionAmountOutOfRange
+    case sharedLedgerUnavailable
 
     var errorDescription: String? {
         switch self {
@@ -16,6 +17,8 @@ enum LedgerError: LocalizedError, Equatable {
         case .balanceOutOfRange: "That transaction would make the balance too large."
         case .nothingToUndo: "There are no transactions to undo."
         case .transactionAmountOutOfRange: "That transaction cannot be reversed."
+        case .sharedLedgerUnavailable:
+            "The shared ledger needs attention before it can be changed."
         }
     }
 }
@@ -66,6 +69,7 @@ struct LedgerService {
 
     @discardableResult
     func addChild(named name: String) throws -> Child {
+        try ensureSharedLedgerAllowsMutation()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { throw LedgerError.emptyName }
 
@@ -78,6 +82,7 @@ struct LedgerService {
     }
 
     func renameChild(_ child: Child, to name: String) throws {
+        try ensureSharedLedgerAllowsMutation()
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else { throw LedgerError.emptyName }
 
@@ -89,6 +94,7 @@ struct LedgerService {
     }
 
     func archiveChild(_ child: Child) throws {
+        try ensureSharedLedgerAllowsMutation()
         child.isArchived = true
         child.lastModifiedAt = .now
         try enqueueCloudSave(for: child)
@@ -105,6 +111,7 @@ struct LedgerService {
         source: TransactionSource = .manual,
         reversesTransactionID: UUID? = nil
     ) throws -> LedgerTransaction {
+        try ensureSharedLedgerAllowsMutation()
         guard cents != 0 else { throw LedgerError.nonPositiveAmount }
         let addition = balance(for: child).addingReportingOverflow(cents)
         guard !addition.overflow else {
@@ -178,6 +185,13 @@ struct LedgerService {
     private func activeSharedLedger() throws -> SharedLedgerState? {
         try modelContext.fetch(FetchDescriptor<SharedLedgerState>()).first {
             $0.phase == .active
+        }
+    }
+
+    private func ensureSharedLedgerAllowsMutation() throws {
+        let sharedLedgers = try modelContext.fetch(FetchDescriptor<SharedLedgerState>())
+        guard !sharedLedgers.contains(where: { $0.phase == .attentionRequired }) else {
+            throw LedgerError.sharedLedgerUnavailable
         }
     }
 

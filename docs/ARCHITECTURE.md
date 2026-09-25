@@ -6,8 +6,10 @@ Kid Money's ledger is local-first. SwiftUI and App Intents share a SwiftData
 store and a small domain service. The isolated CloudKit connection probe has
 completed Phase 6 transport validation. The real shared-ledger foundation now
 defines local sync state, deterministic CloudKit mappings, and a durable change
-queue. It can strictly decode and locally merge supplied CloudKit records, but
-it does not yet perform network synchronization.
+queue. It can strictly decode and locally merge supplied CloudKit records. A
+transport-independent queue processor now exercises send policy, retry, account
+gating, and optimistic conflicts, but the app does not yet start a live
+`CKSyncEngine` or perform network synchronization.
 
 ```text
 SwiftUI views ──────┐
@@ -75,8 +77,10 @@ records a pending save or deletion by deterministic CloudKit record name.
 When no shared household exists—or while one is still being prepared—ordinary
 ledger operations remain purely local. Once a household is explicitly active,
 `LedgerService` saves each local mutation and its coalesced pending change in
-the same SwiftData transaction. The queue is deliberately not drained yet, so
-this foundation cannot upload real ledger data.
+the same SwiftData transaction. An attention-required household rejects further
+ledger mutations instead of silently accumulating changes that cannot safely
+converge. No production code starts queue draining yet, so this foundation
+cannot upload real ledger data.
 
 `CloudLedgerRecordMapper` maps Household, Child, and LedgerTransaction values
 without floating-point money. Children and transactions use their stable UUIDs
@@ -95,6 +99,24 @@ idempotent; a conflicting payload for an existing ID is rejected. Child
 metadata uses modification time followed by stable payload ordering as its
 last-write-wins tie-breaker. Remote changes are written directly through a
 dedicated merge context and never enter the outgoing queue.
+
+`CloudLedgerQueueProcessor` drains active-household changes oldest-first through
+an injected `CloudLedgerQueueTransport`. `CloudLedgerSyncState` persists status,
+last attempt/success, the next retry time, error code, database scope, and a
+reserved opaque `engineStateData` slot. Transient failures use bounded
+exponential backoff and honor a longer server retry interval. Missing or
+restricted iCloud accounts and irreconcilable data conflicts move the household
+to attention-required state; queued work is retained and ordinary ledger writes
+stop until recovery is explicit.
+
+For optimistic-save conflicts, child metadata is merged with the same
+deterministic last-write-wins policy as inbound records. A server winner
+completes the local change; a local winner is retried using the server record's
+system fields and change tag. Ledger transactions remain immutable: a different
+payload for an existing transaction ID is never overwritten. The processor is
+covered through an in-memory transport, including restart-safe retry state. A
+live `CKSyncEngine` adapter, inbound event handling, engine-state serialization,
+status UI, and migration trigger remain deliberately disconnected.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is

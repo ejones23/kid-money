@@ -165,9 +165,11 @@ cloud synchronization is distributed.
    local ledgers, passed on September 24, 2026.**
 4. Add the durable queue, merge rules, sync status, and existing-ledger upload.
    **In progress: deterministic mappings, durable local queues, strict remote
-   decoding, atomic merge, out-of-order deferral, and undo convergence are
-   complete and tested. Network queue draining, status UI, and migration remain
-   disabled.**
+   decoding, atomic merge, out-of-order deferral, undo convergence, persisted
+   queue state, account gating, retry/backoff, and optimistic-conflict policy are
+   complete and tested. The processor still uses an injected transport; live
+   CKSyncEngine send/fetch events, engine-state restoration, status UI, and
+   migration remain disabled.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,

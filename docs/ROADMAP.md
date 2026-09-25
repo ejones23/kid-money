@@ -101,7 +101,7 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — connection prototype and local sync foundation complete**
+Status: **In progress — connection prototype and guarded queue processor complete**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -121,7 +121,11 @@ Status: **In progress — connection prototype and local sync foundation complet
 - [x] strictly decode and atomically merge remote CloudKit records
 - [x] durably defer transactions delivered before their referenced child
 - [x] enforce deterministic child conflicts and same-transaction undo convergence
-- drain the pending-change queue with retry and account-state handling
+- [x] drain the pending-change queue through an injected transport with persisted
+  retry/backoff and account-state handling
+- [x] resolve optimistic child conflicts and stop on immutable transaction conflicts
+- adapt the queue processor to live `CKSyncEngine` send/fetch events
+- serialize and restore the engine's opaque state
 - create one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -144,7 +148,8 @@ gamification.
 
 CloudKit-based private family sharing is in progress by explicit owner request.
 The distributed prototype shares only a disposable counter. Deterministic real
-ledger mappings, durable queues, and local remote-merge behavior are implemented
-and tested, but no real ledger network synchronization or migration is enabled yet.
+ledger mappings, durable queues, local remote-merge behavior, and guarded queue
+processing are implemented and tested, but no live ledger network synchronization
+or migration is enabled yet.
 Minimal TestFlight and App Store preparation remains active for physical-device
 validation.
