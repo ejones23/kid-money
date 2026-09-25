@@ -8,6 +8,7 @@ final class Child {
     var createdAt: Date
     var sortOrder: Int
     var isArchived: Bool
+    var lastModifiedAt: Date?
 
     @Relationship(deleteRule: .cascade, inverse: \LedgerTransaction.child)
     var transactions: [LedgerTransaction]
@@ -24,6 +25,7 @@ final class Child {
         self.createdAt = createdAt
         self.sortOrder = sortOrder
         self.isArchived = isArchived
+        self.lastModifiedAt = createdAt
         self.transactions = []
     }
 }

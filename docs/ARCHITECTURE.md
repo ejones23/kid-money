@@ -2,10 +2,11 @@
 
 ## Overview
 
-Kid Money's ledger is currently local-first. SwiftUI and App Intents share a
-SwiftData store and a small domain service. An isolated CloudKit connection
-probe exists for Phase 6 validation, but it does not read or synchronize the
-ledger.
+Kid Money's ledger is local-first. SwiftUI and App Intents share a SwiftData
+store and a small domain service. The isolated CloudKit connection probe has
+completed Phase 6 transport validation. The real shared-ledger foundation now
+defines local sync state, deterministic CloudKit mappings, and a durable change
+queue, but it does not yet upload or download ledger data.
 
 ```text
 SwiftUI views ──────┐
@@ -17,7 +18,7 @@ App Intents ───────┘
 
 ### Child
 
-- stable UUID, name, creation date, sort order, and archive flag
+- stable UUID, name, creation date, last-modified date, sort order, and archive flag
 - relationship to ledger transactions
 
 Archiving is preferred to destructive deletion so historical transactions remain understandable.
@@ -64,12 +65,27 @@ recognizes the narrow incomplete-owner state where the counter and share are
 both absent and clears only its disposable `UserDefaults` pointer. Ledger
 models and the SwiftData container are not involved in that recovery.
 
-After that physical checkpoint passes, SwiftData will remain the local working
-store and `LedgerService` will remain the mutation boundary. A direct CloudKit
-layer will synchronize deterministic records through one private, zone-wide
-`CKShare`; it will not use SwiftData's automatic CloudKit mode or an additional
-Core Data container. See `FAMILY_SHARING_DESIGN.md` for the approved queue,
-conflict, authentication, and migration rules.
+That physical checkpoint passed on two Apple Accounts in build 9. SwiftData
+remains the local working store and `LedgerService` remains the mutation
+boundary. `SharedLedgerState` records the household, zone, database scope,
+role, phase, and schema version. `PendingCloudChange` durably and idempotently
+records a pending save or deletion by deterministic CloudKit record name.
+
+When no shared household exists—or while one is still being prepared—ordinary
+ledger operations remain purely local. Once a household is explicitly active,
+`LedgerService` saves each local mutation and its coalesced pending change in
+the same SwiftData transaction. The queue is deliberately not drained yet, so
+this foundation cannot upload real ledger data.
+
+`CloudLedgerRecordMapper` maps Household, Child, and LedgerTransaction values
+without floating-point money. Children and transactions use their stable UUIDs
+for record names. Undo transactions derive a deterministic UUID from the
+original transaction UUID so two devices cannot create two distinct undo
+records for the same ledger entry. A future direct CloudKit layer will drain the
+queue and merge records through one private, zone-wide `CKShare`; it will not
+use SwiftData's automatic CloudKit mode or an additional Core Data container.
+See `FAMILY_SHARING_DESIGN.md` for the approved conflict, authentication, and
+migration rules.
 
 ## Money
 

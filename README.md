@@ -10,7 +10,9 @@ auditable transaction ledger rather than stored as a mutable total. Private
 iCloud sharing between invited parents is now in development; its approved
 design preserves the local-first ledger and does not introduce a Kid Money
 login or custom backend. Build 8 contains only a disposable CloudKit connection
-probe and does not upload ledger data.
+probe and does not upload ledger data. The real sync foundation now defines
+deterministic CloudKit records and a durable local pending-change queue, but no
+ledger upload or download is enabled yet.
 
 This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
@@ -40,8 +42,12 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   child lookup, formatting, localized money conversion, overflow rejection, and
   repeated undo
 - a counter-only private CloudKit sharing probe for two-account validation
+- deterministic CloudKit mappings and a durable, coalescing local change queue
+  that remains dormant until a household is explicitly active
 
-The project builds without errors or warnings in Xcode 26.6. All 19 current tests pass on the iOS 26.5 iPhone 17 Pro simulator. Xcode's App Shortcuts Preview resolves the Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
+The project builds without errors or warnings in Xcode 26.6. All 25 current
+tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
+Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
 TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
 
@@ -137,15 +143,16 @@ Build 6 completed the focused Siri-routing improvement. Apple permits only one i
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 
 Phase 6 adds a private shared household ledger so two parents can manage the
-same children from separate Apple Accounts. The approved
-local-first SwiftData plus direct CloudKit/`CKShare` design, authentication
-model, migration rules, and two-device test plan are documented in
-[docs/FAMILY_SHARING_DESIGN.md](docs/FAMILY_SHARING_DESIGN.md). Build 8 adds a
-strictly isolated counter-only prototype. Build 9 repairs the incomplete-setup
-state discovered during the first production attempt. The next checkpoint is invite
-acceptance and two-way writes on both physical phones using
-[docs/PHASE6_CONNECTION_TEST.md](docs/PHASE6_CONNECTION_TEST.md); the real
-ledger will remain local until that test passes.
+same children from separate Apple Accounts. The approved local-first SwiftData
+plus direct CloudKit/`CKShare` design, authentication model, migration rules,
+and two-device test plan are documented in
+[docs/FAMILY_SHARING_DESIGN.md](docs/FAMILY_SHARING_DESIGN.md). Build 9 passed
+the isolated invitation and two-way-write checkpoint in
+[docs/PHASE6_CONNECTION_TEST.md](docs/PHASE6_CONNECTION_TEST.md). The code now
+has deterministic Household, Child, and LedgerTransaction record mappings plus
+a durable local pending-change queue. The next checkpoint is a tested remote
+decode/merge engine and queue drain; real family data remains local until the
+non-destructive migration and recovery path is complete.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

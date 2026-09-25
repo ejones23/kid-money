@@ -101,7 +101,7 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — physical connection prototype complete; real ledger sync next**
+Status: **In progress — connection prototype and local sync foundation complete**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -115,7 +115,11 @@ Status: **In progress — physical connection prototype complete; real ledger sy
 - [x] verify owner-to-participant and participant-to-owner writes on physical devices
 - [x] verify counter 2 persists after terminating and relaunching both apps
 - [x] confirm the owner's `Rebecca: $2.50` ledger and participant's empty ledger remain unchanged
-- add direct CloudKit synchronization with a durable pending-change queue
+- [x] define deterministic Household, Child, and LedgerTransaction record mappings
+- [x] add durable, coalescing pending changes at the ledger mutation boundary
+- [x] keep local-only and preparing households dormant with no queued uploads
+- decode and deterministically merge remote CloudKit records
+- drain the pending-change queue with retry and account-state handling
 - create one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -137,6 +141,8 @@ notifications, payments, subscriptions, analytics, advertising, and
 gamification.
 
 CloudKit-based private family sharing is in progress by explicit owner request.
-The current prototype shares only a disposable counter; real ledger records and
-offline synchronization remain unimplemented. Minimal TestFlight and App Store
-preparation remains active for physical-device validation.
+The distributed prototype shares only a disposable counter. Deterministic real
+ledger record mappings and the local durable queue are implemented and tested,
+but no real ledger upload, download, or offline reconciliation is enabled yet.
+Minimal TestFlight and App Store preparation remains active for physical-device
+validation.

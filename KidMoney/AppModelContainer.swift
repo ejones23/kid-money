@@ -20,6 +20,12 @@ enum AppModelContainer {
                 cloudKitDatabase: .none
             )
         }
-        return try ModelContainer(for: Child.self, LedgerTransaction.self, configurations: configuration)
+        return try ModelContainer(
+            for: Child.self,
+            LedgerTransaction.self,
+            SharedLedgerState.self,
+            PendingCloudChange.self,
+            configurations: configuration
+        )
     }
 }

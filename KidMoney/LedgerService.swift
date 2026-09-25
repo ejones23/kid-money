@@ -71,6 +71,7 @@ struct LedgerService {
 
         let child = Child(name: trimmedName, sortOrder: try activeChildren().count)
         modelContext.insert(child)
+        try enqueueCloudSave(for: child)
         try modelContext.save()
         Self.logger.info("Saved child creation")
         return child
@@ -81,18 +82,23 @@ struct LedgerService {
         guard !trimmedName.isEmpty else { throw LedgerError.emptyName }
 
         child.name = trimmedName
+        child.lastModifiedAt = .now
+        try enqueueCloudSave(for: child)
         try modelContext.save()
         Self.logger.info("Saved child rename")
     }
 
     func archiveChild(_ child: Child) throws {
         child.isArchived = true
+        child.lastModifiedAt = .now
+        try enqueueCloudSave(for: child)
         try modelContext.save()
         Self.logger.info("Saved child archive")
     }
 
     @discardableResult
     func addTransaction(
+        id: UUID = UUID(),
         cents: Int64,
         to child: Child,
         note: String? = nil,
@@ -106,6 +112,7 @@ struct LedgerService {
             throw LedgerError.balanceOutOfRange
         }
         let transaction = LedgerTransaction(
+            id: id,
             amountCents: cents,
             note: note,
             source: source,
@@ -113,6 +120,7 @@ struct LedgerService {
             child: child
         )
         modelContext.insert(transaction)
+        try enqueueCloudSave(for: transaction)
         try modelContext.save()
         Self.logger.info(
             "Saved \(cents, privacy: .private) cent \(source.rawValue, privacy: .public) transaction"
@@ -152,6 +160,7 @@ struct LedgerService {
         }
 
         try addTransaction(
+            id: CloudLedgerTransactionIdentity.undo(reversing: original.id),
             cents: -original.amountCents,
             to: child,
             source: source,
@@ -164,5 +173,60 @@ struct LedgerService {
         )
         Self.logger.info("Saved compensating undo transaction")
         return result
+    }
+
+    private func activeSharedLedger() throws -> SharedLedgerState? {
+        try modelContext.fetch(FetchDescriptor<SharedLedgerState>()).first {
+            $0.phase == .active
+        }
+    }
+
+    private func enqueueCloudSave(for child: Child) throws {
+        guard let sharedLedger = try activeSharedLedger() else { return }
+        try enqueueCloudSave(
+            householdID: sharedLedger.householdID,
+            recordType: .child,
+            recordName: CloudLedgerRecordName.child(child.id)
+        )
+    }
+
+    private func enqueueCloudSave(for transaction: LedgerTransaction) throws {
+        guard let sharedLedger = try activeSharedLedger() else { return }
+        try enqueueCloudSave(
+            householdID: sharedLedger.householdID,
+            recordType: .ledgerTransaction,
+            recordName: CloudLedgerRecordName.transaction(
+                id: transaction.id,
+                reversesTransactionID: transaction.reversesTransactionID
+            )
+        )
+    }
+
+    private func enqueueCloudSave(
+        householdID: UUID,
+        recordType: CloudLedgerRecordType,
+        recordName: String
+    ) throws {
+        let key = PendingCloudChange.makeDeduplicationKey(
+            householdID: householdID,
+            operation: .save,
+            recordName: recordName
+        )
+        let descriptor = FetchDescriptor<PendingCloudChange>(
+            predicate: #Predicate { $0.deduplicationKey == key }
+        )
+        if let existing = try modelContext.fetch(descriptor).first {
+            existing.enqueuedAt = .now
+            existing.attemptCount = 0
+            existing.lastAttemptAt = nil
+            existing.lastErrorCode = nil
+        } else {
+            modelContext.insert(PendingCloudChange(
+                householdID: householdID,
+                operation: .save,
+                recordType: recordType,
+                recordName: recordName
+            ))
+        }
     }
 }

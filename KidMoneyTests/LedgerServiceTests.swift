@@ -1,3 +1,4 @@
+import CloudKit
 import Foundation
 import SwiftData
 import Testing
@@ -221,6 +222,7 @@ struct LedgerServiceTests {
         #expect(result.newBalanceCents == 0)
         #expect(transactions.count == 2)
         let compensation = try #require(transactions.first { $0.reversesTransactionID == original.id })
+        #expect(compensation.id == CloudLedgerTransactionIdentity.undo(reversing: original.id))
         #expect(compensation.amountCents == -25)
         #expect(compensation.source == .siri)
         #expect(transactions.contains { $0.id == original.id })
@@ -313,5 +315,215 @@ struct LedgerServiceTests {
         #expect(throws: LedgerError.nothingToUndo) {
             try service.undoLastTransaction()
         }
+    }
+
+    @Test func cloudRecordNamesAreDeterministicAndUndoUsesOriginalIdentity() throws {
+        let childID = try #require(UUID(uuidString: "11111111-2222-3333-4444-555555555555"))
+        let firstUndoID = try #require(UUID(uuidString: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"))
+        let secondUndoID = try #require(UUID(uuidString: "99999999-8888-7777-6666-555555555555"))
+
+        #expect(
+            CloudLedgerRecordName.child(childID)
+                == "child-11111111-2222-3333-4444-555555555555"
+        )
+        #expect(
+            CloudLedgerRecordName.transaction(id: firstUndoID, reversesTransactionID: childID)
+                == CloudLedgerRecordName.transaction(id: secondUndoID, reversesTransactionID: childID)
+        )
+        #expect(
+            CloudLedgerRecordName.transaction(id: firstUndoID, reversesTransactionID: childID)
+                == "undo-11111111-2222-3333-4444-555555555555"
+        )
+        #expect(
+            CloudLedgerTransactionIdentity.undo(reversing: childID)
+                == CloudLedgerTransactionIdentity.undo(reversing: childID)
+        )
+        #expect(
+            CloudLedgerTransactionIdentity.undo(reversing: childID)
+                != CloudLedgerTransactionIdentity.undo(reversing: firstUndoID)
+        )
+    }
+
+    @Test func cloudRecordMappingPreservesExactLedgerValues() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let transaction = try service.addTransaction(
+            cents: -25,
+            to: child,
+            note: "Book",
+            source: .siri
+        )
+        let zoneID = CKRecordZone.ID(
+            zoneName: "KidMoney-test-zone",
+            ownerName: CKCurrentUserDefaultName
+        )
+        let householdID = UUID()
+        let state = SharedLedgerState(
+            householdID: householdID,
+            displayName: "Family Ledger",
+            zoneName: zoneID.zoneName,
+            zoneOwnerName: zoneID.ownerName,
+            role: .owner,
+            databaseScope: .privateDatabase,
+            phase: .preparing
+        )
+
+        let householdRecord = CloudLedgerRecordMapper.household(state)
+        let childRecord = CloudLedgerRecordMapper.child(child, zoneID: zoneID)
+        let transactionRecord = try #require(
+            CloudLedgerRecordMapper.transaction(transaction, zoneID: zoneID)
+        )
+
+        #expect(
+            householdRecord.recordID.recordName
+                == CloudLedgerRecordName.household(householdID)
+        )
+        #expect(householdRecord.recordID.zoneID == zoneID)
+        #expect(householdRecord[CloudLedgerSchema.Field.displayName] as? String == "Family Ledger")
+        #expect(
+            (householdRecord[CloudLedgerSchema.Field.schemaVersion] as? NSNumber)?.intValue
+                == CloudLedgerSchema.currentVersion
+        )
+        #expect(childRecord.recordID.recordName == CloudLedgerRecordName.child(child.id))
+        #expect(childRecord.recordID.zoneID == zoneID)
+        #expect(childRecord[CloudLedgerSchema.Field.name] as? String == "Rebecca")
+        #expect((childRecord[CloudLedgerSchema.Field.isArchived] as? NSNumber)?.boolValue == false)
+        #expect(
+            transactionRecord.recordID.recordName
+                == CloudLedgerRecordName.transaction(id: transaction.id, reversesTransactionID: nil)
+        )
+        #expect(
+            (transactionRecord[CloudLedgerSchema.Field.amountCents] as? NSNumber)?.int64Value == -25
+        )
+        #expect(transactionRecord[CloudLedgerSchema.Field.note] as? String == "Book")
+        #expect(transactionRecord[CloudLedgerSchema.Field.source] as? String == "siri")
+        #expect(
+            transactionRecord[CloudLedgerSchema.Field.childIdentifier] as? String
+                == child.id.uuidString.lowercased()
+        )
+    }
+
+    @Test func localOnlyMutationsDoNotCreatePendingCloudChanges() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        try service.addTransaction(cents: 10, to: child)
+        try service.renameChild(child, to: "Becca")
+
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+    }
+
+    @Test func preparingSharedLedgerDoesNotQueueOrdinaryMutations() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let householdID = UUID()
+        context.insert(SharedLedgerState(
+            householdID: householdID,
+            displayName: "Family Ledger",
+            zoneName: "KidMoneyHousehold-\(householdID.uuidString)",
+            zoneOwnerName: CKCurrentUserDefaultName,
+            role: .owner,
+            databaseScope: .privateDatabase,
+            phase: .preparing
+        ))
+        try context.save()
+
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        try service.addTransaction(cents: 10, to: child)
+
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+    }
+
+    @Test func activeSharedLedgerQueuesAndCoalescesDurableChanges() throws {
+        let storeURL = FileManager.default.temporaryDirectory
+            .appending(path: "KidMoneyQueue-\(UUID().uuidString).store")
+        defer {
+            for suffix in ["", "-shm", "-wal"] {
+                try? FileManager.default.removeItem(atPath: storeURL.path + suffix)
+            }
+        }
+
+        let householdID = UUID()
+        let childID: UUID
+        let transactionID: UUID
+
+        do {
+            let container = try AppModelContainer.make(storeURL: storeURL)
+            let context = ModelContext(container)
+            context.insert(SharedLedgerState(
+                householdID: householdID,
+                displayName: "Family Ledger",
+                zoneName: "KidMoneyHousehold-\(householdID.uuidString)",
+                zoneOwnerName: CKCurrentUserDefaultName,
+                role: .owner,
+                databaseScope: .privateDatabase,
+                phase: .active
+            ))
+            try context.save()
+
+            let service = LedgerService(modelContext: context)
+            let child = try service.addChild(named: "Rebecca")
+            childID = child.id
+            try service.renameChild(child, to: "Becca")
+            transactionID = try service.addTransaction(cents: 10, to: child).id
+
+            let pending = try context.fetch(FetchDescriptor<PendingCloudChange>())
+            #expect(pending.count == 2)
+            #expect(pending.filter { $0.recordType == .child }.count == 1)
+            #expect(pending.filter { $0.recordType == .ledgerTransaction }.count == 1)
+        }
+
+        do {
+            let container = try AppModelContainer.make(storeURL: storeURL)
+            let context = ModelContext(container)
+            let pending = try context.fetch(FetchDescriptor<PendingCloudChange>())
+
+            #expect(Set(pending.map(\.householdID)) == [householdID])
+            #expect(Set(pending.map(\.recordName)) == [
+                CloudLedgerRecordName.child(childID),
+                CloudLedgerRecordName.transaction(id: transactionID, reversesTransactionID: nil)
+            ])
+        }
+    }
+
+    @Test func undoQueueCoalescesByOriginalTransactionIdentity() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let householdID = UUID()
+        context.insert(SharedLedgerState(
+            householdID: householdID,
+            displayName: "Family Ledger",
+            zoneName: "KidMoneyHousehold-\(householdID.uuidString)",
+            zoneOwnerName: CKCurrentUserDefaultName,
+            role: .owner,
+            databaseScope: .privateDatabase,
+            phase: .active
+        ))
+        try context.save()
+
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let original = try service.addTransaction(cents: 10, to: child)
+        _ = try service.addTransaction(
+            cents: -10,
+            to: child,
+            reversesTransactionID: original.id
+        )
+        _ = try service.addTransaction(
+            cents: -10,
+            to: child,
+            reversesTransactionID: original.id
+        )
+
+        let pending = try context.fetch(FetchDescriptor<PendingCloudChange>())
+        let undoName = CloudLedgerRecordName.transaction(
+            id: UUID(),
+            reversesTransactionID: original.id
+        )
+        #expect(pending.filter { $0.recordName == undoName }.count == 1)
     }
 }

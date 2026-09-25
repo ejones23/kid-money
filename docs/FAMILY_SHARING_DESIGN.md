@@ -1,6 +1,6 @@
 # Family sharing design proposal
 
-Status: **Approved; connection prototype implemented, real-ledger sync pending**
+Status: **Approved; connection prototype and local sync foundation implemented**
 
 This document records the approved design for letting two parents use their own
 Apple Accounts and devices to manage one Kid Money ledger. Implementation begins
@@ -164,6 +164,9 @@ cloud synchronization is distributed.
    two-account physical matrix, including relaunch persistence and unchanged
    local ledgers, passed on September 24, 2026.**
 4. Add the durable queue, merge rules, sync status, and existing-ledger upload.
+   **In progress: deterministic mappings and the durable, coalescing local queue
+   are complete and tested. Remote decoding, merge, queue draining, status UI,
+   and migration remain disabled.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,
