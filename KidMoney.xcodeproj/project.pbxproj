@@ -22,6 +22,7 @@
 		A10000000000000000000013 /* AppShortcuts.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000016 /* AppShortcuts.xcstrings */; };
 		A10000000000000000000014 /* FamilySharingProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000017 /* FamilySharingProbe.swift */; };
 		A10000000000000000000015 /* CloudLedgerSyncFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* CloudLedgerSyncFoundation.swift */; };
+		A10000000000000000000016 /* CloudLedgerMergeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* CloudLedgerMergeService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		A20000000000000000000017 /* FamilySharingProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilySharingProbe.swift; sourceTree = "<group>"; };
 		A20000000000000000000018 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A20000000000000000000019 /* CloudLedgerSyncFoundation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerSyncFoundation.swift; sourceTree = "<group>"; };
+		A20000000000000000000020 /* CloudLedgerMergeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerMergeService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 				A20000000000000000000013 /* KidMoneyIntents.swift */,
 				A20000000000000000000017 /* FamilySharingProbe.swift */,
 				A20000000000000000000019 /* CloudLedgerSyncFoundation.swift */,
+				A20000000000000000000020 /* CloudLedgerMergeService.swift */,
 				A20000000000000000000018 /* Info.plist */,
 				A20000000000000000000015 /* KidMoney.entitlements */,
 				A20000000000000000000016 /* AppShortcuts.xcstrings */,
@@ -231,6 +234,7 @@
 				A10000000000000000000011 /* KidMoneyIntents.swift in Sources */,
 				A10000000000000000000014 /* FamilySharingProbe.swift in Sources */,
 				A10000000000000000000015 /* CloudLedgerSyncFoundation.swift in Sources */,
+				A10000000000000000000016 /* CloudLedgerMergeService.swift in Sources */,
 				A10000000000000000000006 /* ChildListView.swift in Sources */,
 				A10000000000000000000007 /* AddChildView.swift in Sources */,
 				A10000000000000000000008 /* ChildDetailView.swift in Sources */,

@@ -6,7 +6,8 @@ Kid Money's ledger is local-first. SwiftUI and App Intents share a SwiftData
 store and a small domain service. The isolated CloudKit connection probe has
 completed Phase 6 transport validation. The real shared-ledger foundation now
 defines local sync state, deterministic CloudKit mappings, and a durable change
-queue, but it does not yet upload or download ledger data.
+queue. It can strictly decode and locally merge supplied CloudKit records, but
+it does not yet perform network synchronization.
 
 ```text
 SwiftUI views ──────┐
@@ -86,6 +87,20 @@ queue and merge records through one private, zone-wide `CKShare`; it will not
 use SwiftData's automatic CloudKit mode or an additional Core Data container.
 See `FAMILY_SHARING_DESIGN.md` for the approved conflict, authentication, and
 migration rules.
+
+`CloudLedgerMergeService` validates record types, deterministic names, zone
+identity, schema versions, exact integer cents, and domain fields before any
+merge. A batch saves atomically or rolls back. Transactions are immutable and
+idempotent; a conflicting payload for an existing ID is rejected. Child
+metadata uses modification time followed by stable payload ordering as its
+last-write-wins tie-breaker. Remote changes are written directly through a
+dedicated merge context and never enter the outgoing queue.
+
+CloudKit can deliver a transaction before its referenced child. Such a record
+is stored as a `DeferredCloudTransaction`, survives process relaunch, and is
+automatically applied after the child arrives. Undo entries converge by their
+original transaction ID. This also canonicalizes undo entries created by older
+builds without changing the derived balance.
 
 ## Money
 

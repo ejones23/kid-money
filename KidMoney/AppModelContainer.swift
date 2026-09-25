@@ -25,6 +25,7 @@ enum AppModelContainer {
             LedgerTransaction.self,
             SharedLedgerState.self,
             PendingCloudChange.self,
+            DeferredCloudTransaction.self,
             configurations: configuration
         )
     }

@@ -526,4 +526,277 @@ struct LedgerServiceTests {
         )
         #expect(pending.filter { $0.recordName == undoName }.count == 1)
     }
+
+    @Test func cloudRecordDecodingRoundTripsAndRejectsInvalidMoney() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let child = Child(
+            id: UUID(),
+            name: "Rebecca",
+            createdAt: Date(timeIntervalSinceReferenceDate: 10),
+            sortOrder: 2
+        )
+        child.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 20)
+        let transaction = LedgerTransaction(
+            id: UUID(),
+            amountCents: -25,
+            createdAt: Date(timeIntervalSinceReferenceDate: 30),
+            note: "Book",
+            source: .siri,
+            child: child
+        )
+        let sharedLedger = try makeSharedLedger(context: context)
+
+        let decodedChild = try CloudLedgerRecordDecoder.child(
+            CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        )
+        let transactionRecord = try #require(
+            CloudLedgerRecordMapper.transaction(transaction, zoneID: sharedLedger.zoneID)
+        )
+        let decodedTransaction = try CloudLedgerRecordDecoder.transaction(transactionRecord)
+
+        #expect(decodedChild.id == child.id)
+        #expect(decodedChild.name == "Rebecca")
+        #expect(decodedChild.sortOrder == 2)
+        #expect(decodedChild.lastModifiedAt == child.lastModifiedAt)
+        #expect(decodedTransaction.id == transaction.id)
+        #expect(decodedTransaction.childID == child.id)
+        #expect(decodedTransaction.amountCents == -25)
+        #expect(decodedTransaction.note == "Book")
+        #expect(decodedTransaction.source == .siri)
+
+        transactionRecord[CloudLedgerSchema.Field.amountCents] = NSNumber(value: 0)
+        #expect(throws: CloudLedgerRecordDecodingError.missingOrInvalidField(
+            CloudLedgerSchema.Field.amountCents
+        )) {
+            try CloudLedgerRecordDecoder.transaction(transactionRecord)
+        }
+    }
+
+    @Test func remoteChildMergeUsesDeterministicLastWriteWinsWithoutQueueEcho() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let service = LedgerService(modelContext: context)
+        let local = try service.addChild(named: "Rebecca")
+        let timestamp = Date(timeIntervalSinceReferenceDate: 100)
+        local.lastModifiedAt = timestamp
+        for pending in try context.fetch(FetchDescriptor<PendingCloudChange>()) {
+            context.delete(pending)
+        }
+        try context.save()
+
+        let remote = Child(
+            id: local.id,
+            name: "Zoe",
+            createdAt: local.createdAt,
+            sortOrder: 3,
+            isArchived: true
+        )
+        remote.lastModifiedAt = timestamp
+        let record = CloudLedgerRecordMapper.child(remote, zoneID: sharedLedger.zoneID)
+
+        let first = try CloudLedgerMergeService(modelContext: context).merge(
+            records: [record],
+            into: sharedLedger
+        )
+        #expect(first.updatedChildren == 1)
+        #expect(local.name == "Zoe")
+        #expect(local.sortOrder == 3)
+        #expect(local.isArchived)
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+
+        let losingRemote = Child(
+            id: local.id,
+            name: "Amy",
+            createdAt: local.createdAt,
+            sortOrder: 0
+        )
+        losingRemote.lastModifiedAt = timestamp
+        let second = try CloudLedgerMergeService(modelContext: context).merge(
+            records: [CloudLedgerRecordMapper.child(losingRemote, zoneID: sharedLedger.zoneID)],
+            into: sharedLedger
+        )
+        #expect(second.updatedChildren == 0)
+        #expect(second.unchangedRecords == 1)
+        #expect(local.name == "Zoe")
+    }
+
+    @Test func remoteTransactionsMergeIdempotentlyWithoutQueueEcho() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = Child(
+            id: UUID(),
+            name: "Rebecca",
+            createdAt: Date(timeIntervalSinceReferenceDate: 10),
+            sortOrder: 0
+        )
+        let transaction = LedgerTransaction(
+            id: UUID(),
+            amountCents: 35,
+            createdAt: Date(timeIntervalSinceReferenceDate: 20),
+            note: "Allowance",
+            source: .siri,
+            child: child
+        )
+        let childRecord = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        let transactionRecord = try #require(
+            CloudLedgerRecordMapper.transaction(transaction, zoneID: sharedLedger.zoneID)
+        )
+        let merger = CloudLedgerMergeService(modelContext: context)
+
+        let first = try merger.merge(
+            records: [transactionRecord, childRecord],
+            into: sharedLedger
+        )
+        let second = try merger.merge(
+            records: [childRecord, transactionRecord],
+            into: sharedLedger
+        )
+        let persistedChild = try #require(
+            context.fetch(FetchDescriptor<Child>()).first { $0.id == child.id }
+        )
+
+        #expect(first.insertedChildren == 1)
+        #expect(first.insertedTransactions == 1)
+        #expect(second.insertedChildren == 0)
+        #expect(second.insertedTransactions == 0)
+        #expect(try context.fetch(FetchDescriptor<LedgerTransaction>()).count == 1)
+        #expect(LedgerService(modelContext: context).balance(for: persistedChild) == 35)
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+    }
+
+    @Test func missingChildTransactionIsDurablyDeferredUntilChildArrives() throws {
+        let storeURL = FileManager.default.temporaryDirectory
+            .appending(path: "KidMoneyRemoteQueue-\(UUID().uuidString).store")
+        defer {
+            for suffix in ["", "-shm", "-wal"] {
+                try? FileManager.default.removeItem(atPath: storeURL.path + suffix)
+            }
+        }
+
+        let child = Child(name: "Rebecca", sortOrder: 0)
+        let transaction = LedgerTransaction(
+            amountCents: 15,
+            note: "Remote",
+            source: .manual,
+            child: child
+        )
+        let householdID: UUID
+        let childRecord: CKRecord
+
+        do {
+            let container = try AppModelContainer.make(storeURL: storeURL)
+            let context = ModelContext(container)
+            let sharedLedger = try makeSharedLedger(context: context)
+            householdID = sharedLedger.householdID
+            childRecord = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+            let transactionRecord = try #require(
+                CloudLedgerRecordMapper.transaction(transaction, zoneID: sharedLedger.zoneID)
+            )
+
+            let result = try CloudLedgerMergeService(modelContext: context).merge(
+                records: [transactionRecord],
+                into: sharedLedger
+            )
+            #expect(result.deferredTransactions == 1)
+            #expect(try context.fetch(FetchDescriptor<DeferredCloudTransaction>()).count == 1)
+            #expect(try context.fetch(FetchDescriptor<LedgerTransaction>()).isEmpty)
+        }
+
+        do {
+            let container = try AppModelContainer.make(storeURL: storeURL)
+            let context = ModelContext(container)
+            let sharedLedger = try #require(
+                context.fetch(FetchDescriptor<SharedLedgerState>()).first {
+                    $0.householdID == householdID
+                }
+            )
+            let result = try CloudLedgerMergeService(modelContext: context).merge(
+                records: [childRecord],
+                into: sharedLedger
+            )
+
+            #expect(result.insertedChildren == 1)
+            #expect(result.insertedTransactions == 1)
+            #expect(result.deferredTransactions == 0)
+            #expect(try context.fetch(FetchDescriptor<DeferredCloudTransaction>()).isEmpty)
+        }
+    }
+
+    @Test func immutableTransactionConflictRollsBackTheWholeRemoteBatch() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let localChild = try service.addChild(named: "Rebecca")
+        let localTransaction = try service.addTransaction(cents: 10, to: localChild)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let additionalChild = Child(name: "Daniel", sortOrder: 1)
+        let conflictingRecord = try #require(
+            CloudLedgerRecordMapper.transaction(localTransaction, zoneID: sharedLedger.zoneID)
+        )
+        conflictingRecord[CloudLedgerSchema.Field.amountCents] = NSNumber(value: 20)
+
+        #expect(throws: CloudLedgerMergeError.immutableTransactionConflict(localTransaction.id)) {
+            try CloudLedgerMergeService(modelContext: context).merge(
+                records: [
+                    CloudLedgerRecordMapper.child(additionalChild, zoneID: sharedLedger.zoneID),
+                    conflictingRecord
+                ],
+                into: sharedLedger
+            )
+        }
+        #expect(try context.fetch(FetchDescriptor<Child>()).count == 1)
+        #expect(try context.fetch(FetchDescriptor<LedgerTransaction>()).count == 1)
+        #expect(localTransaction.amountCents == 10)
+    }
+
+    @Test func remoteUndoCanonicalizesLegacyIdentityWithoutChangingBalance() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let original = try service.addTransaction(cents: 10, to: child)
+        let legacyUndo = try service.addTransaction(
+            id: UUID(),
+            cents: -10,
+            to: child,
+            reversesTransactionID: original.id
+        )
+        let sharedLedger = try makeSharedLedger(context: context)
+        let remoteRecord = try #require(
+            CloudLedgerRecordMapper.transaction(legacyUndo, zoneID: sharedLedger.zoneID)
+        )
+
+        let result = try CloudLedgerMergeService(modelContext: context).merge(
+            records: [remoteRecord],
+            into: sharedLedger
+        )
+        let transactions = try context.fetch(FetchDescriptor<LedgerTransaction>())
+
+        #expect(result.canonicalizedUndoTransactions == 1)
+        #expect(transactions.count == 2)
+        #expect(transactions.contains {
+            $0.id == CloudLedgerTransactionIdentity.undo(reversing: original.id)
+        })
+        #expect(service.balance(for: child) == 0)
+    }
+
+    private func makeSharedLedger(context: ModelContext) throws -> SharedLedgerState {
+        let householdID = UUID()
+        let sharedLedger = SharedLedgerState(
+            householdID: householdID,
+            displayName: "Family Ledger",
+            zoneName: "KidMoneyHousehold-\(householdID.uuidString)",
+            zoneOwnerName: CKCurrentUserDefaultName,
+            role: .owner,
+            databaseScope: .privateDatabase,
+            phase: .active,
+            createdAt: Date(timeIntervalSinceReferenceDate: 1)
+        )
+        context.insert(sharedLedger)
+        try context.save()
+        return sharedLedger
+    }
 }

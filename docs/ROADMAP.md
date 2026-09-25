@@ -118,7 +118,9 @@ Status: **In progress — connection prototype and local sync foundation complet
 - [x] define deterministic Household, Child, and LedgerTransaction record mappings
 - [x] add durable, coalescing pending changes at the ledger mutation boundary
 - [x] keep local-only and preparing households dormant with no queued uploads
-- decode and deterministically merge remote CloudKit records
+- [x] strictly decode and atomically merge remote CloudKit records
+- [x] durably defer transactions delivered before their referenced child
+- [x] enforce deterministic child conflicts and same-transaction undo convergence
 - drain the pending-change queue with retry and account-state handling
 - create one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
@@ -142,7 +144,7 @@ gamification.
 
 CloudKit-based private family sharing is in progress by explicit owner request.
 The distributed prototype shares only a disposable counter. Deterministic real
-ledger record mappings and the local durable queue are implemented and tested,
-but no real ledger upload, download, or offline reconciliation is enabled yet.
+ledger mappings, durable queues, and local remote-merge behavior are implemented
+and tested, but no real ledger network synchronization or migration is enabled yet.
 Minimal TestFlight and App Store preparation remains active for physical-device
 validation.
