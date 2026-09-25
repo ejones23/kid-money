@@ -1,6 +1,6 @@
 # Phase 6 family-sharing connection test
 
-Status: **Build 9 active in internal and family TestFlight groups; physical two-account verification pending**
+Status: **Invitation acceptance and two-way writes passed; final durability checks pending**
 
 TestFlight build `0.1 (8)` contains an isolated CloudKit probe. It shares only
 an integer counter, a timestamp, and whether the last writer was the owner or
@@ -81,6 +81,22 @@ finding, not a reason to change the phone's security settings.
 
 Do not begin real-ledger migration merely because the app builds or the owner
 can create a share. Both directions must be observed on the two physical phones.
+
+## Physical result — September 24, 2026
+
+TestFlight build 9 recovered the owner's incomplete build 8 state and presented
+the new-connection flow. The owner created a private share, and the spouse
+accepted it on an iPhone signed into a different iCloud Apple Account.
+
+- The owner incremented the counter from 0 to 1; after refresh, the participant
+  phone displayed 1.
+- The participant incremented the counter from 1 to 2; after refresh, the owner
+  phone displayed 2.
+
+This physically verifies invitation acceptance, participant authorization, and
+CloudKit writes in both directions, including on the managed work phone. The
+termination/relaunch and unchanged-local-ledger checks remain outstanding, so
+the disposable probe should remain in place until those are confirmed.
 
 ## After the test
 

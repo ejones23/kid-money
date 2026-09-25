@@ -61,6 +61,13 @@ groups. It adds automatic recovery for that incomplete probe state and now
 persists connection metadata only after both the counter and share save
 successfully. This recovery does not read or modify the local ledger.
 
+On September 24, 2026, build 9 physically passed invitation acceptance and
+two-way writes across two iPhones signed into different iCloud Apple Accounts.
+The owner increment was observed as counter 1 on the participant phone, and the
+participant increment was observed as counter 2 on the owner phone. Relaunch
+persistence and unchanged-ledger confirmation remain before the probe matrix is
+formally complete.
+
 ## Requirements
 
 - macOS with Xcode 26.6 or a compatible newer Xcode

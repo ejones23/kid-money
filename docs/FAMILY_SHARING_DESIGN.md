@@ -160,8 +160,9 @@ cloud synchronization is distributed.
    but avoid further local-only persistence assumptions.
 2. Add sync invariants and migration tests before enabling CloudKit.
 3. Build a disposable two-account prototype for zone creation, invitation,
-   acceptance, and two-way counter sync. **Implemented in build 8; physical
-   verification pending.**
+   acceptance, and two-way counter sync. **Implemented in builds 8–9;
+   invitation acceptance and writes in both directions were physically verified
+   on September 24, 2026. Final relaunch and unchanged-ledger checks remain.**
 4. Add the durable queue, merge rules, sync status, and existing-ledger upload.
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
