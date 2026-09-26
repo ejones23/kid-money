@@ -11,7 +11,8 @@ transport-independent queue processor now exercises send policy, retry, account
 gating, and optimistic conflicts. A concrete `CKSyncEngine` delegate now maps
 engine events into those persistence and merge boundaries. A durable migration
 coordinator stages existing local ledgers without changing their rows. The app
-does not instantiate either path or perform network synchronization.
+does not instantiate either path or perform network synchronization. A dormant
+owner setup runner composes those pieces behind an injected CloudKit boundary.
 
 ```text
 SwiftUI views ──────┐
@@ -155,8 +156,18 @@ any local children or transactions. A later product flow must offer an explicit
 keep/export/replace decision instead of silently merging independent ledgers.
 The sync-engine store may service a preparing household only during the
 persisted initial-upload phase, and its retry or terminal errors update the
-migration record. Zone creation, share creation, and app wiring are not yet
-implemented, so the coordinator itself cannot contact CloudKit.
+migration record.
+
+`CloudLedgerSetupRunner` resumes that durable state machine after validating the
+iCloud account. Its live transport idempotently creates the owner's private
+zone, constructs the dormant sync engine for one explicit initial send, fetches
+or creates the zone-wide private `CKShare`, and stops at `readyToActivate`.
+Injected tests cover lost responses after zone/share creation, an incomplete
+upload, unavailable iCloud, terminal errors, and retryable cleanup. Local sync
+state is removed only after remote zone deletion succeeds; children and
+transactions are never deleted. No app call site constructs the runner or its
+live transport, and participant adoption, activation, and ongoing sync remain
+disconnected.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is

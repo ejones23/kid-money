@@ -54,6 +54,7 @@ enum CloudLedgerMigrationError: Error, Equatable {
     case orphanedTransaction(UUID)
     case duplicateRecordName(String)
     case remoteCleanupRequired
+    case cleanupNotAllowed
 }
 
 struct CloudLedgerMigrationSummary: Equatable {
@@ -276,6 +277,39 @@ struct CloudLedgerMigrationCoordinator {
         let sharedLedger = try requireSharedLedger(householdID: migration.householdID)
         for change in try pendingChanges(householdID: migration.householdID) {
             modelContext.delete(change)
+        }
+        modelContext.delete(migration)
+        modelContext.delete(sharedLedger)
+        try modelContext.save()
+    }
+
+    /// Removes only synchronization setup after a caller has confirmed that
+    /// the remote zone no longer exists. The local ledger remains untouched.
+    func cancelAfterConfirmedRemoteCleanup() throws {
+        let migration = try requireMigration()
+        guard migration.phase != .completed else {
+            throw CloudLedgerMigrationError.cleanupNotAllowed
+        }
+        let sharedLedger = try requireSharedLedger(householdID: migration.householdID)
+        guard sharedLedger.phase != .active else {
+            throw CloudLedgerMigrationError.cleanupNotAllowed
+        }
+
+        let householdID = migration.householdID
+        for change in try pendingChanges(householdID: householdID) {
+            modelContext.delete(change)
+        }
+        for deferred in try modelContext.fetch(FetchDescriptor<DeferredCloudTransaction>())
+            where deferred.householdID == householdID {
+            modelContext.delete(deferred)
+        }
+        for state in try modelContext.fetch(FetchDescriptor<CloudLedgerSyncState>())
+            where state.householdID == householdID {
+            modelContext.delete(state)
+        }
+        for metadata in try modelContext.fetch(FetchDescriptor<CloudLedgerRecordMetadata>())
+            where metadata.householdID == householdID {
+            modelContext.delete(metadata)
         }
         modelContext.delete(migration)
         modelContext.delete(sharedLedger)

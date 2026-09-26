@@ -18,7 +18,10 @@ and a `CKSyncEngine` delegate now handles scoped send/fetch events, opaque engin
 state, and CloudKit system metadata. The runtime is not instantiated by the app,
 so no real ledger network synchronization starts yet. A durable migration state
 machine now stages an existing ledger with deterministic record identities,
-repairs interrupted queues, and refuses destructive or ambiguous adoption.
+repairs interrupted queues, and refuses destructive or ambiguous adoption. A
+dormant setup runner now validates iCloud, idempotently provisions the private
+zone, drives the explicit initial engine upload, creates the zone-wide share,
+and safely cleans up failed setup without deleting the local ledger.
 
 This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
@@ -58,8 +61,10 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   changes, successful-send cleanup, and serialized engine-state restoration
 - a non-destructive existing-ledger migration coordinator with durable phases,
   deterministic initial staging, restart repair, and guarded activation
+- a dormant, injected owner setup runner covering account gating, private-zone
+  provisioning, initial upload, share recovery, and confirmed remote cleanup
 
-The project builds without errors or warnings in Xcode 26.6. All 57 current
+The project builds without errors or warnings in Xcode 26.6. All 64 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -173,11 +178,12 @@ The migration coordinator now keeps the existing SwiftData ledger intact,
 persists each setup phase, stages a deterministic initial queue, repairs an
 interrupted queue after restart, retains edits made during setup, prevents share
 creation before the initial queue drains, and refuses to silently merge an
-invitation into a second local ledger. The next checkpoint is a dormant,
-injected setup runner for iCloud account validation, private-zone creation, the
-initial engine upload, and zone-wide share creation. Real family data remains
-local because neither the migration coordinator nor the sync runtime is called
-from the app.
+invitation into a second local ledger. The injected setup runner now implements
+idempotent account, zone, upload, share, interruption, and cleanup orchestration.
+The next checkpoint is the participant invitation-adoption and initial-fetch
+path, including explicit protection for a participant phone with an unrelated
+local ledger. Real family data remains local because neither setup path nor the
+sync runtime is called from the app.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 
