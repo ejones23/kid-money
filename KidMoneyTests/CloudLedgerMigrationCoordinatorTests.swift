@@ -154,12 +154,12 @@ struct CloudLedgerMigrationCoordinatorTests {
 
         #expect(try coordinator.recordInitialUploadCompleted().phase == .awaitingShareCreation)
         #expect(try coordinator.recordShareCreated().phase == .readyToActivate)
-        #expect(try coordinator.activate().phase == .completed)
+        #expect(try coordinator.resumeOwnerMigration().phase == .readyToActivate)
 
         let sharedLedger = try #require(
             context.fetch(FetchDescriptor<SharedLedgerState>()).first
         )
-        #expect(sharedLedger.phase == .active)
+        #expect(sharedLedger.phase == .preparing)
         #expect(service.balance(for: child) == 25)
     }
 

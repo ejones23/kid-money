@@ -197,29 +197,6 @@ struct CloudLedgerMigrationCoordinator {
     }
 
     @discardableResult
-    func activate(now: Date = .now) throws -> CloudLedgerMigrationSummary {
-        let migration = try requireMigration()
-        let sharedLedger = try requireSharedLedger(householdID: migration.householdID)
-        switch migration.phase {
-        case .readyToActivate:
-            sharedLedger.phaseRawValue = SharedLedgerPhase.active.rawValue
-            migration.phaseRawValue = CloudLedgerMigrationPhase.completed.rawValue
-            migration.activatedAt = now
-            migration.lastErrorCode = nil
-            try modelContext.save()
-        case .completed:
-            break
-        case .awaitingZoneCreation, .uploadingInitialLedger, .awaitingShareCreation,
-                .attentionRequired, nil:
-            throw CloudLedgerMigrationError.invalidPhase(
-                expected: .readyToActivate,
-                actual: migration.phase
-            )
-        }
-        return try summary(for: migration)
-    }
-
-    @discardableResult
     func recordRecoverableFailure(
         code: String,
         now: Date = .now

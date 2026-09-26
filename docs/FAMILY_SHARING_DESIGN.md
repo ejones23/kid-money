@@ -177,8 +177,11 @@ cloud synchronization is distributed.
    zone-wide share, and performs confirmed remote cleanup without deleting the
    ledger. A dormant participant coordinator validates and persists a private
    invitation, rejects unrelated local data, recovers interrupted acceptance,
-   and atomically imports the invited zone. Status UI, remote-notification
-   capability, and live activation remain disabled.**
+   and atomically imports the invited zone. A dormant activation gate now
+   checks setup phase, iCloud identity, and share access; offline edits remain
+   queued across restart, while account changes or revocation freeze new edits
+   without deleting local data. Status UI, remote-notification capability, and
+   app wiring remain disabled.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,

@@ -203,7 +203,7 @@ struct LedgerService {
     private func ensureSharedLedgerAllowsMutation() throws {
         let adoptionInProgress = try modelContext.fetch(
             FetchDescriptor<CloudLedgerParticipantAdoptionState>()
-        ).contains { $0.phase != nil }
+        ).contains { $0.phase != .completed }
         guard !adoptionInProgress else {
             throw LedgerError.sharedLedgerUnavailable
         }

@@ -9,8 +9,9 @@ accounts, or third-party dependencies. A child's balance is derived from an
 auditable transaction ledger rather than stored as a mutable total. Private
 iCloud sharing between invited parents is now in development; its approved
 design preserves the local-first ledger and does not introduce a Kid Money
-login or custom backend. Build 8 contains only a disposable CloudKit connection
-probe and does not upload ledger data. The real sync foundation now defines
+login or custom backend. TestFlight builds 8–9 contain only a disposable
+CloudKit connection probe and do not upload ledger data. The real sync
+foundation now defines
 deterministic CloudKit records, a durable local pending-change queue, and tested
 remote decode/merge rules. A tested queue processor now adds persisted sync
 status, retry/backoff, iCloud account gating, and optimistic conflict handling,
@@ -25,6 +26,10 @@ and safely cleans up failed setup without deleting the local ledger.
 The participant adoption coordinator now stages a private invitation, checks
 for an unrelated local ledger, accepts the share, and imports the invited zone
 as an atomic initial snapshot. It remains disconnected from the app.
+A separate dormant activation gate verifies owner or participant readiness,
+the signed-in iCloud identity, and current share access before enabling edits.
+Offline edits stay queued; account changes and revoked shares freeze new edits
+without deleting local ledger history.
 
 This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
@@ -68,8 +73,10 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   provisioning, initial upload, share recovery, and confirmed remote cleanup
 - a dormant participant adoption path with invitation validation, local-ledger
   preflight, scoped initial import, and interrupted-acceptance recovery
+- a dormant activation gate with account/share verification, offline continuity,
+  and non-destructive account-switch and revocation handling
 
-The project builds without errors or warnings in Xcode 26.6. All 71 current
+The project builds without errors or warnings in Xcode 26.6. All 75 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -187,10 +194,12 @@ invitation into a second local ledger. The injected setup runner now implements
 idempotent account, zone, upload, share, interruption, and cleanup orchestration.
 The participant adoption path now validates a zone-wide, read-write invitation,
 rejects a phone with an unrelated local ledger, imports the invited zone, and
-recovers a lost acceptance response after relaunch. The next checkpoint is
-activation and ongoing sync recovery, including explicit safeguards for iCloud
-account changes and invite revocation. Real family data remains local because
-neither setup path nor the sync runtime is called from the app.
+recovers a lost acceptance response after relaunch. The injected activation
+gate now checks the iCloud account and live share before enabling a prepared
+ledger. It preserves queued offline edits across restart and freezes new edits
+after account switching or invite revocation. The next checkpoint is a safe,
+explicit app entry point and ongoing runtime recovery. Real family data remains
+local because setup, activation, and sync are not called from the app.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

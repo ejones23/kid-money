@@ -101,7 +101,7 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — dormant owner and participant setup pipelines complete**
+Status: **In progress — dormant owner, participant, and activation paths complete**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -142,6 +142,9 @@ Status: **In progress — dormant owner and participant setup pipelines complete
 - [x] refuse participant adoption when an unrelated local ledger exists
 - [x] recover an interrupted share acceptance and initial shared-zone fetch
 - [x] atomically import a scoped first snapshot and block edits until activation
+- [x] gate owner/participant activation on current iCloud identity and share access
+- [x] retain queued local edits through an offline restart; freeze on account switch
+  or share revocation without deleting ledger rows
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -169,7 +172,8 @@ processing, a dormant CKSyncEngine adapter, and the non-destructive migration
 state machine are implemented and tested. Dormant owner private-zone/share
 provisioning is also implemented behind an injected setup transport. Participant
 adoption is implemented behind an injected transport with local preflight and
-retryable initial import. App wiring, activation, and live ledger network
-synchronization are not enabled yet.
+retryable initial import. A separate injected activation gate tests account and
+share failure recovery. App wiring and live ledger network synchronization are
+not enabled yet.
 Minimal TestFlight and App Store preparation remains active for physical-device
 validation.

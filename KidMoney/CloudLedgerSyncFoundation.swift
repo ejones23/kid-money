@@ -30,6 +30,7 @@ final class SharedLedgerState {
     var phaseRawValue: String
     var schemaVersion: Int
     var createdAt: Date
+    var accountRecordName: String? = nil
 
     init(
         householdID: UUID = UUID(),

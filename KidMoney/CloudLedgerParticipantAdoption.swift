@@ -6,6 +6,7 @@ enum CloudLedgerParticipantAdoptionPhase: String, Codable {
     case awaitingAcceptance
     case awaitingInitialFetch
     case readyToActivate
+    case completed
     case attentionRequired
 }
 
@@ -160,6 +161,7 @@ struct CloudLedgerParticipantAdoptionCoordinator {
               phase != .attentionRequired else {
             throw CloudLedgerParticipantAdoptionError.invalidState
         }
+        if phase == .completed { return state }
         guard try await transport.accountStatus() == .available else {
             state.attemptCount += 1
             state.lastErrorCode = "icloud-unavailable"

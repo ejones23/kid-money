@@ -136,8 +136,8 @@ with current local state and immediately requeues the newer version.
 Each state-update event is JSON-encoded into `CloudLedgerSyncState.engineStateData`
 and restored when constructing `CloudLedgerSyncEngineRuntime`. Automatic sync
 defaults to disabled and no production call site creates the runtime. Status
-UI, remote-notification capability, and activation remain deliberately
-disconnected.
+UI, remote-notification capability, and the activation coordinator remain
+deliberately disconnected from app startup.
 
 `CloudLedgerMigrationCoordinator` persists the owner setup phases: awaiting
 zone creation, uploading the initial ledger, awaiting share creation, ready to
@@ -176,8 +176,20 @@ The coordinator requires exactly one Household record whose UUID matches the
 zone name. It merges the complete first snapshot with the local preparing
 household in one save; malformed records roll back the batch. An interrupted
 acceptance or fetch can be retried from durable invitation state. `LedgerService`
-blocks mutations throughout participant adoption so imported rows cannot be
-edited before activation. No app call site invokes this coordinator.
+blocks mutations throughout participant adoption until guarded activation
+marks it complete. No app call site invokes this coordinator.
+
+`CloudLedgerActivationCoordinator` is the sole dormant path from prepared to
+active. It requires completed owner upload/share setup or participant first
+import, no deferred participant transactions, a reachable zone-wide share, and
+the current iCloud account identity. Activation persists that identity locally
+with the shared-ledger phase in one save. Subsequent access checks keep
+transiently offline ledgers writable (edits remain queued), but freeze new
+mutations without deleting data if the account changes or share access is
+revoked. Attention-required state is deliberately not auto-recovered: the
+product still needs a clear user decision for a different iCloud account or a
+removed invitation. The live transport exists but is not constructed by the
+app; these paths are covered only by injected tests, not physical devices.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is
