@@ -1,10 +1,9 @@
 # Phase 6 real-ledger physical test
 
-Status: **Build 10 is Testing in both Internal Testing and the external Family
-Test group. The owner-only preflight passed, the owner chose upload, the owner
-screen reported Sharing enabled, and a private text invitation was sent on
-September 26, 2026. Participant adoption and matching imported history passed;
-ordinary two-phone changes currently fail to move through Sync Now.**
+Status: **Build 11 is Testing in both Internal Testing and the external Family
+Test group. Build 10 passed owner opt-in, invitation, participant adoption,
+and matching imported history; its ordinary Sync Now left a new edit queued.
+Build 11 contains a candidate fix, awaiting the two-phone retry.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to

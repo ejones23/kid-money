@@ -167,6 +167,8 @@ ordinary Sync Now is failing to move a queued owner edit**
   transaction history on a second iCloud Apple Account
 - [ ] fix and physically verify ordinary owner-to-participant and
   participant-to-owner synchronization after manual changes
+- [x] validate, upload, and add candidate Sync Now fix build 11 to both
+  TestFlight groups; await the two-phone retry of the existing queued edit
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI

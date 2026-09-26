@@ -92,6 +92,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Verify participant adoption, Sharing enabled, and matching initial
   transaction history on the spouse's phone.
 - [ ] Resolve the build 10 ordinary-sync failure before continuing two-way edits.
+- [x] Validate and upload build `0.1 (11)` with the candidate Sync Now fix;
+  App Store Connect shows **Testing** in both internal and Family Test groups.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
 
 ## 6. Public release

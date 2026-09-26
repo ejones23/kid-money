@@ -117,9 +117,10 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 The owner-only, no-upload physical preflight for build `0.1 (10)` passed on
 September 26, 2026. Its real-ledger schema is deployed to CloudKit Production,
-its privacy label and full policy are published, and build 10 is Testing in the
-spouse's external group. Owner opt-in, invitation, and participant initial import
-have been physically observed. Diagnose and repair ordinary Sync Now before
+its privacy label and full policy are published. Build 11, with a candidate
+Sync Now lifetime fix, is Testing in the internal and spouse external groups.
+Owner opt-in, invitation, and participant initial import have been physically
+observed. First retry the existing queued owner edit on both phones before
 resuming two-way manual and Siri testing. Do not start uploads
 merely because the app launched. Keep attention-required recovery
 non-destructive and preserve the physically verified Siri grammar.
