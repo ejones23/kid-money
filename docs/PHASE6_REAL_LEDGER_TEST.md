@@ -98,13 +98,16 @@ the edit once with the expected balance.
    new history row and the expected balance after their **Sync Now**.
 2. **Passed:** the spouse made a small manual adjustment, synced it, and the
    owner received it once with the expected balance after Sync Now.
-3. **Partially passed, with a routing regression:** build 11 rejected the
-   locked and then unlocked one-shot phrase “Give Rebecca fifteen cents in Kid
-   Money,” but the unlocked prompted route “Give money in Kid Money” collected
-   Rebecca and fifteen cents, created exactly one Siri transaction, reached
-   `$3.00`, and queued one cloud change. Sync that transaction to the spouse
-   before testing a spouse-side Siri subtraction. A simulator build does not
-   establish Siri behavior.
+3. **Partially passed, with an iOS 27 routing compatibility finding:** after
+   both phones had been updated to iOS 27, build 11 rejected the locked and
+   then unlocked one-shot phrase “Give Rebecca fifteen cents in Kid Money,”
+   but the unlocked prompted route “Give money in Kid Money” collected Rebecca
+   and fifteen cents, created exactly one Siri transaction, reached `$3.00`,
+   and queued one cloud change. Because both the app build and OS changed since
+   the build 6 success, the observation does not isolate an app regression from
+   an OS routing change. Sync that transaction to the spouse before testing a
+   spouse-side Siri subtraction. A simulator build does not establish Siri
+   behavior.
 4. Terminate and relaunch both apps. Confirm matching balances and histories,
    then run **Sync Now** once more on each.
 

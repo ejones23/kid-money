@@ -219,11 +219,13 @@ Build 11 fixes the sync runtime lifetime issue and is Testing in both internal
 and spouse external groups. The previously queued edit cleared from the owner's
 queue and appeared exactly once on the spouse's phone after explicit Sync Now
 on each device. A subsequent spouse-side manual edit also synchronized back
-to the owner exactly once with the expected balance. On build 11, an unlocked
-prompted Siri request created an exact fifteen-cent shared-ledger transaction
-and durable pending change, but the prior locked one-shot phrase regressed to
-an unlock request and then failed routing. Siri delivery, relaunch, and recovery
-remain unverified. The Production CloudKit
+to the owner exactly once with the expected balance. After both phones were
+updated to iOS 27, an unlocked prompted Siri request on build 11 created an
+exact fifteen-cent shared-ledger transaction and durable pending change, but
+the prior locked one-shot phrase requested an unlock and then failed routing.
+Because both the app and OS changed since build 6, this is recorded as an iOS
+27 compatibility finding rather than an isolated build regression. Siri
+delivery, relaunch, and recovery remain unverified. The Production CloudKit
 schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in
 [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).

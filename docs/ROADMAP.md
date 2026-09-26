@@ -172,8 +172,9 @@ in both directions; Siri, relaunch, and recovery still need testing**
   TestFlight groups
 - [x] verify an unlocked prompted Siri addition creates an exact shared-ledger
   transaction and durable pending change in build 11
-- [ ] restore the build 6 one-shot grammar and locked-screen execution, which
-  regressed in build 11 despite the prompted intent still working
+- [ ] investigate iOS 27 one-shot grammar and locked-screen compatibility; the
+  build 11 test failed after both the app and OS changed since build 6, while
+  the prompted intent still worked
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
