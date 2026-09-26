@@ -3,6 +3,10 @@ import SwiftData
 import SwiftUI
 import UIKit
 
+private enum OwnerSharingPreflightError: Error {
+    case unavailable(CKAccountStatus)
+}
+
 @MainActor
 struct FamilyLedgerSharingView: View {
     @Environment(\.modelContext) private var modelContext
@@ -169,6 +173,11 @@ struct FamilyLedgerSharingView: View {
     }
 
     private func startOwnerSharing() async throws {
+        let status = try await CloudLedgerLiveSetupTransport(modelContext: modelContext)
+            .accountStatus()
+        guard status == .available else {
+            throw OwnerSharingPreflightError.unavailable(status)
+        }
         try CloudLedgerMigrationCoordinator(modelContext: modelContext)
             .beginOwnerMigration(displayName: "Family Ledger")
         try await resumeOwnerSharing()
@@ -268,6 +277,18 @@ struct FamilyLedgerSharingView: View {
         }
         if case CloudLedgerParticipantAdoptionError.iCloudUnavailable = error {
             return "Sign in to an available iCloud account, then try joining again."
+        }
+        if case OwnerSharingPreflightError.unavailable(let status) = error {
+            if status == .restricted {
+                return "This device restricts iCloud access. No family ledger upload was started."
+            }
+            return "Sign in to iCloud or try again when iCloud is available. No family ledger upload was started."
+        }
+        if case CloudLedgerSetupRunnerError.iCloudUnavailable = error {
+            return "iCloud became unavailable during setup. Your local ledger is safe; open Sharing to resume or cancel."
+        }
+        if case CloudLedgerSetupRunnerError.operationFailed = error {
+            return "iCloud could not finish sharing. Your local ledger is safe. Open Sharing to resume or cancel setup."
         }
         if case CloudLedgerMigrationError.localLedgerNotEmpty = error {
             return "This phone already has a local ledger. Kid Money will not replace it automatically."

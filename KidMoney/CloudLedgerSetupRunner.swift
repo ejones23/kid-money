@@ -20,7 +20,8 @@ struct CloudLedgerSetupResult {
 }
 
 /// The network boundary for owner setup. Tests inject a deterministic fake;
-/// the live implementation below is intentionally not constructed by the app.
+/// the live implementation below is constructed only for explicit Sharing
+/// actions.
 @MainActor
 protocol CloudLedgerSetupTransport: AnyObject {
     func accountStatus() async throws -> CKAccountStatus
@@ -197,7 +198,7 @@ struct CloudLedgerSetupRunner {
 }
 
 /// Real CloudKit transport for the setup runner. Keeping its construction out
-/// of app startup ensures this code cannot upload a user's ledger yet.
+/// of app startup ensures opening Kid Money cannot upload a user's ledger.
 @MainActor
 final class CloudLedgerLiveSetupTransport: CloudLedgerSetupTransport {
     private let container: CKContainer

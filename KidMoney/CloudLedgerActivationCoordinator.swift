@@ -51,7 +51,7 @@ enum CloudLedgerAccessErrorClassifier {
     }
 }
 
-/// Dormant activation gate. No caller in the app constructs this coordinator.
+/// Activation gate. Only explicit Sharing actions construct this coordinator.
 /// A successful check is required before a prepared ledger can be made writable.
 @MainActor
 struct CloudLedgerActivationCoordinator {
