@@ -11,7 +11,8 @@ Kid Money is designed to keep its ledger data on the user's device. The develope
 
 Kid Money has:
 
-- no user accounts;
+- no Kid Money-managed accounts (optional sharing uses each adult's existing
+  iCloud Apple Account);
 - no advertising;
 - no analytics or tracking SDKs;
 - no third-party analytics or advertising integrations.
@@ -24,15 +25,16 @@ owner-or-participant role value in a private share sent only to people the owner
 invites. TestFlight build 9 contains this counter-only test and does not upload
 the local ledger.
 
-A future TestFlight build will offer an optional **Share Family Ledger** action.
-Only after the ledger owner explicitly confirms, Kid Money will copy the
+Builds with real-ledger sharing offer an optional **Share Family Ledger** action.
+Only after the ledger owner explicitly confirms does Kid Money copy the
 household name, child names, transaction amounts and dates, optional notes,
 and related ledger identifiers to a custom zone in the owner's private iCloud
 CloudKit database. Balances remain derived from transactions. The owner may
 invite another adult with read-write access through Apple's private sharing
 sheet. That adult uses their own iCloud Apple Account; Kid Money does not
 collect Apple Account passwords. Apple operates iCloud, and the developer does
-not receive the family's records through a developer-operated server.
+not receive the family's records or have access to them in the developer
+portal.
 
 Each participating phone keeps a local copy so the ledger works offline.
 In the first sharing test build, the parent starts synchronization with **Sync

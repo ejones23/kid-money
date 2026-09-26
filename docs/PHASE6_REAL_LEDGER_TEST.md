@@ -1,6 +1,7 @@
 # Phase 6 real-ledger physical test
 
-Status: **Prepared; do not run until the Production schema and privacy release gates pass.**
+Status: **Prepared; Production schema passed. Do not run until the privacy
+release gate passes and build 10 is distributed.**
 
 This is separate from the successful counter-only connection test. The next
 build will offer an explicit owner upload of the actual child and transaction

@@ -77,6 +77,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   schema to Production before distributing an opt-in sharing build.
 - [ ] Verify App Store Connect privacy answers and the published privacy policy
   match the optional private CloudKit ledger upload.
+  The verified privacy-policy URL and `Data Not Collected` questionnaire answer
+  are saved in App Store Connect; the label still needs explicit publication.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
 
 ## 6. Public release
