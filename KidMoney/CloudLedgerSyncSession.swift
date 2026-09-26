@@ -225,6 +225,7 @@ enum CloudLedgerSyncFailurePolicy {
 final class CloudLedgerLiveSyncSessionTransport: CloudLedgerSyncSessionTransport {
     let modelContext: ModelContext
     let container: CKContainer
+    private var retainedRuntime: CloudLedgerSyncEngineRuntime?
 
     init(
         modelContext: ModelContext,
@@ -237,14 +238,24 @@ final class CloudLedgerLiveSyncSessionTransport: CloudLedgerSyncSessionTransport
     }
 
     func fetchChanges(for ledger: SharedLedgerState) async throws {
-        try await runtime(for: ledger).engine.fetchChanges()
+        let runtime = try runtime(for: ledger)
+        try await runtime.engine.fetchChanges()
     }
 
     func sendChanges(for ledger: SharedLedgerState) async throws {
-        try await runtime(for: ledger).engine.sendChanges()
+        let runtime = try runtime(for: ledger)
+        try runtime.refreshPendingChangesFromQueue()
+        try await runtime.engine.sendChanges()
     }
 
-    private func runtime(for ledger: SharedLedgerState) throws -> CloudLedgerSyncEngineRuntime {
+    func runtime(for ledger: SharedLedgerState) throws -> CloudLedgerSyncEngineRuntime {
+        if let retainedRuntime {
+            guard retainedRuntime.delegate.store.householdID == ledger.householdID,
+                  retainedRuntime.delegate.zoneID == ledger.zoneID else {
+                throw CloudLedgerSyncSessionError.invalidLedger
+            }
+            return retainedRuntime
+        }
         let database: CKDatabase
         switch ledger.databaseScope {
         case .privateDatabase:
@@ -254,10 +265,12 @@ final class CloudLedgerLiveSyncSessionTransport: CloudLedgerSyncSessionTransport
         case nil:
             throw CloudLedgerSyncSessionError.invalidLedger
         }
-        return try CloudLedgerSyncEngineRuntime(
+        let runtime = try CloudLedgerSyncEngineRuntime(
             database: database,
             modelContext: modelContext,
             householdID: ledger.householdID
         )
+        retainedRuntime = runtime
+        return runtime
     }
 }

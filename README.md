@@ -82,7 +82,7 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - an owner upload-consent screen and separate participant invitation review;
   neither launches network work merely because the app opened
 
-The project builds without errors or warnings in Xcode 26.6. All 88 current
+The project builds without errors or warnings in Xcode 26.6. All 89 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -213,7 +213,9 @@ participant invitation review, guarded Join, Sync Now, and
 participant-management actions. The owner confirmed build 10 preserved the
 local ledger and that cancelling upload consent left sharing disabled. The
 owner then reported Sharing enabled after explicit upload and sent a private
-invitation; participant adoption and two-way sync remain unverified. Build 10
+invitation. The spouse joined and saw the complete initial history, but a new
+owner-side edit remained queued after Sync Now and did not reach the spouse.
+Ordinary two-way sync remains unverified. Build 10
 is Testing in both internal and spouse external groups. The Production CloudKit
 schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in

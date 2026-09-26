@@ -3,7 +3,8 @@
 Status: **Build 10 is Testing in both Internal Testing and the external Family
 Test group. The owner-only preflight passed, the owner chose upload, the owner
 screen reported Sharing enabled, and a private text invitation was sent on
-September 26, 2026. Participant adoption and two-phone sync remain unverified.**
+September 26, 2026. Participant adoption and matching imported history passed;
+ordinary two-phone changes currently fail to move through Sync Now.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to
@@ -62,6 +63,11 @@ second device can import or edit the real ledger.
 
 ## Participant adoption
 
+Physical result on September 26, 2026: the spouse opened the private text
+invitation on build 10, joined successfully, saw **Sharing enabled**, and could
+read the owner's complete existing transaction history. Do not repeat adoption
+or uninstall either app to troubleshoot later synchronization.
+
 1. On the spouse's phone, open the invitation. Kid Money should say an
    invitation is ready and should not import children immediately.
 2. Open **Kid Money → Sharing**. Confirm the invitation review and empty-ledger
@@ -72,6 +78,18 @@ second device can import or edit the real ledger.
    this first test build.
 
 ## Two-way writes and persistence
+
+Current build 10 finding: an owner-side manual `+$0.25` appeared locally and
+left one change waiting to sync. **Sync Now** on the owner did not clear that
+change, and **Sync Now** on the participant did not deliver it; the participant
+still showed the pre-edit balance. This is a failure of ordinary sync, not an
+expected manual-refresh delay. Build 11 contains a candidate engine-lifetime
+fix. Update both phones through TestFlight without uninstalling or re-inviting.
+Before making any more edits, tap **Sync Now** on the owner phone and check
+that the pending count reaches zero. Then tap **Sync Now** on the spouse's
+phone and check that this same 25-cent transaction appears exactly once. If
+either check fails, record the **Sync** status and pending count on both phones
+and any alert text, then pause again.
 
 1. On the owner phone, make one small manual adjustment with a distinctive
    note. Tap **Sync Now** there, then on the spouse's phone. Confirm the exact

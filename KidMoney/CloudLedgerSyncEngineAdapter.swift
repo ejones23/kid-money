@@ -626,4 +626,8 @@ final class CloudLedgerSyncEngineRuntime {
         self.delegate = delegate
         self.engine = engine
     }
+
+    func refreshPendingChangesFromQueue() throws {
+        engine.state.add(pendingRecordZoneChanges: try delegate.store.pendingEngineChanges())
+    }
 }

@@ -36,6 +36,31 @@ private final class SessionWorkStub: CloudLedgerSyncSessionTransport {
 
 @MainActor
 struct CloudLedgerSyncSessionTests {
+    @Test func liveTransportRetainsDelegateAcrossFetchAndSendAndRefreshesQueue() throws {
+        let (context, shared) = try fixture()
+        let transport = CloudLedgerLiveSyncSessionTransport(modelContext: context)
+        weak var delegate: CloudLedgerSyncEngineDelegate?
+
+        do {
+            let runtime = try transport.runtime(for: shared)
+            delegate = runtime.delegate
+            #expect(try transport.runtime(for: shared) === runtime)
+
+            let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+            let pending = CKSyncEngine.PendingRecordZoneChange.saveRecord(
+                CKRecord.ID(
+                    recordName: CloudLedgerRecordName.child(child.id),
+                    zoneID: shared.zoneID
+                )
+            )
+            #expect(!runtime.engine.state.pendingRecordZoneChanges.contains(pending))
+            try runtime.refreshPendingChangesFromQueue()
+            #expect(runtime.engine.state.pendingRecordZoneChanges.contains(pending))
+        }
+
+        #expect(delegate != nil)
+    }
+
     @Test func accessibleSessionFetchesBeforeSendingAndReportsSynced() async throws {
         let (context, shared) = try fixture()
         let access = SessionAccessStub()

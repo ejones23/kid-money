@@ -1,10 +1,13 @@
 # Family sharing design proposal
 
-Status: **Approved; connection prototype passed and explicit sharing UI is wired locally**
+Status: **Approved; initial private-ledger import passed on two phones, with
+ordinary incremental synchronization under repair**
 
-The proposed consent and invitation UI boundary for enabling the real ledger
-is in [PHASE6_ACTIVATION_FLOW.md](PHASE6_ACTIVATION_FLOW.md). It is wired into the
-local build but has not been distributed through TestFlight or physically tested.
+The consent and invitation UI boundary is in
+[PHASE6_ACTIVATION_FLOW.md](PHASE6_ACTIVATION_FLOW.md). Build 10 reached both
+TestFlight groups. The owner uploaded an existing ledger, and the spouse joined
+and saw its complete initial history. A subsequent owner edit remained queued
+after Sync Now; incremental two-way synchronization is not yet verified.
 
 This document records the approved design for letting two parents use their own
 Apple Accounts and devices to manage one Kid Money ledger. Implementation begins

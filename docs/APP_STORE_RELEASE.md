@@ -89,7 +89,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   App Store Connect shows **Testing** for the group.
 - [x] Observe owner-side build 10 consent/upload completion, **Sharing enabled**,
   and private invitation sent on a physical phone.
-- [ ] Verify participant adoption and matching ledger on the spouse's phone.
+- [x] Verify participant adoption, Sharing enabled, and matching initial
+  transaction history on the spouse's phone.
+- [ ] Resolve the build 10 ordinary-sync failure before continuing two-way edits.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
 
 ## 6. Public release

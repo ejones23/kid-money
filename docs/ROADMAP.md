@@ -101,8 +101,8 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — build 10 in both TestFlight groups; owner upload and
-invitation reported successful; participant adoption and two-phone sync pending**
+Status: **In progress — build 10 completed invitation and initial import;
+ordinary Sync Now is failing to move a queued owner edit**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -163,6 +163,10 @@ invitation reported successful; participant adoption and two-phone sync pending*
 - [x] add build 10 to the external Family Test group for the spouse
 - [x] physically observe owner-side Sharing enabled after explicit upload
   consent and a private invitation sent through Apple's sharing UI
+- [x] physically verify participant Join, Sharing enabled, and complete initial
+  transaction history on a second iCloud Apple Account
+- [ ] fix and physically verify ordinary owner-to-participant and
+  participant-to-owner synchronization after manual changes
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -182,8 +186,17 @@ family external testers in build 10, as specified in
 `PHASE6_ACTIVATION_FLOW.md`. The Production CloudKit schema and privacy
 disclosures passed their release gates September 26, 2026. The owner-only
 no-upload physical preflight passed before external build 10 distribution.
-The owner reported Sharing enabled after explicit upload consent and sent the
-private invitation. Participant import and two-way sync are not yet verified.
+The participant joined and saw the complete initial history. A subsequent
+owner-side manual edit remained queued after Sync Now and did not appear on the
+participant after their Sync Now. Ordinary sync must be fixed before the rest
+of the two-way matrix.
+
+After the basic two-way matrix is stable:
+
+- Let the household owner choose a family-ledger display name (for example,
+  “Jones Family”) and synchronize later renames safely as household metadata.
+- Add pull-to-refresh on a child's transaction-history screen, backed by the
+  same guarded Sync Now path and an honest visible result.
 
 ## Explicitly deferred
 

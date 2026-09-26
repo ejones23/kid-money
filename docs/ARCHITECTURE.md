@@ -208,6 +208,10 @@ synced after successful work. Transient CloudKit failures persist retry time
 and leave local edits writable; missing zones, changed accounts, or terminal
 errors freeze new edits without removing the queue. The live transport keeps
 `CKSyncEngine.automaticallySync` disabled and is constructed only by Sync Now.
+It retains one engine and delegate through the complete fetch/send operation;
+the engine's configuration holds its delegate weakly, so a temporary runtime
+cannot safely service a live sync request. Before sending it adds any durable
+changes queued after the engine was constructed.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is
