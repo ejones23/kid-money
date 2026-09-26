@@ -10,10 +10,9 @@ auditable transaction ledger rather than stored as a mutable total. Private
 iCloud sharing between invited parents is now in development; its approved
 design preserves the local-first ledger and does not introduce a Kid Money
 login or custom backend. TestFlight builds 8–9 contain only a disposable
-CloudKit connection probe and do not upload ledger data. Build 10 is in
-Internal Testing for an owner-only preflight of opt-in real-ledger sharing;
-it is not yet in the spouse's external group. The real sync
-foundation now defines
+CloudKit connection probe and do not upload ledger data. Build 10 passed an
+owner-only, no-upload physical preflight and is Testing in both internal and
+spouse external TestFlight groups. The real sync foundation now defines
 deterministic CloudKit records, a durable local pending-change queue, and tested
 remote decode/merge rules. A tested queue processor now adds persisted sync
 status, retry/backoff, iCloud account gating, and optimistic conflict handling,
@@ -211,10 +210,11 @@ after account switching or invite revocation. The access-checked sync session
 fetches before sending, rechecks account and share access, and retains queued
 edits on failure. Build 10 has an explicit owner-consent screen,
 participant invitation review, guarded Join, Sync Now, and
-participant-management actions. None of those paths has been physically
-verified yet. Build 10 is available to internal testers for an
-owner-only, no-upload preflight; build 9 remains the spouse's counter-only
-external build. The Production CloudKit schema and privacy disclosures passed
+participant-management actions. The owner confirmed build 10 preserved the
+local ledger and that cancelling upload consent left sharing disabled; actual
+upload, invitation, and two-way sync are not yet physically verified. Build 10
+is Testing in both internal and spouse external groups. The Production CloudKit
+schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in
 [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
 

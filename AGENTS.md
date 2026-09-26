@@ -19,7 +19,7 @@ Read these before substantial work:
 
 Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified the locked-screen numeric give/take grammar, exact balances, and relaunch persistence. Siri may still request Kid Money/Wallet disambiguation. Build `0.1 (7)` passed the manual-interface review. Phase 5 added exact input, duplicate-name matching, overflow protection, multi-context persistence tests, privacy-conscious logging, accessibility improvements, one production `ModelContainer`, and an opt-out from SwiftData-managed CloudKit sync.
 
-Private CloudKit family sharing is approved for Phase 6. Build `0.1 (9)` passed the two-account counter-only physical probe on September 24, 2026: bidirectional writes and relaunch persistence worked, while both phones' local ledgers remained unchanged. The real-ledger foundation includes deterministic records, durable queues, strict atomic merge, out-of-order deferral, undo convergence, a guarded queue processor, and an on-demand CKSyncEngine adapter. Owner and participant setup coordinators stage, upload, share, accept, and import under injected transports. Build `0.1 (10)` wires these paths to explicit owner consent, participant Join, Sync Now, and participant-management UI; merely opening the app does not start an upload. The consent and sharing screens have been inspected on the iOS 26.5 simulator, and all 88 tests pass in Xcode 26.6. Build 10 is in Internal Testing for owner-only physical preflight; build 9 remains the spouse's external counter-only build. Real-ledger sharing has not been physically verified.
+Private CloudKit family sharing is approved for Phase 6. Build `0.1 (9)` passed the two-account counter-only physical probe on September 24, 2026: bidirectional writes and relaunch persistence worked, while both phones' local ledgers remained unchanged. The real-ledger foundation includes deterministic records, durable queues, strict atomic merge, out-of-order deferral, undo convergence, a guarded queue processor, and an on-demand CKSyncEngine adapter. Owner and participant setup coordinators stage, upload, share, accept, and import under injected transports. Build `0.1 (10)` wires these paths to explicit owner consent, participant Join, Sync Now, and participant-management UI; merely opening the app does not start an upload. The consent and sharing screens have been inspected on the iOS 26.5 simulator, and all 88 tests pass in Xcode 26.6. Build 10 passed its owner-only, no-upload physical preflight on September 26, 2026, and is Testing in both internal and spouse external TestFlight groups. Real-ledger upload and two-way sharing have not been physically verified.
 
 The activation gate validates owner or participant readiness, confirms iCloud
 account identity and live share access, keeps offline edits queued across
@@ -115,10 +115,11 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Run the owner-only, no-upload physical preflight for internal TestFlight build
-`0.1 (10)`. Its real-ledger schema is deployed to CloudKit Production and its
-privacy label and full policy are published. If the preflight passes, proceed
-with deliberate owner opt-in, then add build 10 to the spouse's external group
-for participant acceptance and two-way manual/Siri testing. Do not start uploads
+The owner-only, no-upload physical preflight for build `0.1 (10)` passed on
+September 26, 2026. Its real-ledger schema is deployed to CloudKit Production,
+its privacy label and full policy are published, and build 10 is Testing in the
+spouse's external group.
+Proceed with deliberate owner opt-in and invitation, then participant acceptance
+and two-way manual/Siri testing. Do not start uploads
 merely because the app launched. Keep attention-required recovery
 non-destructive and preserve the physically verified Siri grammar.

@@ -82,8 +82,11 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   iCloud sharing remains disclosed in the full privacy policy.
 - [x] Archive, validate, and upload real-ledger sharing build `0.1 (10)`.
 - [x] Add build `0.1 (10)` to `Internal Testing` after processing completes.
-- [ ] Complete an owner-only, no-upload preflight before enabling the spouse's
-  external `Family Test` group for build 10.
+- [x] Complete the owner-only, no-upload physical preflight for build 10:
+  existing ledger unchanged, plausible consent counts, and **Not Now** kept
+  the ledger local-only.
+- [x] Add build `0.1 (10)` to the external `Family Test` group after preflight;
+  App Store Connect shows **Testing** for the group.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
 
 ## 6. Public release

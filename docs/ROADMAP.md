@@ -101,7 +101,8 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — build 10 in Internal Testing; owner preflight pending**
+Status: **In progress — build 10 in both TestFlight groups; owner no-upload
+preflight passed; real-ledger upload and two-phone sync pending**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -157,6 +158,9 @@ Status: **In progress — build 10 in Internal Testing; owner preflight pending*
 - [x] verify the owner sharing and consent screens on an iPhone simulator
 - [x] publish the private-sharing privacy policy and App Store privacy label
 - [x] validate and distribute real-ledger sharing build 10 to internal testers
+- [x] physically verify build 10 preserves the owner's local ledger and that
+  cancelling the upload consent leaves sharing disabled
+- [x] add build 10 to the external Family Test group for the spouse
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -171,11 +175,12 @@ Status: **In progress — build 10 in Internal Testing; owner preflight pending*
 See `FAMILY_SHARING_DESIGN.md` for the approved persistence, authentication,
 migration, and validation design. The probe procedure and strict no-ledger-data
 boundary are recorded in `PHASE6_CONNECTION_TEST.md`.
-The real-ledger consent and invitation screens are distributed to internal
-testers in build 10, as specified in `PHASE6_ACTIVATION_FLOW.md`. Build 9 in
-the spouse's external group remains counter-only. The Production CloudKit
-schema and privacy disclosures passed their release gates September 26, 2026.
-Owner-only physical preflight precedes any external build 10 distribution.
+The real-ledger consent and invitation screens are distributed to internal and
+family external testers in build 10, as specified in
+`PHASE6_ACTIVATION_FLOW.md`. The Production CloudKit schema and privacy
+disclosures passed their release gates September 26, 2026. The owner-only
+no-upload physical preflight passed before external build 10 distribution.
+The actual ledger upload, invitation, and two-way sync are not yet verified.
 
 ## Explicitly deferred
 

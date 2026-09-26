@@ -1,7 +1,8 @@
 # Phase 6 real-ledger physical test
 
-Status: **Build 10 is in Internal Testing; owner-only, no-upload preflight is
-ready. External spouse testing waits for that preflight.**
+Status: **Build 10 is Testing in both Internal Testing and the external Family
+Test group. The owner-only, no-upload physical preflight passed on September 26,
+2026. Deliberate owner upload and two-phone ledger sync remain unverified.**
 
 This is separate from the successful counter-only connection test. The next
 build will offer an explicit owner upload of the actual child and transaction
@@ -15,16 +16,19 @@ The owner should review the consent sheet before deciding to proceed.
    `iCloud.io.github.ejones23.KidMoney`. Verify the `cloudkit.share` type remains.
 2. Confirm the published privacy policy and App Store Connect privacy answers
    describe the optional private iCloud copy and read-write invitations.
-3. Install build `0.1 (10)` on the owner phone only for the initial preflight.
-   Later, after the owner preflight passes and build 10 reaches the external
-   `Family Test` group, install it on the spouse's phone. Use separate iCloud
-   Apple Accounts; the spouse's Kid Money ledger must be empty for this first
-   adoption test.
+3. Keep build `0.1 (10)` on the owner phone. Build 10 is now available in the
+   external `Family Test` group; update the spouse's phone through TestFlight
+   without uninstalling the app. Use separate iCloud Apple Accounts; the
+   spouse's Kid Money ledger must be empty for this first adoption test.
 4. Record the owner phone's existing child names, balances, and transaction
    count without sharing a screenshot or personal ledger details with the
    developer. Do not uninstall the app or reset a phone during this test.
 
 ## Owner-only, no-upload preflight
+
+Completed on September 26, 2026: the owner confirmed build 10 retained the
+existing ledger, displayed plausible counts and the upload disclosure, and
+remained local-only after tapping **Not Now**.
 
 1. On the phone holding the ledger you intend to share, confirm TestFlight
    shows build `0.1 (10)` and the existing children, balances, and history are
@@ -42,8 +46,8 @@ The owner should review the consent sheet before deciding to proceed.
 1. On the owner phone, open **Kid Money → Sharing**. Confirm it still says the
    ledger is on this phone only. Merely opening this screen must not upload.
 2. Tap **Share Family Ledger**. Review the child and transaction counts and the
-   exact disclosure. Tap **Not Now** once; verify no setup begins.
-3. Reopen the sheet and, only if comfortable copying this ledger to private
+   exact disclosure again. The prior **Not Now** preflight is complete.
+3. Only if comfortable copying this ledger to private
    iCloud, tap **Upload My Ledger to iCloud**. If setup errors, record the exact
    wording and stop; do not repeatedly create a new share or reinstall.
 4. When Apple's sharing sheet appears, privately invite the spouse with
