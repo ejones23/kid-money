@@ -8,9 +8,11 @@ import Testing
 private final class ActivationTransportStub: CloudLedgerActivationTransport {
     var result: CloudLedgerAccessResult = .available(accountRecordName: "account-one")
     var checkCount = 0
+    var onCheck: (() -> Void)?
 
     func checkAccess(to sharedLedger: SharedLedgerState) async -> CloudLedgerAccessResult {
         checkCount += 1
+        onCheck?()
         return result
     }
 }
@@ -102,6 +104,80 @@ struct CloudLedgerActivationCoordinatorTests {
         #expect(try context.fetch(FetchDescriptor<Child>()).map(\.id) == [child.id])
     }
 
+    @Test func interruptedActivationDoesNotUndoAnAttentionRequiredTransition() async throws {
+        let context = ModelContext(try AppModelContainer.make(inMemory: true))
+        let (shared, adoption) = participant(in: context)
+        let transport = ActivationTransportStub()
+        transport.onCheck = {
+            shared.phaseRawValue = SharedLedgerPhase.attentionRequired.rawValue
+            try? context.save()
+        }
+
+        await #expect(throws: CloudLedgerActivationError.invalidState) {
+            try await CloudLedgerActivationCoordinator(
+                modelContext: context,
+                transport: transport
+            ).activate()
+        }
+        #expect(shared.phase == .attentionRequired)
+        #expect(shared.accountRecordName == nil)
+        #expect(adoption.phase == .readyToActivate)
+    }
+
+    @Test func lateOfflineResultCannotMaskAttentionRequiredState() async throws {
+        let context = ModelContext(try AppModelContainer.make(inMemory: true))
+        let (shared, _) = participant(in: context)
+        let transport = ActivationTransportStub()
+        let coordinator = CloudLedgerActivationCoordinator(
+            modelContext: context,
+            transport: transport
+        )
+        try await coordinator.activate()
+        transport.result = .offline(code: "network-unavailable")
+        transport.onCheck = {
+            shared.phaseRawValue = SharedLedgerPhase.attentionRequired.rawValue
+            try? context.save()
+        }
+
+        await #expect(throws: CloudLedgerActivationError.invalidState) {
+            try await coordinator.checkActiveAccess()
+        }
+        #expect(shared.phase == .attentionRequired)
+        #expect(try context.fetch(FetchDescriptor<CloudLedgerSyncState>()).isEmpty)
+    }
+
+    @Test func cloudKitAccessFailuresSeparateRevocationFromTemporaryOutages() throws {
+        let shareID = CKRecord.ID(
+            recordName: CKRecordNameZoneWideShare,
+            zoneID: CKRecordZone.ID(zoneName: "Test", ownerName: "owner")
+        )
+        for code in [CKError.Code.unknownItem, .zoneNotFound, .userDeletedZone,
+                     .permissionFailure, .managedAccountRestricted, .notAuthenticated] {
+            let error = try cloudError(code)
+            #expect(CloudLedgerAccessErrorClassifier.result(for: error, shareID: shareID)
+                    == .denied(code: "cloudkit-\(code.rawValue)"))
+        }
+        for code in [CKError.Code.networkUnavailable, .networkFailure,
+                     .serviceUnavailable, .accountTemporarilyUnavailable] {
+            let error = try cloudError(code)
+            #expect(CloudLedgerAccessErrorClassifier.result(for: error, shareID: shareID)
+                    == .offline(code: "cloudkit-\(code.rawValue)"))
+        }
+
+        let nested = NSError(
+            domain: CKErrorDomain,
+            code: CKError.Code.zoneNotFound.rawValue
+        )
+        let wrapped = NSError(
+            domain: CKErrorDomain,
+            code: CKError.Code.partialFailure.rawValue,
+            userInfo: [CKPartialErrorsByItemIDKey: [shareID: nested]]
+        )
+        let partial = try #require(wrapped as? CKError)
+        #expect(CloudLedgerAccessErrorClassifier.result(for: partial, shareID: shareID)
+                == .denied(code: "cloudkit-\(CKError.Code.zoneNotFound.rawValue)"))
+    }
+
     @Test func offlineEditsAndActivationSurviveRestart() async throws {
         let storeURL = FileManager.default.temporaryDirectory
             .appending(path: "KidMoneyActivation-\(UUID().uuidString).store")
@@ -147,7 +223,15 @@ struct CloudLedgerActivationCoordinatorTests {
                 modelContext: context,
                 transport: transport
             ).checkActiveAccess() == .available(accountRecordName: "account-one"))
+            #expect(try context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first?.status
+                    == .pending)
+            #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).count == 2)
         }
+    }
+
+    private func cloudError(_ code: CKError.Code) throws -> CKError {
+        let error = NSError(domain: CKErrorDomain, code: code.rawValue)
+        return try #require(error as? CKError)
     }
 
     private func owner(in context: ModelContext) -> SharedLedgerState {

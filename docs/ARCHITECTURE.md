@@ -190,6 +190,13 @@ revoked. Attention-required state is deliberately not auto-recovered: the
 product still needs a clear user decision for a different iCloud account or a
 removed invitation. The live transport exists but is not constructed by the
 app; these paths are covered only by injected tests, not physical devices.
+CloudKit access errors are classified using the installed SDK's codes:
+missing zones/shares and managed-account restrictions freeze shared edits,
+while transient network/service failures leave the local queue writable.
+Nested per-record failures in a `partialFailure` are inspected. A successful
+access recheck after an outage changes status to pending, not synced, because
+fetch and send have not yet completed. `PHASE6_ACTIVATION_FLOW.md` specifies
+the consent and invitation entry points before app wiring.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is

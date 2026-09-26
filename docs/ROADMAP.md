@@ -145,6 +145,9 @@ Status: **In progress — dormant owner, participant, and activation paths compl
 - [x] gate owner/participant activation on current iCloud identity and share access
 - [x] retain queued local edits through an offline restart; freeze on account switch
   or share revocation without deleting ledger rows
+- [x] distinguish missing zones, revocation, and managed-account restrictions
+  from temporary CloudKit outages in the dormant access check
+- [x] design explicit owner upload consent and safe participant invitation routing
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -158,6 +161,8 @@ Status: **In progress — dormant owner, participant, and activation paths compl
 See `FAMILY_SHARING_DESIGN.md` for the approved persistence, authentication,
 migration, and validation design. The probe procedure and strict no-ledger-data
 boundary are recorded in `PHASE6_CONNECTION_TEST.md`.
+The planned real-ledger consent and invitation screens are specified in
+`PHASE6_ACTIVATION_FLOW.md`; they are not yet connected to the app.
 
 ## Explicitly deferred
 

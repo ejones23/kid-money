@@ -76,7 +76,7 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - a dormant activation gate with account/share verification, offline continuity,
   and non-destructive account-switch and revocation handling
 
-The project builds without errors or warnings in Xcode 26.6. All 75 current
+The project builds without errors or warnings in Xcode 26.6. All 78 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -150,6 +150,7 @@ docs/APP_STORE_METADATA.md    Draft public listing copy
 docs/APP_ICON.md              Provisional icon notes and source prompt
 docs/DEVELOPMENT.md           Setup and verification workflow
 docs/FAMILY_SHARING_DESIGN.md Proposed shared-ledger persistence and identity design
+docs/PHASE6_ACTIVATION_FLOW.md Safe owner opt-in and participant invitation flow
 docs/PHASE6_CONNECTION_TEST.md Two-device CloudKit connection-test procedure
 docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
 docs/ROADMAP.md               Delivery plan and next steps
@@ -198,8 +199,10 @@ recovers a lost acceptance response after relaunch. The injected activation
 gate now checks the iCloud account and live share before enabling a prepared
 ledger. It preserves queued offline edits across restart and freezes new edits
 after account switching or invite revocation. The next checkpoint is a safe,
-explicit app entry point and ongoing runtime recovery. Real family data remains
+explicit app entry point and an access-checked sync session. Real family data remains
 local because setup, activation, and sync are not called from the app.
+The proposed consent, invitation-routing, and attention-required screens are
+documented in [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

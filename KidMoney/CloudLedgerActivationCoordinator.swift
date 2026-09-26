@@ -22,6 +22,35 @@ enum CloudLedgerActivationError: Error, Equatable {
     case deferredTransactions(Int)
 }
 
+/// A missing zone/share or an access restriction is not an offline retry. In
+/// particular, CloudKit can wrap the record-specific failure in partialFailure.
+enum CloudLedgerAccessErrorClassifier {
+    static func result(
+        for error: CKError,
+        shareID: CKRecord.ID
+    ) -> CloudLedgerAccessResult {
+        let relevant: CKError
+        if error.code == .partialFailure {
+            guard let nested = error.partialErrorsByItemID?[shareID] as? CKError else {
+                return .offline(code: "cloudkit-partial-failure")
+            }
+            relevant = nested
+        } else {
+            relevant = error
+        }
+
+        let code = "cloudkit-\(relevant.code.rawValue)"
+        switch relevant.code {
+        case .unknownItem, .zoneNotFound, .userDeletedZone, .permissionFailure,
+                .notAuthenticated, .managedAccountRestricted, .badContainer,
+                .missingEntitlement, .badDatabase:
+            return .denied(code: code)
+        default:
+            return .offline(code: code)
+        }
+    }
+}
+
 /// Dormant activation gate. No caller in the app constructs this coordinator.
 /// A successful check is required before a prepared ledger can be made writable.
 @MainActor
@@ -63,6 +92,24 @@ struct CloudLedgerActivationCoordinator {
         }
 
         let accountName = try await requireAccess(to: shared)
+        // The remote check suspends this actor. Another event may have frozen
+        // or cancelled setup while it was in flight; never undo that decision.
+        guard try singleSharedLedger() === shared,
+              shared.phase == .preparing,
+              shared.accountRecordName == nil else {
+            throw CloudLedgerActivationError.invalidState
+        }
+        if shared.role == .owner {
+            guard try singleMigration() === migration,
+                  migration?.phase == .readyToActivate else {
+                throw CloudLedgerActivationError.notReady
+            }
+        } else {
+            guard try singleAdoption() === adoption,
+                  adoption?.phase == .readyToActivate else {
+                throw CloudLedgerActivationError.notReady
+            }
+        }
         shared.accountRecordName = accountName
         if shared.role == .owner {
             // Owner phase and ledger activation are saved together by this method.
@@ -86,11 +133,23 @@ struct CloudLedgerActivationCoordinator {
             throw CloudLedgerActivationError.invalidState
         }
         let result = await transport.checkAccess(to: shared)
+        guard try singleSharedLedger() === shared,
+              shared.phase == .active else {
+            throw CloudLedgerActivationError.invalidState
+        }
         switch result {
         case .available(let accountName):
             guard accountName == shared.accountRecordName else {
                 try markAttention(shared, code: "icloud-account-changed", now: now)
                 throw CloudLedgerActivationError.accountChanged
+            }
+            let sync = try syncState(for: shared)
+            if sync.status == .offline || sync.status == .iCloudUnavailable {
+                // A fetch and queue drain must run before we can claim synced.
+                sync.statusRawValue = CloudLedgerSyncStatus.pending.rawValue
+                sync.nextRetryAt = nil
+                sync.lastErrorCode = nil
+                try modelContext.save()
             }
         case .offline(let code):
             let sync = try syncState(for: shared)
@@ -213,12 +272,11 @@ final class CloudLedgerLiveActivationTransport: CloudLedgerActivationTransport {
             }
             return .available(accountRecordName: accountName)
         } catch let error as CKError {
-            switch error.code {
-            case .unknownItem, .permissionFailure, .notAuthenticated, .userDeletedZone:
-                return .denied(code: "cloudkit-\(error.code.rawValue)")
-            default:
-                return .offline(code: "cloudkit-\(error.code.rawValue)")
-            }
+            let shareID = CKRecord.ID(
+                recordName: CKRecordNameZoneWideShare,
+                zoneID: sharedLedger.zoneID
+            )
+            return CloudLedgerAccessErrorClassifier.result(for: error, shareID: shareID)
         } catch {
             return .offline(code: "access-check-failed")
         }

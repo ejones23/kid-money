@@ -2,6 +2,10 @@
 
 Status: **Approved; connection prototype and dormant owner/participant setup pipelines implemented**
 
+The proposed consent and invitation UI boundary for enabling the real ledger
+is in [PHASE6_ACTIVATION_FLOW.md](PHASE6_ACTIVATION_FLOW.md). It is not yet wired
+into the app or distributed through TestFlight.
+
 This document records the approved design for letting two parents use their own
 Apple Accounts and devices to manage one Kid Money ledger. Implementation begins
 with an isolated two-account connection test before any real ledger data is
