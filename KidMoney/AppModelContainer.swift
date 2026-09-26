@@ -25,6 +25,7 @@ enum AppModelContainer {
             LedgerTransaction.self,
             SharedLedgerState.self,
             CloudLedgerMigrationState.self,
+            CloudLedgerParticipantAdoptionState.self,
             PendingCloudChange.self,
             DeferredCloudTransaction.self,
             CloudLedgerSyncState.self,

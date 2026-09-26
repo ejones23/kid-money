@@ -257,7 +257,8 @@ struct CloudLedgerMergeService {
 
     func merge(
         records: [CKRecord],
-        into sharedLedger: SharedLedgerState
+        into sharedLedger: SharedLedgerState,
+        saveChanges: Bool = true
     ) throws -> CloudLedgerMergeSummary {
         do {
             var summary = CloudLedgerMergeSummary()
@@ -466,7 +467,9 @@ struct CloudLedgerMergeService {
             }
 
             summary.deferredTransactions = deferredByID.count
-            try modelContext.save()
+            if saveChanges {
+                try modelContext.save()
+            }
             return summary
         } catch {
             modelContext.rollback()

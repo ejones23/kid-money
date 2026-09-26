@@ -1,6 +1,6 @@
 # Family sharing design proposal
 
-Status: **Approved; connection prototype and dormant owner sync/setup pipeline implemented**
+Status: **Approved; connection prototype and dormant owner/participant setup pipelines implemented**
 
 This document records the approved design for letting two parents use their own
 Apple Accounts and devices to manage one Kid Money ledger. Implementation begins
@@ -175,8 +175,10 @@ cloud synchronization is distributed.
    injected owner setup runner now validates iCloud, idempotently provisions the
    private zone, drives one initial engine send, creates or recovers the
    zone-wide share, and performs confirmed remote cleanup without deleting the
-   ledger. Participant adoption, status UI, remote-notification capability, and
-   live activation remain disabled.**
+   ledger. A dormant participant coordinator validates and persists a private
+   invitation, rejects unrelated local data, recovers interrupted acceptance,
+   and atomically imports the invited zone. Status UI, remote-notification
+   capability, and live activation remain disabled.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,

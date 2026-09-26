@@ -201,6 +201,12 @@ struct LedgerService {
     }
 
     private func ensureSharedLedgerAllowsMutation() throws {
+        let adoptionInProgress = try modelContext.fetch(
+            FetchDescriptor<CloudLedgerParticipantAdoptionState>()
+        ).contains { $0.phase != nil }
+        guard !adoptionInProgress else {
+            throw LedgerError.sharedLedgerUnavailable
+        }
         let sharedLedgers = try modelContext.fetch(FetchDescriptor<SharedLedgerState>())
         guard !sharedLedgers.contains(where: { $0.phase == .attentionRequired }) else {
             throw LedgerError.sharedLedgerUnavailable

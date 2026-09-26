@@ -29,6 +29,8 @@
 		A10000000000000000000020 /* CloudLedgerMigrationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000024 /* CloudLedgerMigrationCoordinatorTests.swift */; };
 		A10000000000000000000021 /* CloudLedgerSetupRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000025 /* CloudLedgerSetupRunner.swift */; };
 		A10000000000000000000022 /* CloudLedgerSetupRunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000026 /* CloudLedgerSetupRunnerTests.swift */; };
+		A10000000000000000000023 /* CloudLedgerParticipantAdoption.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000027 /* CloudLedgerParticipantAdoption.swift */; };
+		A10000000000000000000024 /* CloudLedgerParticipantAdoptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000028 /* CloudLedgerParticipantAdoptionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,8 @@
 		A20000000000000000000024 /* CloudLedgerMigrationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerMigrationCoordinatorTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000025 /* CloudLedgerSetupRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerSetupRunner.swift; sourceTree = "<group>"; };
 		A20000000000000000000026 /* CloudLedgerSetupRunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerSetupRunnerTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000027 /* CloudLedgerParticipantAdoption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerParticipantAdoption.swift; sourceTree = "<group>"; };
+		A20000000000000000000028 /* CloudLedgerParticipantAdoptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerParticipantAdoptionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +118,7 @@
 				A20000000000000000000022 /* CloudLedgerSyncEngineAdapter.swift */,
 				A20000000000000000000023 /* CloudLedgerMigrationCoordinator.swift */,
 				A20000000000000000000025 /* CloudLedgerSetupRunner.swift */,
+				A20000000000000000000027 /* CloudLedgerParticipantAdoption.swift */,
 				A20000000000000000000018 /* Info.plist */,
 				A20000000000000000000015 /* KidMoney.entitlements */,
 				A20000000000000000000016 /* AppShortcuts.xcstrings */,
@@ -131,6 +136,7 @@
 				A20000000000000000000009 /* LedgerServiceTests.swift */,
 				A20000000000000000000024 /* CloudLedgerMigrationCoordinatorTests.swift */,
 				A20000000000000000000026 /* CloudLedgerSetupRunnerTests.swift */,
+				A20000000000000000000028 /* CloudLedgerParticipantAdoptionTests.swift */,
 			);
 			path = KidMoneyTests;
 			sourceTree = "<group>";
@@ -257,6 +263,7 @@
 				A10000000000000000000018 /* CloudLedgerSyncEngineAdapter.swift in Sources */,
 				A10000000000000000000019 /* CloudLedgerMigrationCoordinator.swift in Sources */,
 				A10000000000000000000021 /* CloudLedgerSetupRunner.swift in Sources */,
+				A10000000000000000000023 /* CloudLedgerParticipantAdoption.swift in Sources */,
 				A10000000000000000000006 /* ChildListView.swift in Sources */,
 				A10000000000000000000007 /* AddChildView.swift in Sources */,
 				A10000000000000000000008 /* ChildDetailView.swift in Sources */,
@@ -270,6 +277,7 @@
 				A10000000000000000000009 /* LedgerServiceTests.swift in Sources */,
 				A10000000000000000000020 /* CloudLedgerMigrationCoordinatorTests.swift in Sources */,
 				A10000000000000000000022 /* CloudLedgerSetupRunnerTests.swift in Sources */,
+				A10000000000000000000024 /* CloudLedgerParticipantAdoptionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

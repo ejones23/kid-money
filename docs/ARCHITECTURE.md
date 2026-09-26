@@ -166,8 +166,18 @@ Injected tests cover lost responses after zone/share creation, an incomplete
 upload, unavailable iCloud, terminal errors, and retryable cleanup. Local sync
 state is removed only after remote zone deletion succeeds; children and
 transactions are never deleted. No app call site constructs the runner or its
-live transport, and participant adoption, activation, and ongoing sync remain
-disconnected.
+live transport. Activation and ongoing sync remain disconnected.
+
+`CloudLedgerParticipantAdoptionCoordinator` persists a validated zone-wide,
+read-write invitation before accepting it. It rejects any existing independent
+local ledger. The live transport checks whether CloudKit already accepted the
+share, then fetches changes from the beginning of only the invited shared zone.
+The coordinator requires exactly one Household record whose UUID matches the
+zone name. It merges the complete first snapshot with the local preparing
+household in one save; malformed records roll back the batch. An interrupted
+acceptance or fetch can be retried from durable invitation state. `LedgerService`
+blocks mutations throughout participant adoption so imported rows cannot be
+edited before activation. No app call site invokes this coordinator.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is
