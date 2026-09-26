@@ -89,6 +89,48 @@ struct CloudLedgerParticipantAdoptionTests {
         #expect(fixture.transport.acceptCount == 0)
     }
 
+    @Test func invitationRoutingNeverSendsARealLedgerShareToTheCounterProbe() {
+        let container = FamilySharingProbe.containerIdentifier
+        let share = CKRecordNameZoneWideShare
+        #expect(CloudLedgerInvitationRouter.kind(
+            containerIdentifier: container,
+            zoneName: "KidMoneyProbe-\(UUID().uuidString)",
+            shareRecordName: share
+        ) == .connectionProbe)
+        #expect(CloudLedgerInvitationRouter.kind(
+            containerIdentifier: container,
+            zoneName: "KidMoneyHousehold-\(UUID().uuidString)",
+            shareRecordName: share
+        ) == .familyLedger)
+        #expect(CloudLedgerInvitationRouter.kind(
+            containerIdentifier: "another.container",
+            zoneName: "KidMoneyHousehold-\(UUID().uuidString)",
+            shareRecordName: share
+        ) == .unsupported)
+        #expect(CloudLedgerInvitationRouter.kind(
+            containerIdentifier: container,
+            zoneName: "UnknownZone",
+            shareRecordName: share
+        ) == .unsupported)
+    }
+
+    @Test func decliningBeforeAcceptancePreservesLocalMode() throws {
+        let fixture = try fixture()
+        let coordinator = CloudLedgerParticipantAdoptionCoordinator(
+            modelContext: fixture.context,
+            transport: fixture.transport
+        )
+        try coordinator.stage(fixture.invitation)
+
+        try coordinator.declineUnacceptedInvitation()
+
+        #expect(try fixture.context.fetch(
+            FetchDescriptor<CloudLedgerParticipantAdoptionState>()
+        ).isEmpty)
+        #expect(fixture.transport.acceptCount == 0)
+        _ = try LedgerService(modelContext: fixture.context).addChild(named: "Local")
+    }
+
     @Test func lostAcceptanceResponseRecoversAfterStoreReopen() async throws {
         let storeURL = FileManager.default.temporaryDirectory
             .appending(path: "KidMoneyAdoption-\(UUID().uuidString).store")

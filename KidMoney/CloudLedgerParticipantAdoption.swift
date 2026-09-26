@@ -1,5 +1,6 @@
 import CloudKit
 import Foundation
+import Observation
 import SwiftData
 
 enum CloudLedgerParticipantAdoptionPhase: String, Codable {
@@ -86,6 +87,48 @@ struct CloudLedgerInvitation {
     var shareKey: String {
         "\(zoneID.ownerName)|\(zoneID.zoneName)|\(shareRecordName)"
     }
+
+    @MainActor var isEligible: Bool {
+        let prefix = "KidMoneyHousehold-"
+        return containerIdentifier == FamilySharingProbe.containerIdentifier
+            && isZoneWide
+            && isReadWrite
+            && shareRecordName == CKRecordNameZoneWideShare
+            && zoneID.ownerName != CKCurrentUserDefaultName
+            && zoneID.zoneName.hasPrefix(prefix)
+            && UUID(uuidString: String(zoneID.zoneName.dropFirst(prefix.count))) != nil
+    }
+}
+
+enum CloudLedgerInvitationKind: Equatable {
+    case connectionProbe
+    case familyLedger
+    case unsupported
+}
+
+enum CloudLedgerInvitationRouter {
+    @MainActor
+    static func kind(
+        containerIdentifier: String,
+        zoneName: String,
+        shareRecordName: String
+    ) -> CloudLedgerInvitationKind {
+        guard containerIdentifier == FamilySharingProbe.containerIdentifier,
+              shareRecordName == CKRecordNameZoneWideShare else {
+            return .unsupported
+        }
+        if zoneName.hasPrefix("KidMoneyProbe-") { return .connectionProbe }
+        if zoneName.hasPrefix("KidMoneyHousehold-") { return .familyLedger }
+        return .unsupported
+    }
+}
+
+@MainActor
+@Observable
+final class CloudLedgerInvitationNotice {
+    static let shared = CloudLedgerInvitationNotice()
+    var message: String?
+    private init() {}
 }
 
 enum CloudLedgerParticipantAdoptionError: Error, Equatable {
@@ -109,8 +152,9 @@ protocol CloudLedgerParticipantTransport: AnyObject {
     func initialRecords(in zoneID: CKRecordZone.ID) async throws -> [CKRecord]
 }
 
-/// Dormant participant setup. It persists the invitation before contacting
-/// CloudKit, so a lost acceptance response can be recovered after relaunch.
+/// Participant setup persists the invitation before contacting CloudKit, so a
+/// lost acceptance response can be recovered after relaunch. The app invokes
+/// it only after the recipient explicitly chooses to join.
 @MainActor
 struct CloudLedgerParticipantAdoptionCoordinator {
     let modelContext: ModelContext
@@ -121,12 +165,7 @@ struct CloudLedgerParticipantAdoptionCoordinator {
         _ invitation: CloudLedgerInvitation,
         now: Date = .now
     ) throws -> CloudLedgerParticipantAdoptionState {
-        guard invitation.containerIdentifier == FamilySharingProbe.containerIdentifier,
-              invitation.isZoneWide,
-              invitation.isReadWrite,
-              invitation.shareRecordName == CKRecordNameZoneWideShare,
-              invitation.zoneID.ownerName != CKCurrentUserDefaultName,
-              invitation.zoneID.zoneName.hasPrefix("KidMoneyHousehold-") else {
+        guard invitation.isEligible else {
             throw CloudLedgerParticipantAdoptionError.invalidInvitation
         }
         if let existing = try modelContext.fetch(
@@ -192,6 +231,21 @@ struct CloudLedgerParticipantAdoptionCoordinator {
         }
     }
 
+    /// Declining an invitation before CloudKit acceptance removes only the
+    /// local staging record. It never deletes a child or transaction.
+    func declineUnacceptedInvitation() throws {
+        let states = try modelContext.fetch(
+            FetchDescriptor<CloudLedgerParticipantAdoptionState>()
+        )
+        guard states.count == 1, let state = states.first,
+              state.phase == .awaitingAcceptance,
+              try modelContext.fetch(FetchDescriptor<SharedLedgerState>()).isEmpty else {
+            throw CloudLedgerParticipantAdoptionError.invalidState
+        }
+        modelContext.delete(state)
+        try modelContext.save()
+    }
+
     private func mergeInitialSnapshot(
         _ records: [CKRecord],
         into adoption: CloudLedgerParticipantAdoptionState
@@ -246,9 +300,9 @@ struct CloudLedgerParticipantAdoptionCoordinator {
     }
 }
 
-/// The live transport is not instantiated by the app. Initial fetches always
-/// start at the beginning of exactly the invited zone; a retry can merge the
-/// same deterministic records without duplicating transactions.
+/// Initial fetches always start at the beginning of exactly the invited zone;
+/// a retry can merge the same deterministic records without duplicating
+/// transactions.
 @MainActor
 final class CloudLedgerLiveParticipantTransport: CloudLedgerParticipantTransport {
     private let container: CKContainer

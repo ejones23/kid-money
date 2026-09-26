@@ -101,7 +101,7 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — dormant owner, participant, and activation paths complete**
+Status: **In progress — explicit sharing UI wired locally; not yet in TestFlight**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -114,7 +114,7 @@ Status: **In progress — dormant owner, participant, and activation paths compl
 - [x] accept the private share using a second iCloud Apple Account
 - [x] verify owner-to-participant and participant-to-owner writes on physical devices
 - [x] verify counter 2 persists after terminating and relaunching both apps
-- [x] confirm the owner's `Rebecca: $2.50` ledger and participant's empty ledger remain unchanged
+- [x] confirm both phones' local ledgers remain unchanged by the counter-only test
 - [x] define deterministic Household, Child, and LedgerTransaction record mappings
 - [x] add durable, coalescing pending changes at the ledger mutation boundary
 - [x] keep local-only and preparing households dormant with no queued uploads
@@ -150,6 +150,11 @@ Status: **In progress — dormant owner, participant, and activation paths compl
 - [x] design explicit owner upload consent and safe participant invitation routing
 - [x] add a dormant sync session that checks access before fetch and again
   before send, with durable retry and no upload from incomplete setup state
+- [x] require a separate owner consent sheet before any real-ledger upload
+- [x] route counter-probe and real-ledger invitations separately; reject
+  unsupported shares and stage a valid invitation without accepting it
+- [x] provide explicit Join, Sync Now, and participant-management actions
+- [x] verify the owner sharing and consent screens on an iPhone simulator
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -158,13 +163,16 @@ Status: **In progress — dormant owner, participant, and activation paths compl
 - verify two-way manual and Siri changes across two physical devices
 - verify offline/reconnect, invite revocation, iCloud sign-out, and managed-device
   restrictions
+- deploy the real-ledger CloudKit schema to Production before TestFlight
 - update the privacy policy and App Store disclosures before distribution
 
 See `FAMILY_SHARING_DESIGN.md` for the approved persistence, authentication,
 migration, and validation design. The probe procedure and strict no-ledger-data
 boundary are recorded in `PHASE6_CONNECTION_TEST.md`.
-The planned real-ledger consent and invitation screens are specified in
-`PHASE6_ACTIVATION_FLOW.md`; they are not yet connected to the app.
+The real-ledger consent and invitation screens are implemented in the local
+build as specified in `PHASE6_ACTIVATION_FLOW.md`. Build 9 on TestFlight is
+still counter-only. A live opt-in sharing build must wait for the Production
+CloudKit schema and privacy-disclosure checks.
 
 ## Explicitly deferred
 
@@ -180,7 +188,8 @@ state machine are implemented and tested. Dormant owner private-zone/share
 provisioning is also implemented behind an injected setup transport. Participant
 adoption is implemented behind an injected transport with local preflight and
 retryable initial import. A separate injected activation gate tests account and
-share failure recovery. App wiring and live ledger network synchronization are
-not enabled yet.
+share failure recovery. The local build now wires these paths to explicit
+sharing-screen actions; no automatic background sync is enabled. The real-ledger
+flow has not been distributed or physically verified.
 Minimal TestFlight and App Store preparation remains active for physical-device
 validation.

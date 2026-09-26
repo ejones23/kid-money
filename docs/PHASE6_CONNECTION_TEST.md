@@ -96,7 +96,7 @@ accepted it on an iPhone signed into a different iCloud Apple Account.
 This physically verifies invitation acceptance, participant authorization, and
 CloudKit writes in both directions, including on the managed work phone. After
 both apps were terminated and relaunched, each still displayed counter 2. The
-owner's local ledger still displayed `Rebecca: $2.50`, while the participant's
+owner's existing local ledger remained intact, while the participant's
 phone still had no children. The full probe matrix therefore passed without
 uploading, merging, or modifying real ledger data.
 

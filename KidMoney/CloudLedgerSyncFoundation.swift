@@ -237,7 +237,7 @@ enum CloudLedgerRecordMapper {
         record[CloudLedgerSchema.Field.name] = child.name
         record[CloudLedgerSchema.Field.createdAt] = child.createdAt
         record[CloudLedgerSchema.Field.sortOrder] = NSNumber(value: child.sortOrder)
-        record[CloudLedgerSchema.Field.isArchived] = NSNumber(value: child.isArchived)
+        record[CloudLedgerSchema.Field.isArchived] = NSNumber(value: child.isArchived ? 1 : 0)
         record[CloudLedgerSchema.Field.lastModifiedAt] = child.lastModifiedAt ?? child.createdAt
         return record
     }

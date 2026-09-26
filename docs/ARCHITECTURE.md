@@ -10,9 +10,10 @@ queue. It can strictly decode and locally merge supplied CloudKit records. A
 transport-independent queue processor now exercises send policy, retry, account
 gating, and optimistic conflicts. A concrete `CKSyncEngine` delegate now maps
 engine events into those persistence and merge boundaries. A durable migration
-coordinator stages existing local ledgers without changing their rows. The app
-does not instantiate either path or perform network synchronization. A dormant
-owner setup runner composes those pieces behind an injected CloudKit boundary.
+coordinator stages existing local ledgers without changing their rows. The
+sharing screen now instantiates setup and synchronization only for explicit
+owner/participant actions; app launch does not start either path. An owner
+setup runner composes those pieces behind an injected CloudKit boundary.
 
 ```text
 SwiftUI views ──────┐
@@ -84,8 +85,9 @@ local edits and their coalesced pending changes together so an edit made during
 setup cannot fall outside the initial upload. Once a household is active, the
 same queueing rule continues for normal synchronization. An attention-required
 household rejects further ledger mutations instead of silently accumulating
-changes that cannot safely converge. No production code starts queue draining
-yet, so this foundation cannot upload real ledger data.
+changes that cannot safely converge. Only explicit sharing-screen setup or
+Sync Now actions can start real-ledger network work in the local build. Build 9
+on TestFlight remains counter-only.
 
 `CloudLedgerRecordMapper` maps Household, Child, and LedgerTransaction values
 without floating-point money. Children and transactions use their stable UUIDs
@@ -135,9 +137,8 @@ with current local state and immediately requeues the newer version.
 
 Each state-update event is JSON-encoded into `CloudLedgerSyncState.engineStateData`
 and restored when constructing `CloudLedgerSyncEngineRuntime`. Automatic sync
-defaults to disabled and no production call site creates the runtime. Status
-UI, remote-notification capability, and the activation coordinator remain
-deliberately disconnected from app startup.
+defaults to disabled. Sharing-screen actions create the runtime on demand;
+remote-notification capability and automatic background sync remain disabled.
 
 `CloudLedgerMigrationCoordinator` persists the owner setup phases: awaiting
 zone creation, uploading the initial ledger, awaiting share creation, ready to
@@ -165,8 +166,8 @@ or creates the zone-wide private `CKShare`, and stops at `readyToActivate`.
 Injected tests cover lost responses after zone/share creation, an incomplete
 upload, unavailable iCloud, terminal errors, and retryable cleanup. Local sync
 state is removed only after remote zone deletion succeeds; children and
-transactions are never deleted. No app call site constructs the runner or its
-live transport. Activation and ongoing sync remain disconnected.
+transactions are never deleted. Sharing-screen actions construct the runner and
+live transport only after explicit user input; app launch does not.
 
 `CloudLedgerParticipantAdoptionCoordinator` persists a validated zone-wide,
 read-write invitation before accepting it. It rejects any existing independent
@@ -177,9 +178,9 @@ zone name. It merges the complete first snapshot with the local preparing
 household in one save; malformed records roll back the batch. An interrupted
 acceptance or fetch can be retried from durable invitation state. `LedgerService`
 blocks mutations throughout participant adoption until guarded activation
-marks it complete. No app call site invokes this coordinator.
+marks it complete. The app invokes this coordinator only after an explicit Join.
 
-`CloudLedgerActivationCoordinator` is the sole dormant path from prepared to
+`CloudLedgerActivationCoordinator` is the sole path from prepared to
 active. It requires completed owner upload/share setup or participant first
 import, no deferred participant transactions, a reachable zone-wide share, and
 the current iCloud account identity. Activation persists that identity locally
@@ -188,8 +189,9 @@ transiently offline ledgers writable (edits remain queued), but freeze new
 mutations without deleting data if the account changes or share access is
 revoked. Attention-required state is deliberately not auto-recovered: the
 product still needs a clear user decision for a different iCloud account or a
-removed invitation. The live transport exists but is not constructed by the
-app; these paths are covered only by injected tests, not physical devices.
+removed invitation. The local build constructs the live transport only for
+explicit Sharing actions. These paths are covered by injected tests, not yet
+physical devices.
 CloudKit access errors are classified using the installed SDK's codes:
 missing zones/shares and managed-account restrictions freeze shared edits,
 while transient network/service failures leave the local queue writable.
@@ -198,14 +200,14 @@ access recheck after an outage changes status to pending, not synced, because
 fetch and send have not yet completed. `PHASE6_ACTIVATION_FLOW.md` specifies
 the consent and invitation entry points before app wiring.
 
-`CloudLedgerSyncSession` is the dormant entry point for ordinary network work.
+`CloudLedgerSyncSession` is the entry point for ordinary network work.
 It requires an activated household with matching completed owner or participant
 setup state, checks the pinned account and share before fetching, fetches the
 household zone, checks again before sending any queued data, and only reports
 synced after successful work. Transient CloudKit failures persist retry time
 and leave local edits writable; missing zones, changed accounts, or terminal
 errors freeze new edits without removing the queue. The live transport keeps
-`CKSyncEngine.automaticallySync` disabled and is not constructed by the app.
+`CKSyncEngine.automaticallySync` disabled and is constructed only by Sync Now.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is

@@ -1,10 +1,10 @@
 # Family sharing design proposal
 
-Status: **Approved; connection prototype and dormant owner/participant setup pipelines implemented**
+Status: **Approved; connection prototype passed and explicit sharing UI is wired locally**
 
 The proposed consent and invitation UI boundary for enabling the real ledger
-is in [PHASE6_ACTIVATION_FLOW.md](PHASE6_ACTIVATION_FLOW.md). It is not yet wired
-into the app or distributed through TestFlight.
+is in [PHASE6_ACTIVATION_FLOW.md](PHASE6_ACTIVATION_FLOW.md). It is wired into the
+local build but has not been distributed through TestFlight or physically tested.
 
 This document records the approved design for letting two parents use their own
 Apple Accounts and devices to manage one Kid Money ledger. Implementation begins
@@ -184,8 +184,10 @@ cloud synchronization is distributed.
    and atomically imports the invited zone. A dormant activation gate now
    checks setup phase, iCloud identity, and share access; offline edits remain
    queued across restart, while account changes or revocation freeze new edits
-   without deleting local data. Status UI, remote-notification capability, and
-   app wiring remain disabled.**
+   without deleting local data. Explicit owner consent, participant Join,
+   Sync Now, and participant-management UI are now wired in the local build.
+   Automatic background sync and remote-notification capability remain
+   disabled.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,

@@ -19,18 +19,16 @@ Read these before substantial work:
 
 Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified the locked-screen numeric give/take grammar, exact balances, and relaunch persistence. Siri may still request Kid Money/Wallet disambiguation. Build `0.1 (7)` passed the manual-interface review. Phase 5 added exact input, duplicate-name matching, overflow protection, multi-context persistence tests, privacy-conscious logging, accessibility improvements, one production `ModelContainer`, and an opt-out from SwiftData-managed CloudKit sync.
 
-Private CloudKit family sharing is approved for Phase 6. Build `0.1 (9)` passed the two-account counter-only physical probe on September 24, 2026: bidirectional writes and relaunch persistence worked, while the owner's `Rebecca: $2.50` ledger and participant's empty ledger remained unchanged. The real-ledger foundation now includes deterministic records, durable queues, strict atomic merge, out-of-order deferral, undo convergence, a guarded queue processor, and a dormant CKSyncEngine adapter. Dormant owner and participant setup coordinators stage, upload, share, accept, and import under injected transports. None is instantiated by the app, so real-ledger network sync remains disabled. The app builds in Xcode 26.6 with 86 passing tests on an iOS 26.5 simulator.
+Private CloudKit family sharing is approved for Phase 6. Build `0.1 (9)` passed the two-account counter-only physical probe on September 24, 2026: bidirectional writes and relaunch persistence worked, while both phones' local ledgers remained unchanged. The real-ledger foundation includes deterministic records, durable queues, strict atomic merge, out-of-order deferral, undo convergence, a guarded queue processor, and an on-demand CKSyncEngine adapter. Owner and participant setup coordinators stage, upload, share, accept, and import under injected transports. The local build now wires these paths to explicit owner consent, participant Join, Sync Now, and participant-management UI; merely opening the app does not start an upload. The consent and sharing screens have been inspected on the iOS 26.5 simulator, and all 88 tests pass in Xcode 26.6. Build 9 on TestFlight remains counter-only; real-ledger sharing has not been physically verified.
 
-The dormant activation gate now validates owner or participant readiness,
-confirms iCloud account identity and live share access, keeps offline edits
-queued across restart, and freezes edits after account switching or share
-revocation without deleting ledger data. It is not wired into the app. The
-current simulator suite has 86 passing tests. Installed-SDK CloudKit errors are
-now classified as temporary or attention-required, including per-record
-partial failures. The consent and invitation entry points are designed in
-`docs/PHASE6_ACTIVATION_FLOW.md`. A dormant access-checked sync session fetches
-before sending, rechecks access, and persists retry or attention-required
-state without deleting local rows or queued edits.
+The activation gate validates owner or participant readiness, confirms iCloud
+account identity and live share access, keeps offline edits queued across
+restart, and freezes edits after account switching or share revocation without
+deleting ledger data. Installed-SDK CloudKit errors are classified as temporary
+or attention-required, including per-record partial failures. The
+access-checked sync session fetches before sending, rechecks access, and
+persists retry or attention-required state without deleting local rows or
+queued edits. Automatic background synchronization is not enabled.
 
 Latest verified capabilities:
 
@@ -117,9 +115,11 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Continue the durable shared-ledger synchronization layer described in
-`docs/FAMILY_SHARING_DESIGN.md` and `docs/PHASE6_ACTIVATION_FLOW.md`. Implement
-explicit owner upload consent and safe participant invitation routing. Do not
-start uploads merely because the app launched. Keep attention-required recovery
-non-destructive, update privacy disclosures before TestFlight, and preserve the
-physically verified Siri grammar.
+Prepare the explicit real-ledger sharing build for TestFlight. Confirm the
+Household, Child, and LedgerTransaction schema exists in CloudKit Production,
+align published privacy disclosures and App Store Connect answers, then verify
+owner opt-in, participant acceptance, bidirectional manual/Siri edits, offline
+recovery, and relaunch on physical devices. Do not start uploads merely because
+the app launched. Keep attention-required recovery non-destructive and preserve
+the physically verified Siri grammar. Build 9 remains counter-only until the
+new build passes these release gates.

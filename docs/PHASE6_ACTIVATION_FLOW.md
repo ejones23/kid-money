@@ -1,11 +1,11 @@
 # Phase 6 activation and invitation flow
 
-Status: **Design for the next app-wiring checkpoint; not enabled in TestFlight.**
+Status: **Owner/participant screens are wired locally, but not enabled in TestFlight.**
 
 The counter-only connection test proved that two Apple Accounts can share one
-CloudKit zone. The real ledger setup code is still dormant. This flow describes
-how to expose it without surprising a parent, uploading data implicitly, or
-silently replacing an existing ledger.
+CloudKit zone. The real-ledger UI now follows this flow in a local build. Build
+9 on TestFlight remains counter-only. Opening Sharing does not start an upload;
+the owner must press **Upload My Ledger to iCloud** in a separate consent sheet.
 
 ## Owner: explicit opt-in
 
@@ -37,12 +37,12 @@ checking iCloud, or viewing this screen must not start migration.
 
 ## Participant: invitation entry
 
-The existing scene delegate receives `CKShare.Metadata` for both cold-start
-and running-scene invitations. It currently sends every invitation to the
-disposable counter probe. Before wiring the real ledger, route invitations by
-validated container, zone naming, zone-wide share identity, and read-write
-permission. Keep the probe and real-ledger paths separate; an unknown share
-must be rejected, not accepted by either path.
+The scene delegate receives `CKShare.Metadata` for both cold-start and
+running-scene invitations. It routes the disposable counter probe separately
+from a family-ledger invitation using the container, zone prefix, and
+zone-wide share name. The participant coordinator then validates the complete
+zone identity and read-write permission before staging. Unknown shares are
+rejected rather than accepted by either path.
 
 1. Persist the validated invitation locally and show a **Join Family Ledger**
    review screen. Do not call CloudKit acceptance from the scene callback.
@@ -88,5 +88,8 @@ initial upload, invitation acceptance, bidirectional manual and Siri edits,
 offline/reconnect, restart, account changes, and revocation. Compilation and
 simulator tests alone do not establish physical CloudKit or Siri behavior.
 
-The dormant access-checked sync session and its injected failure tests are
-implemented. It has not been connected to the app.
+The access-checked sync session and its injected failure tests are
+implemented. An activated family ledger can run it with **Sync Now**; no
+automatic background sync or startup upload is enabled yet. Before TestFlight,
+the Household, Child, and LedgerTransaction schema must be deployed to
+Production, and the real-ledger physical matrix must be prepared.

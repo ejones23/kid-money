@@ -2,6 +2,7 @@ import CloudKit
 import Observation
 import OSLog
 import SwiftUI
+import SwiftData
 import UIKit
 
 enum FamilySharingProbeError: LocalizedError {
@@ -529,7 +530,36 @@ final class KidMoneySceneDelegate: NSObject, UIWindowSceneDelegate {
 
     private func accept(_ metadata: CKShare.Metadata) {
         Task { @MainActor in
-            await FamilySharingProbe.shared.accept(metadata)
+            let kind = CloudLedgerInvitationRouter.kind(
+                containerIdentifier: metadata.containerIdentifier,
+                zoneName: metadata.share.recordID.zoneID.zoneName,
+                shareRecordName: metadata.share.recordID.recordName
+            )
+            switch kind {
+            case .connectionProbe:
+                await FamilySharingProbe.shared.accept(metadata)
+            case .familyLedger:
+                do {
+                    let invitation = try CloudLedgerInvitation(metadata: metadata)
+                    let context = ModelContext(try AppModelContainer.shared())
+                    let coordinator = CloudLedgerParticipantAdoptionCoordinator(
+                        modelContext: context,
+                        transport: CloudLedgerLiveParticipantTransport()
+                    )
+                    try coordinator.stage(invitation)
+                    CloudLedgerInvitationNotice.shared.message =
+                        "A family ledger invitation is ready. Open Sharing in Kid Money to review it. No ledger data has been replaced or downloaded yet."
+                } catch CloudLedgerMigrationError.localLedgerNotEmpty {
+                    CloudLedgerInvitationNotice.shared.message =
+                        "This phone already has a local ledger. Kid Money will not replace or merge it automatically. Your data is unchanged."
+                } catch {
+                    CloudLedgerInvitationNotice.shared.message =
+                        "Kid Money could not stage this family ledger invitation. No ledger data was changed."
+                }
+            case .unsupported:
+                CloudLedgerInvitationNotice.shared.message =
+                    "This sharing invitation is not a supported Kid Money private share. Nothing was accepted."
+            }
         }
     }
 }

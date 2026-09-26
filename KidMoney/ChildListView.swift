@@ -5,6 +5,7 @@ struct ChildListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<Child> { !$0.isArchived }, sort: \Child.sortOrder) private var children: [Child]
     @State private var isShowingAddChild = false
+    @State private var invitationNotice = CloudLedgerInvitationNotice.shared
 
     var body: some View {
         NavigationStack {
@@ -30,9 +31,9 @@ struct ChildListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink {
-                        FamilySharingProbeView()
+                        FamilyLedgerSharingView()
                     } label: {
-                        Label("Family Sharing Test", systemImage: "person.2")
+                        Label("Sharing", systemImage: "person.2")
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
@@ -44,6 +45,14 @@ struct ChildListView: View {
             }
             .sheet(isPresented: $isShowingAddChild) {
                 AddChildView()
+            }
+            .alert("Family Invitation", isPresented: Binding(
+                get: { invitationNotice.message != nil },
+                set: { if !$0 { invitationNotice.message = nil } }
+            )) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(invitationNotice.message ?? "")
             }
         }
     }

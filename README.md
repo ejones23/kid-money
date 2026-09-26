@@ -16,8 +16,8 @@ deterministic CloudKit records, a durable local pending-change queue, and tested
 remote decode/merge rules. A tested queue processor now adds persisted sync
 status, retry/backoff, iCloud account gating, and optimistic conflict handling,
 and a `CKSyncEngine` delegate now handles scoped send/fetch events, opaque engine
-state, and CloudKit system metadata. The runtime is not instantiated by the app,
-so no real ledger network synchronization starts yet. A durable migration state
+state, and CloudKit system metadata. Automatic synchronization is still off.
+A durable migration state
 machine now stages an existing ledger with deterministic record identities,
 repairs interrupted queues, and refuses destructive or ambiguous adoption. A
 dormant setup runner now validates iCloud, idempotently provisions the private
@@ -25,8 +25,8 @@ zone, drives the explicit initial engine upload, creates the zone-wide share,
 and safely cleans up failed setup without deleting the local ledger.
 The participant adoption coordinator now stages a private invitation, checks
 for an unrelated local ledger, accepts the share, and imports the invited zone
-as an atomic initial snapshot. It remains disconnected from the app.
-A separate dormant activation gate verifies owner or participant readiness,
+as an atomic initial snapshot. The local build connects this path to an
+explicit Join action, not automatic acceptance. An activation gate verifies owner or participant readiness,
 the signed-in iCloud identity, and current share access before enabling edits.
 Offline edits stay queued; account changes and revoked shares freeze new edits
 without deleting local ledger history.
@@ -75,10 +75,13 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   preflight, scoped initial import, and interrupted-acceptance recovery
 - a dormant activation gate with account/share verification, offline continuity,
   and non-destructive account-switch and revocation handling
-- a dormant access-checked sync session that fetches before sending, rechecks
-  identity and share access, and retains queued changes on failures
+- an access-checked sync session behind an explicit Sync Now action that fetches
+  before sending, rechecks identity and share access, and retains queued
+  changes on failures
+- an owner upload-consent screen and separate participant invitation review;
+  neither launches network work merely because the app opened
 
-The project builds without errors or warnings in Xcode 26.6. All 86 current
+The project builds without errors or warnings in Xcode 26.6. All 88 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -105,7 +108,7 @@ two-way writes across two iPhones signed into different iCloud Apple Accounts.
 The owner increment was observed as counter 1 on the participant phone, and the
 participant increment was observed as counter 2 on the owner phone. Counter 2
 survived termination and relaunch on both phones. The isolated test also left
-the owner's `Rebecca: $2.50` ledger and the participant's empty ledger unchanged,
+the owner's existing ledger and the participant's empty ledger unchanged,
 completing the physical connection-probe matrix.
 
 ## Requirements
@@ -154,6 +157,8 @@ docs/DEVELOPMENT.md           Setup and verification workflow
 docs/FAMILY_SHARING_DESIGN.md Proposed shared-ledger persistence and identity design
 docs/PHASE6_ACTIVATION_FLOW.md Safe owner opt-in and participant invitation flow
 docs/PHASE6_CONNECTION_TEST.md Two-device CloudKit connection-test procedure
+docs/PHASE6_CLOUDKIT_SCHEMA.md Production schema release gate
+docs/PHASE6_REAL_LEDGER_TEST.md Two-device real-ledger test procedure
 docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
@@ -200,13 +205,15 @@ rejects a phone with an unrelated local ledger, imports the invited zone, and
 recovers a lost acceptance response after relaunch. The injected activation
 gate now checks the iCloud account and live share before enabling a prepared
 ledger. It preserves queued offline edits across restart and freezes new edits
-after account switching or invite revocation. The dormant access-checked sync
-session now fetches before sending, rechecks account and share access, and
-retains queued edits on failure. The next implementation step is the explicit
-owner-consent and participant-invitation UI. Real family data remains local
-because setup, activation, and sync are not called from the app.
-The proposed consent, invitation-routing, and attention-required screens are
-documented in [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
+after account switching or invite revocation. The access-checked sync session
+fetches before sending, rechecks account and share access, and retains queued
+edits on failure. The local build now has an explicit owner-consent screen,
+participant invitation review, guarded Join, Sync Now, and
+participant-management actions. None of those paths has been distributed or
+physically verified yet; TestFlight build 9 is counter-only. Production CloudKit
+schema and privacy-disclosure checks are the release gates before the
+real-ledger two-phone test. The flow is documented in
+[docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

@@ -13,9 +13,10 @@ protocol CloudLedgerSyncSessionTransport: AnyObject {
     func sendChanges(for ledger: SharedLedgerState) async throws
 }
 
-/// The only intended entry point for ordinary real-ledger network work. The
-/// app does not construct this runner yet. It keeps automatic CKSyncEngine
-/// synchronization off and rechecks access between fetch and send.
+/// The only entry point for ordinary real-ledger network work. The sharing
+/// screen constructs it only for an explicit Sync Now action. It keeps
+/// automatic CKSyncEngine synchronization off and rechecks access between
+/// fetch and send.
 @MainActor
 final class CloudLedgerSyncSession {
     let modelContext: ModelContext
