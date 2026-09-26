@@ -191,3 +191,20 @@ Record any Wallet question, parameter clarification, unsupported-capability resp
 - Relaunch persistence: terminating and relaunching Kid Money preserved `$2.40`.
 - Interpretation: all tested five-cent increments supplied both the child and amount from one utterance, executed from the locked screen, produced the exact expected ledger values, and persisted. Siri still required system-level app disambiguation against Wallet, even with the app name last, but asked no child or amount clarification.
 - Build 6 result: complete. Resume Phase 4; retain Wallet disambiguation as a platform-routing limitation rather than an app correctness failure.
+
+## Build 11 shared-ledger Siri regression check
+
+On September 26, 2026, after manual real-ledger synchronization passed in both
+directions, the owner retested the build 6 fifteen-cent phrase on build 11.
+
+- From the locked screen, “Give Rebecca fifteen cents in Kid Money” required
+  unlocking. Repeating it from the unlocked Home Screen returned “Kid Money
+  hasn't added support for that with Siri.” No transaction was created.
+- The prompted route “Give money in Kid Money” worked while unlocked. Siri
+  asked Kid Money or Wallet, then child, then amount. Rebecca plus “fifteen
+  cents” created exactly one `$0.15` Siri transaction, moved the balance from
+  `$2.85` to `$3.00`, and left one durable change waiting to sync.
+- Interpretation: fifteen-cent conversion, App Intent execution, shared-ledger
+  mutation, and durable queueing work. The regression is limited to one-shot
+  shortcut routing and locked-screen authorization/availability. Do not claim
+  build 11 preserves the previously verified locked one-shot grammar.

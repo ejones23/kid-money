@@ -170,6 +170,10 @@ in both directions; Siri, relaunch, and recovery still need testing**
 - [x] physically verify participant-to-owner synchronization after a manual edit
 - [x] validate, upload, and add candidate Sync Now fix build 11 to both
   TestFlight groups
+- [x] verify an unlocked prompted Siri addition creates an exact shared-ledger
+  transaction and durable pending change in build 11
+- [ ] restore the build 6 one-shot grammar and locked-screen execution, which
+  regressed in build 11 despite the prompted intent still working
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI

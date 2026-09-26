@@ -98,11 +98,13 @@ the edit once with the expected balance.
    new history row and the expected balance after their **Sync Now**.
 2. **Passed:** the spouse made a small manual adjustment, synced it, and the
    owner received it once with the expected balance after Sync Now.
-3. If both phones use the verified Siri grammar, make one numeric-cent voice
-   adjustment on each phone, such as “Give [child] fifteen cents in Kid Money.”
-   Siri may ask Kid Money/Wallet disambiguation. Sync the writer, then reader,
-   and verify exact cents and one transaction on each. A simulator build does
-   not establish this behavior.
+3. **Partially passed, with a routing regression:** build 11 rejected the
+   locked and then unlocked one-shot phrase “Give Rebecca fifteen cents in Kid
+   Money,” but the unlocked prompted route “Give money in Kid Money” collected
+   Rebecca and fifteen cents, created exactly one Siri transaction, reached
+   `$3.00`, and queued one cloud change. Sync that transaction to the spouse
+   before testing a spouse-side Siri subtraction. A simulator build does not
+   establish Siri behavior.
 4. Terminate and relaunch both apps. Confirm matching balances and histories,
    then run **Sync Now** once more on each.
 
