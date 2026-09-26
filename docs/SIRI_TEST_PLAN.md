@@ -10,6 +10,21 @@ Begin after Phase 2 compiles, tests pass, and the app is installed on a physical
 - Rebecca exists with a $0.00 balance.
 - Xcode is ready to capture device logs.
 
+## Physical-device inventory
+
+As of September 26, 2026, the available phones are:
+
+- personal iPhone SE on iOS 27;
+- managed work iPhone 15 on iOS 27, used as the shared-ledger owner and primary
+  Siri test device; and
+- spouse iPhone 14 on iOS 27, used as the shared-ledger participant, with Siri
+  disabled.
+
+Do not require Siri to be enabled on the participant phone. For Phase 6, create
+Siri-originated changes on the owner phone and use the participant phone to
+verify receipt, exact-once history, balance, and relaunch persistence. Reverse
+participant-to-owner synchronization can use a manual transaction.
+
 ## Core success test
 
 1. Terminate or background Kid Money.

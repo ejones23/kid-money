@@ -105,9 +105,11 @@ the edit once with the expected balance.
    and fifteen cents, created exactly one Siri transaction, reached `$3.00`,
    and queued one cloud change. Because both the app build and OS changed since
    the build 6 success, the observation does not isolate an app regression from
-   an OS routing change. Sync that transaction to the spouse before testing a
-   spouse-side Siri subtraction. A simulator build does not establish Siri
-   behavior.
+   an OS routing change. Sync that transaction to the spouse and verify it
+   appears exactly once. Siri is disabled on the spouse's iPhone 14, so no
+   participant-side Siri test is required; the already-passed manual reverse
+   mutation covers participant-to-owner synchronization. A simulator build
+   does not establish Siri behavior.
 4. Terminate and relaunch both apps. Confirm matching balances and histories,
    then run **Sync Now** once more on each.
 

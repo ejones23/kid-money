@@ -120,7 +120,10 @@ September 26, 2026. Its real-ledger schema is deployed to CloudKit Production,
 its privacy label and full policy are published. Build 11, with a candidate
 Sync Now lifetime fix, is Testing in the internal and spouse external groups.
 Owner opt-in, invitation, participant initial import, and manual incremental
-sync in both directions have been physically observed. Next verify relaunch
-persistence and Siri-originated sync before recovery testing. Do not start uploads
-merely because the app launched. Keep attention-required recovery
-non-destructive and preserve the physically verified Siri grammar.
+sync in both directions have been physically observed. The shared-ledger owner
+is a work iPhone 15; the participant is a spouse iPhone 14 with Siri disabled;
+an additional personal iPhone SE is available but is not part of the current
+share. Next verify relaunch persistence and owner-Siri-originated sync before
+recovery testing. Do not start uploads merely because the app launched. Keep
+attention-required recovery non-destructive and preserve the physically
+verified Siri grammar.
