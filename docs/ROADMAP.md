@@ -148,6 +148,8 @@ Status: **In progress — dormant owner, participant, and activation paths compl
 - [x] distinguish missing zones, revocation, and managed-account restrictions
   from temporary CloudKit outages in the dormant access check
 - [x] design explicit owner upload consent and safe participant invitation routing
+- [x] add a dormant sync session that checks access before fetch and again
+  before send, with durable retry and no upload from incomplete setup state
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI

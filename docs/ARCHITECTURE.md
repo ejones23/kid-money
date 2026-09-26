@@ -198,6 +198,15 @@ access recheck after an outage changes status to pending, not synced, because
 fetch and send have not yet completed. `PHASE6_ACTIVATION_FLOW.md` specifies
 the consent and invitation entry points before app wiring.
 
+`CloudLedgerSyncSession` is the dormant entry point for ordinary network work.
+It requires an activated household with matching completed owner or participant
+setup state, checks the pinned account and share before fetching, fetches the
+household zone, checks again before sending any queued data, and only reports
+synced after successful work. Transient CloudKit failures persist retry time
+and leave local edits writable; missing zones, changed accounts, or terminal
+errors freeze new edits without removing the queue. The live transport keeps
+`CKSyncEngine.automaticallySync` disabled and is not constructed by the app.
+
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is
 automatically applied after the child arrives. Undo entries converge by their

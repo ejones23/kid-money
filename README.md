@@ -75,8 +75,10 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   preflight, scoped initial import, and interrupted-acceptance recovery
 - a dormant activation gate with account/share verification, offline continuity,
   and non-destructive account-switch and revocation handling
+- a dormant access-checked sync session that fetches before sending, rechecks
+  identity and share access, and retains queued changes on failures
 
-The project builds without errors or warnings in Xcode 26.6. All 78 current
+The project builds without errors or warnings in Xcode 26.6. All 86 current
 tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
 Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
 
@@ -198,9 +200,11 @@ rejects a phone with an unrelated local ledger, imports the invited zone, and
 recovers a lost acceptance response after relaunch. The injected activation
 gate now checks the iCloud account and live share before enabling a prepared
 ledger. It preserves queued offline edits across restart and freezes new edits
-after account switching or invite revocation. The next checkpoint is a safe,
-explicit app entry point and an access-checked sync session. Real family data remains
-local because setup, activation, and sync are not called from the app.
+after account switching or invite revocation. The dormant access-checked sync
+session now fetches before sending, rechecks account and share access, and
+retains queued edits on failure. The next implementation step is the explicit
+owner-consent and participant-invitation UI. Real family data remains local
+because setup, activation, and sync are not called from the app.
 The proposed consent, invitation-routing, and attention-required screens are
 documented in [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
 

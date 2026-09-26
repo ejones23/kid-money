@@ -80,11 +80,13 @@ must be rejected, not accepted by either path.
 
 ## Release gates
 
-Before a TestFlight build can expose this flow: add an access-checked sync
-session entry point with injected failure tests; validate owner and participant
+Before a TestFlight build can expose this flow: validate owner and participant
 UI state transitions; update privacy disclosures for child names, notes, and
 history in private iCloud sharing; and confirm that cold-start invitations
 cannot fall into the counter probe. Then run a two-device physical matrix for
 initial upload, invitation acceptance, bidirectional manual and Siri edits,
 offline/reconnect, restart, account changes, and revocation. Compilation and
 simulator tests alone do not establish physical CloudKit or Siri behavior.
+
+The dormant access-checked sync session and its injected failure tests are
+implemented. It has not been connected to the app.
