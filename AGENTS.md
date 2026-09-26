@@ -17,7 +17,7 @@ Read these before substantial work:
 
 ## Current state
 
-Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 added locale-aware exact input, duplicate-name matching, balance-overflow and minimum-integer undo protection, a 100-write multi-context persistence test, privacy-conscious logging, focused accessibility improvements, one process-wide production `ModelContainer`, and an explicit opt-out from SwiftData-managed CloudKit synchronization. Private CloudKit family sharing is approved for Phase 6. TestFlight build `0.1 (8)` exposed two CloudKit bootstrap findings on the owner phone: Production initially lacked the system-generated `cloudkit.share` type, and the failed atomic save left a stale local probe pointer. A development-signed share generated the missing type, which was deployed to Production. Build `0.1 (9)` recovered that incomplete state and passed the full two-account physical probe on September 24, 2026: the managed work phone created a private share, the spouse accepted it under a second iCloud Apple Account, writes succeeded in both directions, counter 2 survived termination and relaunch on both phones, and the isolated test left the owner's `Rebecca: $2.50` ledger and the participant's empty ledger unchanged. The real-ledger sync foundation now adds deterministic CloudKit mappings, durable local queues, strict record decoding, atomic deterministic merges, durable out-of-order transaction deferral, same-transaction undo convergence, and a guarded queue processor with persisted sync state, account gating, retry/backoff, and optimistic conflict handling. The processor remains behind an injected transport and is not started by the app, so network synchronization and ledger migration remain disabled. The app builds in Xcode 26.6 and all 37 tests pass on an iOS 26.5 simulator.
+Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified locked-screen fifteen-cent give, twenty-five-cent take, and thirty-five-cent give adjustments, exact balances, and relaunch persistence. The stable grammar is “Give/Take [child] [numeric amount] in Kid Money.” Siri still requests Kid Money/Wallet disambiguation, but no child or amount follow-up is required. Coin words are no longer required. The owner successfully completed the full Phase 4 manual-interface review using internal TestFlight build `0.1 (7)`. Phase 5 added locale-aware exact input, duplicate-name matching, balance-overflow and minimum-integer undo protection, a 100-write multi-context persistence test, privacy-conscious logging, focused accessibility improvements, one process-wide production `ModelContainer`, and an explicit opt-out from SwiftData-managed CloudKit synchronization. Private CloudKit family sharing is approved for Phase 6. TestFlight build `0.1 (8)` exposed two CloudKit bootstrap findings on the owner phone: Production initially lacked the system-generated `cloudkit.share` type, and the failed atomic save left a stale local probe pointer. A development-signed share generated the missing type, which was deployed to Production. Build `0.1 (9)` recovered that incomplete state and passed the full two-account physical probe on September 24, 2026: the managed work phone created a private share, the spouse accepted it under a second iCloud Apple Account, writes succeeded in both directions, counter 2 survived termination and relaunch on both phones, and the isolated test left the owner's `Rebecca: $2.50` ledger and the participant's empty ledger unchanged. The real-ledger sync foundation now adds deterministic CloudKit mappings, durable local queues, strict record decoding, atomic deterministic merges, durable out-of-order transaction deferral, same-transaction undo convergence, a guarded queue processor, and a dormant CKSyncEngine adapter with scoped events, system-field metadata, engine-state persistence, account handling, optimistic conflict resolution, and protection for mutations made while an older record version is in flight. The runtime is not instantiated by the app, so network synchronization and ledger migration remain disabled. The app builds in Xcode 26.6 and all 47 tests pass on an iOS 26.5 simulator.
 
 Latest verified capabilities:
 
@@ -45,6 +45,8 @@ Latest verified capabilities:
 - durably defer out-of-order transactions and converge duplicate undo attempts
 - process queued saves with persisted account/retry status and deterministic
   optimistic-conflict handling without enabling live uploads
+- bridge durable changes and inbound records through a dormant `CKSyncEngine`
+  delegate while persisting engine state and server change-tag metadata
 
 ## Non-negotiable rules
 
@@ -59,8 +61,8 @@ Latest verified capabilities:
 - Preserve the phase order. Get to a real Siri test before building the rest of the UI.
 - Private CloudKit family sharing is explicitly requested and approved for Phase
   6. The counter-only physical matrix in `docs/PHASE6_CONNECTION_TEST.md` has
-  passed. Do not upload real ledger data until the live CKSyncEngine adapter and
-  non-destructive migration recovery are covered by tests. Do not introduce third-party
+  passed. Do not upload real ledger data until non-destructive migration and
+  interruption recovery are covered by tests. Do not introduce third-party
   dependencies, a custom backend, application-managed accounts, schedules, or
   notifications without another explicit request.
 - Never commit real family ledger data, credentials, signing material, personal development-team identifiers, or device logs containing personal information.
@@ -94,8 +96,8 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 ## Immediate next task
 
 Continue the durable shared-ledger synchronization layer described in
-`docs/FAMILY_SHARING_DESIGN.md`. Adapt the tested queue processor to live
-`CKSyncEngine` send and fetch events, serialize/restore the engine's opaque state,
-and test the adapter without starting it from the app. Keep real family data
-local until the non-destructive migration and failure-recovery path is complete.
-Preserve the physically verified Siri grammar.
+`docs/FAMILY_SHARING_DESIGN.md`. Implement a non-destructive existing-ledger
+migration coordinator with durable phases, deterministic initial queueing,
+interruption/retry recovery, and tests. Do not instantiate the CKSyncEngine
+runtime from app startup or upload real family data yet. Preserve the physically
+verified Siri grammar.

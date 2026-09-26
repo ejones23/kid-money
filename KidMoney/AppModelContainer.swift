@@ -27,6 +27,7 @@ enum AppModelContainer {
             PendingCloudChange.self,
             DeferredCloudTransaction.self,
             CloudLedgerSyncState.self,
+            CloudLedgerRecordMetadata.self,
             configurations: configuration
         )
     }

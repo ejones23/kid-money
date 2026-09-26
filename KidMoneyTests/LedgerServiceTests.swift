@@ -1011,6 +1011,319 @@ struct LedgerServiceTests {
         #expect(state.status == .attentionRequired)
     }
 
+    @Test func syncEngineStoreRebuildsPendingStateFromDurableQueue() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let transaction = try service.addTransaction(cents: 15, to: child)
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        let changes = try store.pendingEngineChanges()
+        let recordNames = changes.compactMap { change -> String? in
+            guard case .saveRecord(let recordID) = change else { return nil }
+            return recordID.recordName
+        }
+
+        #expect(changes.count == 2)
+        #expect(Set(recordNames) == Set([
+            CloudLedgerRecordName.child(child.id),
+            CloudLedgerRecordName.transaction(
+                id: transaction.id,
+                reversesTransactionID: nil
+            )
+        ]))
+        #expect(changes.allSatisfy { change in
+            guard case .saveRecord(let recordID) = change else { return false }
+            return recordID.zoneID == sharedLedger.zoneID
+        })
+    }
+
+    @Test func fetchedRecordMergesAndStoresReusableSystemFields() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+        let remoteChild = Child(
+            id: UUID(),
+            name: "Rebecca",
+            createdAt: Date(timeIntervalSinceReferenceDate: 10),
+            sortOrder: 0
+        )
+        remoteChild.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 20)
+        let remoteRecord = CloudLedgerRecordMapper.child(
+            remoteChild,
+            zoneID: sharedLedger.zoneID
+        )
+
+        try store.handleFetchedRecords([remoteRecord], deletions: [])
+        let mergedChild = try #require(
+            context.fetch(FetchDescriptor<Child>()).first { $0.id == remoteChild.id }
+        )
+        try LedgerService(modelContext: context).renameChild(mergedChild, to: "Becca")
+        let possibleOutbound = try store.record(for: remoteRecord.recordID)
+        let outbound = try #require(possibleOutbound)
+        let decoded = try CloudLedgerRecordDecoder.child(outbound)
+
+        #expect(decoded.name == "Becca")
+        #expect(outbound.recordID == remoteRecord.recordID)
+        #expect(try context.fetch(FetchDescriptor<CloudLedgerRecordMetadata>()).count == 1)
+    }
+
+    @Test func sentRecordClearsDurableQueueAndMarksSynced() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        let record = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        let retries = try store.handleSavedRecords([record])
+        let state = try #require(
+            context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first
+        )
+
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+        #expect(try context.fetch(FetchDescriptor<CloudLedgerRecordMetadata>()).count == 1)
+        #expect(state.status == .synced)
+        #expect(try store.record(for: record.recordID) == nil)
+        #expect(retries.isEmpty)
+    }
+
+    @Test func successfulSendDoesNotDropNewerCoalescedMutation() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let service = LedgerService(modelContext: context)
+        let child = try service.addChild(named: "Rebecca")
+        let recordID = CKRecord.ID(
+            recordName: CloudLedgerRecordName.child(child.id),
+            zoneID: sharedLedger.zoneID
+        )
+        let sentRecord = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        try service.renameChild(child, to: "Becca")
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        let retries = try store.handleSavedRecords([sentRecord])
+        let possibleRetryRecord = try store.record(for: recordID)
+        let retryRecord = try #require(possibleRetryRecord)
+        let decoded = try CloudLedgerRecordDecoder.child(retryRecord)
+
+        #expect(retries == [recordID])
+        #expect(decoded.name == "Becca")
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).count == 1)
+    }
+
+    @Test func syncEngineServerWinningConflictCompletesPendingSave() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        child.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 10)
+        try context.save()
+        let serverChild = Child(
+            id: child.id,
+            name: "Becca",
+            createdAt: child.createdAt,
+            sortOrder: child.sortOrder
+        )
+        serverChild.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 20)
+        let failedRecord = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        let serverRecord = CloudLedgerRecordMapper.child(
+            serverChild,
+            zoneID: sharedLedger.zoneID
+        )
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        let action = try store.handleFailedSave(CloudLedgerSyncEngineFailure(
+            record: failedRecord,
+            code: .serverRecordChanged,
+            serverRecord: serverRecord,
+            retryAfter: nil
+        ))
+
+        guard case .removeSave(let recordID) = action else {
+            Issue.record("Expected the server-winning conflict to complete the save")
+            return
+        }
+        #expect(recordID == serverRecord.recordID)
+        #expect(child.name == "Becca")
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).isEmpty)
+    }
+
+    @Test func syncEngineLocalWinningConflictRetriesFromServerMetadata() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        child.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 20)
+        try context.save()
+        let serverChild = Child(
+            id: child.id,
+            name: "Older Name",
+            createdAt: child.createdAt,
+            sortOrder: child.sortOrder
+        )
+        serverChild.lastModifiedAt = Date(timeIntervalSinceReferenceDate: 10)
+        let failedRecord = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        let serverRecord = CloudLedgerRecordMapper.child(
+            serverChild,
+            zoneID: sharedLedger.zoneID
+        )
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        let action = try store.handleFailedSave(CloudLedgerSyncEngineFailure(
+            record: failedRecord,
+            code: .serverRecordChanged,
+            serverRecord: serverRecord,
+            retryAfter: nil
+        ))
+        guard case .retrySave(let recordID) = action else {
+            Issue.record("Expected the local-winning conflict to retry")
+            return
+        }
+        let possibleRetryRecord = try store.record(for: recordID)
+        let retryRecord = try #require(possibleRetryRecord)
+        let decoded = try CloudLedgerRecordDecoder.child(retryRecord)
+
+        #expect(decoded.name == "Rebecca")
+        #expect(decoded.lastModifiedAt == child.lastModifiedAt)
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).count == 1)
+        #expect(try context.fetch(FetchDescriptor<CloudLedgerRecordMetadata>()).count == 1)
+    }
+
+    @Test func syncEngineTransientFailurePreservesQueueForEngineRetry() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        let record = CloudLedgerRecordMapper.child(child, zoneID: sharedLedger.zoneID)
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+        let now = Date(timeIntervalSinceReferenceDate: 500)
+
+        let action = try store.handleFailedSave(CloudLedgerSyncEngineFailure(
+            record: record,
+            code: .requestRateLimited,
+            serverRecord: nil,
+            retryAfter: 60
+        ), now: now)
+        let state = try #require(
+            context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first
+        )
+
+        guard case .engineWillRetry = action else {
+            Issue.record("Expected CKSyncEngine to own transient retry")
+            return
+        }
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).count == 1)
+        #expect(state.status == .pending)
+        #expect(state.nextRetryAt == now.addingTimeInterval(60))
+    }
+
+    @Test func fetchedDeletionRequiresAttentionWithoutDeletingLocalLedger() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        let recordID = CKRecord.ID(
+            recordName: CloudLedgerRecordName.child(child.id),
+            zoneID: sharedLedger.zoneID
+        )
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        #expect(throws: CloudLedgerSyncEngineAdapterError.fetchedRecordDeletion(
+            recordID.recordName
+        )) {
+            try store.handleFetchedRecords([], deletions: [
+                CloudLedgerFetchedDeletion(
+                    recordID: recordID,
+                    recordType: CloudLedgerRecordType.child.rawValue
+                )
+            ])
+        }
+
+        #expect(sharedLedger.phase == .attentionRequired)
+        #expect(try context.fetch(FetchDescriptor<Child>()).count == 1)
+        #expect(try context.fetch(FetchDescriptor<PendingCloudChange>()).count == 1)
+    }
+
+    @Test func corruptPersistedEngineStateFailsClosed() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+
+        try store.persistEngineStateData(Data([0x00, 0x01, 0x02]))
+
+        #expect(throws: CloudLedgerSyncEngineAdapterError.corruptEngineState) {
+            _ = try store.restoredStateSerialization()
+        }
+    }
+
+    @Test func realSyncEnginePersistsRestorableStateWithoutNetworking() async throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let sharedLedger = try makeSharedLedger(context: context)
+        let child = try LedgerService(modelContext: context).addChild(named: "Rebecca")
+        let runtime = try CloudLedgerSyncEngineRuntime(
+            database: CKContainer(
+                identifier: "iCloud.io.github.ejones23.KidMoney"
+            ).privateCloudDatabase,
+            modelContext: context,
+            householdID: sharedLedger.householdID,
+            automaticallySync: false
+        )
+        let expectedChange = CKSyncEngine.PendingRecordZoneChange.saveRecord(
+            CKRecord.ID(
+                recordName: CloudLedgerRecordName.child(child.id),
+                zoneID: sharedLedger.zoneID
+            )
+        )
+
+        #expect(runtime.engine.state.pendingRecordZoneChanges.contains(expectedChange))
+        for _ in 0..<100 {
+            let state = try context.fetch(FetchDescriptor<CloudLedgerSyncState>()).first
+            if state?.engineStateData != nil { break }
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        let store = try CloudLedgerSyncEngineStore(
+            modelContext: context,
+            householdID: sharedLedger.householdID
+        )
+        let restored = try store.restoredStateSerialization()
+
+        #expect(restored != nil)
+        await runtime.engine.cancelOperations()
+    }
+
     private func makeSharedLedger(context: ModelContext) throws -> SharedLedgerState {
         let householdID = UUID()
         let sharedLedger = SharedLedgerState(

@@ -8,8 +8,9 @@ completed Phase 6 transport validation. The real shared-ledger foundation now
 defines local sync state, deterministic CloudKit mappings, and a durable change
 queue. It can strictly decode and locally merge supplied CloudKit records. A
 transport-independent queue processor now exercises send policy, retry, account
-gating, and optimistic conflicts, but the app does not yet start a live
-`CKSyncEngine` or perform network synchronization.
+gating, and optimistic conflicts. A concrete `CKSyncEngine` delegate now maps
+engine events into those persistence and merge boundaries, but the app does not
+instantiate the runtime or perform network synchronization.
 
 ```text
 SwiftUI views ──────┐
@@ -114,9 +115,25 @@ deterministic last-write-wins policy as inbound records. A server winner
 completes the local change; a local winner is retried using the server record's
 system fields and change tag. Ledger transactions remain immutable: a different
 payload for an existing transaction ID is never overwritten. The processor is
-covered through an in-memory transport, including restart-safe retry state. A
-live `CKSyncEngine` adapter, inbound event handling, engine-state serialization,
-status UI, and migration trigger remain deliberately disconnected.
+covered through an in-memory transport, including restart-safe retry state.
+
+`CloudLedgerSyncEngineDelegate` scopes fetches and sends to exactly one household
+zone, materializes send batches from the durable queue, merges fetched records,
+classifies per-record failures, and stops on remote deletions or account changes
+that require a product decision. Successful saves clear the corresponding local
+queue entries. `CloudLedgerRecordMetadata` stores only encoded CloudKit system
+fields so retries retain server change tags without duplicating ledger payloads.
+The durable SwiftData queue is authoritative: initialization adds any missing
+engine pending changes, while a stale engine-only save is discarded rather than
+re-uploaded. If a local mutation coalesces into the queue while an older record
+version is in flight, the successful-send event compares that accepted payload
+with current local state and immediately requeues the newer version.
+
+Each state-update event is JSON-encoded into `CloudLedgerSyncState.engineStateData`
+and restored when constructing `CloudLedgerSyncEngineRuntime`. Automatic sync
+defaults to disabled and no production call site creates the runtime. Migration,
+status UI, remote-notification capability, and activation remain deliberately
+disconnected.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is

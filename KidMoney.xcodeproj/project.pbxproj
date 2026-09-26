@@ -24,6 +24,7 @@
 		A10000000000000000000015 /* CloudLedgerSyncFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000019 /* CloudLedgerSyncFoundation.swift */; };
 		A10000000000000000000016 /* CloudLedgerMergeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000020 /* CloudLedgerMergeService.swift */; };
 		A10000000000000000000017 /* CloudLedgerQueueProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000021 /* CloudLedgerQueueProcessor.swift */; };
+		A10000000000000000000018 /* CloudLedgerSyncEngineAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000022 /* CloudLedgerSyncEngineAdapter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		A20000000000000000000019 /* CloudLedgerSyncFoundation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerSyncFoundation.swift; sourceTree = "<group>"; };
 		A20000000000000000000020 /* CloudLedgerMergeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerMergeService.swift; sourceTree = "<group>"; };
 		A20000000000000000000021 /* CloudLedgerQueueProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerQueueProcessor.swift; sourceTree = "<group>"; };
+		A20000000000000000000022 /* CloudLedgerSyncEngineAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudLedgerSyncEngineAdapter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 				A20000000000000000000019 /* CloudLedgerSyncFoundation.swift */,
 				A20000000000000000000020 /* CloudLedgerMergeService.swift */,
 				A20000000000000000000021 /* CloudLedgerQueueProcessor.swift */,
+				A20000000000000000000022 /* CloudLedgerSyncEngineAdapter.swift */,
 				A20000000000000000000018 /* Info.plist */,
 				A20000000000000000000015 /* KidMoney.entitlements */,
 				A20000000000000000000016 /* AppShortcuts.xcstrings */,
@@ -239,6 +242,7 @@
 				A10000000000000000000015 /* CloudLedgerSyncFoundation.swift in Sources */,
 				A10000000000000000000016 /* CloudLedgerMergeService.swift in Sources */,
 				A10000000000000000000017 /* CloudLedgerQueueProcessor.swift in Sources */,
+				A10000000000000000000018 /* CloudLedgerSyncEngineAdapter.swift in Sources */,
 				A10000000000000000000006 /* ChildListView.swift in Sources */,
 				A10000000000000000000007 /* AddChildView.swift in Sources */,
 				A10000000000000000000008 /* ChildDetailView.swift in Sources */,
