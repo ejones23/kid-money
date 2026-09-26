@@ -101,8 +101,8 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — build 11 physically verified owner-to-participant
-incremental sync; reverse direction and recovery still need testing**
+Status: **In progress — build 11 physically verified manual incremental sync
+in both directions; Siri, relaunch, and recovery still need testing**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -167,7 +167,7 @@ incremental sync; reverse direction and recovery still need testing**
   transaction history on a second iCloud Apple Account
 - [x] fix and physically verify ordinary owner-to-participant synchronization
   of the previously queued manual edit
-- [ ] physically verify participant-to-owner synchronization after a manual edit
+- [x] physically verify participant-to-owner synchronization after a manual edit
 - [x] validate, upload, and add candidate Sync Now fix build 11 to both
   TestFlight groups
 - enable one private custom record zone and zone-wide `CKShare` per household
@@ -193,7 +193,10 @@ The participant joined and saw the complete initial history. A subsequent
 owner-side manual edit remained queued after Sync Now and did not appear on the
 participant after their Sync Now. Build 11 repaired that path: the owner queue
 drained and the participant received the edit once with the expected balance.
-The reverse direction and broader two-phone matrix remain open.
+The participant then made a manual edit, cleared her queue with Sync Now, and
+the owner received it exactly once with the expected balance. The remaining
+two-phone matrix covers Siri-originated edits, relaunch persistence, and
+offline/reconnect recovery.
 
 After the basic two-way matrix is stable:
 
