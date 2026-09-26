@@ -73,7 +73,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Execute and record the build 6 locked-screen increment matrix on physical hardware.
 - [x] Execute and record `docs/PHASE6_CONNECTION_TEST.md` on two iCloud
   accounts before implementing real-ledger synchronization.
-- [ ] Deploy the real-ledger Household, Child, and LedgerTransaction CloudKit
+- [x] Deploy the real-ledger Household, Child, and LedgerTransaction CloudKit
   schema to Production before distributing an opt-in sharing build.
 - [ ] Verify App Store Connect privacy answers and the published privacy policy
   match the optional private CloudKit ledger upload.

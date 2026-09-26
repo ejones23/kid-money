@@ -163,7 +163,7 @@ Status: **In progress — explicit sharing UI wired locally; not yet in TestFlig
 - verify two-way manual and Siri changes across two physical devices
 - verify offline/reconnect, invite revocation, iCloud sign-out, and managed-device
   restrictions
-- deploy the real-ledger CloudKit schema to Production before TestFlight
+- [x] deploy the real-ledger CloudKit schema to Production before TestFlight
 - update the privacy policy and App Store disclosures before distribution
 
 See `FAMILY_SHARING_DESIGN.md` for the approved persistence, authentication,
@@ -171,8 +171,8 @@ migration, and validation design. The probe procedure and strict no-ledger-data
 boundary are recorded in `PHASE6_CONNECTION_TEST.md`.
 The real-ledger consent and invitation screens are implemented in the local
 build as specified in `PHASE6_ACTIVATION_FLOW.md`. Build 9 on TestFlight is
-still counter-only. A live opt-in sharing build must wait for the Production
-CloudKit schema and privacy-disclosure checks.
+still counter-only. The Production CloudKit schema was deployed September 26,
+2026. A live opt-in sharing build still waits for privacy-disclosure checks.
 
 ## Explicitly deferred
 

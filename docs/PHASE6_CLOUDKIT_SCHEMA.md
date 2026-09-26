@@ -2,8 +2,9 @@
 
 TestFlight runs against CloudKit Production. Development can create custom
 record fields on first save, but Production needs an explicitly deployed schema.
-The counter-only build deployed `FamilySharingProbe` and `cloudkit.share`; the
-real ledger also needs the three types below. Deploying schema copies types,
+The counter-only build deployed `FamilySharingProbe` and `cloudkit.share`.
+On September 26, 2026, the three real-ledger types below were added in
+Development and deployed to Production. Deploying schema copies types,
 fields, and indexes, **not** any family records.
 
 | Record type | Field | CloudKit type |
@@ -38,7 +39,11 @@ system fields and the existing `cloudkit.share` type intact.
    works. Do not reset Production or delete existing types/fields.
 4. Only then distribute a build exposing **Upload My Ledger to iCloud**.
 
-The current agent environment has no authorized CloudKit Console session or
-`cktool` token. Its read-only Production export attempt stopped at missing
-authentication; no schema was changed. Do not treat local compilation as
-evidence that Production schema is ready.
+The September 26 Production deployment was verified in CloudKit Console:
+`Child` has 12 fields, `Household` has 10, and `LedgerTransaction` has 13,
+including CloudKit's six system fields per type. The deployment diff showed
+the exact custom fields and types above. The new types have no grants in the
+`_world`, `_icloud`, or `_creator` public-database security roles. CloudKit
+security roles govern the public database; the app uses only private and
+shared databases with `CKShare` participant permissions. The existing probe,
+`Users`, and `cloudkit.share` role grants were left intact.

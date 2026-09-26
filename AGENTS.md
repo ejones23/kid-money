@@ -115,9 +115,10 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Prepare the explicit real-ledger sharing build for TestFlight. Confirm the
-Household, Child, and LedgerTransaction schema exists in CloudKit Production,
-align published privacy disclosures and App Store Connect answers, then verify
+Prepare the explicit real-ledger sharing build for TestFlight. The Household,
+Child, and LedgerTransaction schema was deployed and verified in CloudKit
+Production on September 26, 2026. Align published privacy disclosures and App
+Store Connect answers, then verify
 owner opt-in, participant acceptance, bidirectional manual/Siri edits, offline
 recovery, and relaunch on physical devices. Do not start uploads merely because
 the app launched. Keep attention-required recovery non-destructive and preserve

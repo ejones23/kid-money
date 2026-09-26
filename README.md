@@ -211,8 +211,9 @@ edits on failure. The local build now has an explicit owner-consent screen,
 participant invitation review, guarded Join, Sync Now, and
 participant-management actions. None of those paths has been distributed or
 physically verified yet; TestFlight build 9 is counter-only. Production CloudKit
-schema and privacy-disclosure checks are the release gates before the
-real-ledger two-phone test. The flow is documented in
+schema was deployed to Production on September 26, 2026; the remaining
+privacy-disclosure check is the release gate before the real-ledger two-phone
+test. The flow is documented in
 [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
