@@ -75,10 +75,15 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   accounts before implementing real-ledger synchronization.
 - [x] Deploy the real-ledger Household, Child, and LedgerTransaction CloudKit
   schema to Production before distributing an opt-in sharing build.
-- [ ] Verify App Store Connect privacy answers and the published privacy policy
+- [x] Verify App Store Connect privacy answers and the published privacy policy
   match the optional private CloudKit ledger upload.
-  The verified privacy-policy URL and `Data Not Collected` questionnaire answer
-  are saved in App Store Connect; the label still needs explicit publication.
+  The verified privacy-policy URL and `Data Not Collected` answer were
+  published in App Store Connect on September 26, 2026. Optional private
+  iCloud sharing remains disclosed in the full privacy policy.
+- [x] Archive, validate, and upload real-ledger sharing build `0.1 (10)`.
+- [x] Add build `0.1 (10)` to `Internal Testing` after processing completes.
+- [ ] Complete an owner-only, no-upload preflight before enabling the spouse's
+  external `Family Test` group for build 10.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
 
 ## 6. Public release

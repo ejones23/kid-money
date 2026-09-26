@@ -101,7 +101,7 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — explicit sharing UI wired locally; not yet in TestFlight**
+Status: **In progress — build 10 in Internal Testing; owner preflight pending**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -155,6 +155,8 @@ Status: **In progress — explicit sharing UI wired locally; not yet in TestFlig
   unsupported shares and stage a valid invitation without accepting it
 - [x] provide explicit Join, Sync Now, and participant-management actions
 - [x] verify the owner sharing and consent screens on an iPhone simulator
+- [x] publish the private-sharing privacy policy and App Store privacy label
+- [x] validate and distribute real-ledger sharing build 10 to internal testers
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -164,15 +166,16 @@ Status: **In progress — explicit sharing UI wired locally; not yet in TestFlig
 - verify offline/reconnect, invite revocation, iCloud sign-out, and managed-device
   restrictions
 - [x] deploy the real-ledger CloudKit schema to Production before TestFlight
-- update the privacy policy and App Store disclosures before distribution
+- [x] update the privacy policy and App Store disclosures before distribution
 
 See `FAMILY_SHARING_DESIGN.md` for the approved persistence, authentication,
 migration, and validation design. The probe procedure and strict no-ledger-data
 boundary are recorded in `PHASE6_CONNECTION_TEST.md`.
-The real-ledger consent and invitation screens are implemented in the local
-build as specified in `PHASE6_ACTIVATION_FLOW.md`. Build 9 on TestFlight is
-still counter-only. The Production CloudKit schema was deployed September 26,
-2026. A live opt-in sharing build still waits for privacy-disclosure checks.
+The real-ledger consent and invitation screens are distributed to internal
+testers in build 10, as specified in `PHASE6_ACTIVATION_FLOW.md`. Build 9 in
+the spouse's external group remains counter-only. The Production CloudKit
+schema and privacy disclosures passed their release gates September 26, 2026.
+Owner-only physical preflight precedes any external build 10 distribution.
 
 ## Explicitly deferred
 

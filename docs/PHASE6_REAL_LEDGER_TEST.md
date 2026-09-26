@@ -1,7 +1,7 @@
 # Phase 6 real-ledger physical test
 
-Status: **Prepared; Production schema passed. Do not run until the privacy
-release gate passes and build 10 is distributed.**
+Status: **Build 10 is in Internal Testing; owner-only, no-upload preflight is
+ready. External spouse testing waits for that preflight.**
 
 This is separate from the successful counter-only connection test. The next
 build will offer an explicit owner upload of the actual child and transaction
@@ -15,13 +15,27 @@ The owner should review the consent sheet before deciding to proceed.
    `iCloud.io.github.ejones23.KidMoney`. Verify the `cloudkit.share` type remains.
 2. Confirm the published privacy policy and App Store Connect privacy answers
    describe the optional private iCloud copy and read-write invitations.
-3. Install the new TestFlight build on both phones. Record its version/build
-   number. Use the owner's existing iCloud account on one phone and the spouse's
-   separate iCloud account on the other; the spouse's Kid Money ledger must be
-   empty for this first adoption test.
+3. Install build `0.1 (10)` on the owner phone only for the initial preflight.
+   Later, after the owner preflight passes and build 10 reaches the external
+   `Family Test` group, install it on the spouse's phone. Use separate iCloud
+   Apple Accounts; the spouse's Kid Money ledger must be empty for this first
+   adoption test.
 4. Record the owner phone's existing child names, balances, and transaction
    count without sharing a screenshot or personal ledger details with the
    developer. Do not uninstall the app or reset a phone during this test.
+
+## Owner-only, no-upload preflight
+
+1. On the phone holding the ledger you intend to share, confirm TestFlight
+   shows build `0.1 (10)` and the existing children, balances, and history are
+   unchanged. Do not start setup from a different phone with an independent
+   local ledger.
+2. Open **Kid Money → Sharing**. It should say the ledger is on this phone only.
+3. Tap **Share Family Ledger**. Check that the sheet shows plausible child and
+   transaction counts and explains the private iCloud upload. Tap **Not Now**.
+4. Reopen Sharing. It should still say the ledger is on this phone only, and
+   the balances should still be unchanged. Stop here and report any unexpected
+   change or error before choosing **Upload My Ledger to iCloud**.
 
 ## Owner opt-in and invitation
 
