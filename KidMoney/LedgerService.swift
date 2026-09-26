@@ -182,9 +182,21 @@ struct LedgerService {
         return result
     }
 
-    private func activeSharedLedger() throws -> SharedLedgerState? {
-        try modelContext.fetch(FetchDescriptor<SharedLedgerState>()).first {
-            $0.phase == .active
+    private func cloudBackedSharedLedger() throws -> SharedLedgerState? {
+        let sharedLedgers = try modelContext.fetch(FetchDescriptor<SharedLedgerState>())
+        if let active = sharedLedgers.first(where: { $0.phase == .active }) {
+            return active
+        }
+
+        let migratingHouseholdIDs = Set(
+            try modelContext.fetch(FetchDescriptor<CloudLedgerMigrationState>())
+                .filter {
+                    $0.phase != .completed && $0.phase != .attentionRequired && $0.phase != nil
+                }
+                .map(\.householdID)
+        )
+        return sharedLedgers.first {
+            $0.phase == .preparing && migratingHouseholdIDs.contains($0.householdID)
         }
     }
 
@@ -196,7 +208,7 @@ struct LedgerService {
     }
 
     private func enqueueCloudSave(for child: Child) throws {
-        guard let sharedLedger = try activeSharedLedger() else { return }
+        guard let sharedLedger = try cloudBackedSharedLedger() else { return }
         try enqueueCloudSave(
             householdID: sharedLedger.householdID,
             recordType: .child,
@@ -205,7 +217,7 @@ struct LedgerService {
     }
 
     private func enqueueCloudSave(for transaction: LedgerTransaction) throws {
-        guard let sharedLedger = try activeSharedLedger() else { return }
+        guard let sharedLedger = try cloudBackedSharedLedger() else { return }
         try enqueueCloudSave(
             householdID: sharedLedger.householdID,
             recordType: .ledgerTransaction,

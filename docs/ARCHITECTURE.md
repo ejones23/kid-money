@@ -9,8 +9,9 @@ defines local sync state, deterministic CloudKit mappings, and a durable change
 queue. It can strictly decode and locally merge supplied CloudKit records. A
 transport-independent queue processor now exercises send policy, retry, account
 gating, and optimistic conflicts. A concrete `CKSyncEngine` delegate now maps
-engine events into those persistence and merge boundaries, but the app does not
-instantiate the runtime or perform network synchronization.
+engine events into those persistence and merge boundaries. A durable migration
+coordinator stages existing local ledgers without changing their rows. The app
+does not instantiate either path or perform network synchronization.
 
 ```text
 SwiftUI views ──────┐
@@ -75,13 +76,15 @@ boundary. `SharedLedgerState` records the household, zone, database scope,
 role, phase, and schema version. `PendingCloudChange` durably and idempotently
 records a pending save or deletion by deterministic CloudKit record name.
 
-When no shared household exists—or while one is still being prepared—ordinary
-ledger operations remain purely local. Once a household is explicitly active,
-`LedgerService` saves each local mutation and its coalesced pending change in
-the same SwiftData transaction. An attention-required household rejects further
-ledger mutations instead of silently accumulating changes that cannot safely
-converge. No production code starts queue draining yet, so this foundation
-cannot upload real ledger data.
+When no shared household exists, ordinary ledger operations remain purely
+local. A preparing household also remains local unless it has an explicit
+`CloudLedgerMigrationState`. During that migration, `LedgerService` saves new
+local edits and their coalesced pending changes together so an edit made during
+setup cannot fall outside the initial upload. Once a household is active, the
+same queueing rule continues for normal synchronization. An attention-required
+household rejects further ledger mutations instead of silently accumulating
+changes that cannot safely converge. No production code starts queue draining
+yet, so this foundation cannot upload real ledger data.
 
 `CloudLedgerRecordMapper` maps Household, Child, and LedgerTransaction values
 without floating-point money. Children and transactions use their stable UUIDs
@@ -131,9 +134,29 @@ with current local state and immediately requeues the newer version.
 
 Each state-update event is JSON-encoded into `CloudLedgerSyncState.engineStateData`
 and restored when constructing `CloudLedgerSyncEngineRuntime`. Automatic sync
-defaults to disabled and no production call site creates the runtime. Migration,
-status UI, remote-notification capability, and activation remain deliberately
+defaults to disabled and no production call site creates the runtime. Status
+UI, remote-notification capability, and activation remain deliberately
 disconnected.
+
+`CloudLedgerMigrationCoordinator` persists the owner setup phases: awaiting
+zone creation, uploading the initial ledger, awaiting share creation, ready to
+activate, completed, and attention required. Beginning setup inserts a
+preparing `SharedLedgerState` and queues the household plus every child and
+transaction by deterministic record name without rewriting the ledger. Resume
+reconstructs missing queue entries after interruption; re-sending an already
+accepted deterministic record is safe through stored CloudKit system fields or
+optimistic conflict handling. The coordinator will not advance beyond initial
+upload while pending records remain, will not activate before a share exists,
+and permits local cancellation only before a remote zone can exist. A terminal
+failure preserves every ledger row and blocks further shared mutations.
+
+Participant adoption has a separate preflight that rejects a device containing
+any local children or transactions. A later product flow must offer an explicit
+keep/export/replace decision instead of silently merging independent ledgers.
+The sync-engine store may service a preparing household only during the
+persisted initial-upload phase, and its retry or terminal errors update the
+migration record. Zone creation, share creation, and app wiring are not yet
+implemented, so the coordinator itself cannot contact CloudKit.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is

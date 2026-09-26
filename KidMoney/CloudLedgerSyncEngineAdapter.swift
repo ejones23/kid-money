@@ -94,7 +94,13 @@ final class CloudLedgerSyncEngineStore {
         ).first(where: { $0.householdID == householdID }) else {
             throw CloudLedgerSyncEngineAdapterError.missingSharedLedger
         }
-        guard sharedLedger.phase == .active, sharedLedger.databaseScope != nil else {
+        let migrationAllowsInitialUpload = try modelContext.fetch(
+            FetchDescriptor<CloudLedgerMigrationState>()
+        ).contains {
+            $0.householdID == householdID && $0.phase == .uploadingInitialLedger
+        }
+        guard (sharedLedger.phase == .active || migrationAllowsInitialUpload),
+              sharedLedger.databaseScope != nil else {
             throw CloudLedgerSyncEngineAdapterError.invalidSharedLedger
         }
         self.zoneID = sharedLedger.zoneID
@@ -317,6 +323,12 @@ final class CloudLedgerSyncEngineStore {
     func requireUserAttention(code: String, now: Date = .now) throws {
         let ledger = try sharedLedger()
         ledger.phaseRawValue = SharedLedgerPhase.attentionRequired.rawValue
+        if let migration = try migrationState(), migration.phase != .completed {
+            migration.phaseRawValue = CloudLedgerMigrationPhase.attentionRequired.rawValue
+            migration.attemptCount += 1
+            migration.lastAttemptAt = now
+            migration.lastErrorCode = code
+        }
         let state = try syncState()
         state.statusRawValue = CloudLedgerSyncStatus.attentionRequired.rawValue
         state.lastAttemptAt = now
@@ -363,6 +375,12 @@ final class CloudLedgerSyncEngineStore {
                 sortBy: [SortDescriptor(\PendingCloudChange.enqueuedAt)]
             )
         ).filter { $0.householdID == householdID }
+    }
+
+    private func migrationState() throws -> CloudLedgerMigrationState? {
+        try modelContext.fetch(FetchDescriptor<CloudLedgerMigrationState>()).first {
+            $0.householdID == householdID
+        }
     }
 
     private func freshRecord(recordName: String) throws -> CKRecord? {
@@ -429,6 +447,11 @@ final class CloudLedgerSyncEngineStore {
         retryAfter: TimeInterval?,
         now: Date
     ) throws {
+        if let migration = try migrationState(), migration.phase == .uploadingInitialLedger {
+            migration.attemptCount += 1
+            migration.lastAttemptAt = now
+            migration.lastErrorCode = code
+        }
         let state = try syncState()
         state.statusRawValue = CloudLedgerSyncStatus.pending.rawValue
         state.lastAttemptAt = now

@@ -1,6 +1,6 @@
 # Family sharing design proposal
 
-Status: **Approved; connection prototype and local sync foundation implemented**
+Status: **Approved; connection prototype, local sync foundation, and dormant migration state machine implemented**
 
 This document records the approved design for letting two parents use their own
 Apple Accounts and devices to manage one Kid Money ledger. Implementation begins
@@ -169,8 +169,11 @@ cloud synchronization is distributed.
    queue state, account gating, retry/backoff, and optimistic-conflict policy are
    complete and tested. A concrete CKSyncEngine delegate now provides scoped
    send/fetch handling, system-field persistence, and engine-state restoration,
-   but is not instantiated by the app. Status UI, migration, remote-notification
-   capability, and live activation remain disabled.**
+   but is not instantiated by the app. A non-destructive migration coordinator
+   now durably stages deterministic initial records, repairs interruption,
+   guards phase advancement, and blocks ambiguous participant adoption. The
+   private-zone/share setup runner, status UI, remote-notification capability,
+   and live activation remain disabled.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,

@@ -24,6 +24,7 @@ enum AppModelContainer {
             for: Child.self,
             LedgerTransaction.self,
             SharedLedgerState.self,
+            CloudLedgerMigrationState.self,
             PendingCloudChange.self,
             DeferredCloudTransaction.self,
             CloudLedgerSyncState.self,
