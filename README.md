@@ -223,9 +223,12 @@ to the owner exactly once with the expected balance. After both phones were
 updated to iOS 27, an unlocked prompted Siri request on build 11 created an
 exact fifteen-cent shared-ledger transaction and durable pending change, but
 the prior locked one-shot phrase requested an unlock and then failed routing.
-Because both the app and OS changed since build 6, this is recorded as an iOS
-27 compatibility finding rather than an isolated build regression. Siri
-delivery, relaunch, and recovery remain unverified. The Production CloudKit
+That Siri-originated transaction reached the spouse exactly once, and both
+phones preserved the matching `$3.00` balance and history through termination,
+relaunch, and another no-duplicate sync. Because both the app and OS changed
+since build 6, the one-shot failure is recorded as an iOS 27 compatibility
+finding rather than an isolated build regression. Offline/reconnect recovery
+remains unverified. The Production CloudKit
 schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in
 [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).

@@ -102,7 +102,8 @@ second SwiftData or Core Data synchronization stack.
 ## Phase 6 — Shared family ledger
 
 Status: **In progress — build 11 physically verified manual incremental sync
-in both directions; Siri, relaunch, and recovery still need testing**
+in both directions, owner-Siri-originated delivery, and two-phone relaunch
+persistence; offline/reconnect recovery remains**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -172,6 +173,8 @@ in both directions; Siri, relaunch, and recovery still need testing**
   TestFlight groups
 - [x] verify an unlocked prompted Siri addition creates an exact shared-ledger
   transaction and durable pending change in build 11
+- [x] verify the owner-Siri-originated transaction reaches the participant once
+  and survives termination, relaunch, and another no-duplicate sync
 - [ ] investigate iOS 27 one-shot grammar and locked-screen compatibility; the
   build 11 test failed after both the app and OS changed since build 6, while
   the prompted intent still worked
@@ -199,8 +202,10 @@ owner-side manual edit remained queued after Sync Now and did not appear on the
 participant after their Sync Now. Build 11 repaired that path: the owner queue
 drained and the participant received the edit once with the expected balance.
 The participant then made a manual edit, cleared her queue with Sync Now, and
-the owner received it exactly once with the expected balance. The remaining
-two-phone matrix covers Siri-originated edits, relaunch persistence, and
+the owner received it exactly once with the expected balance. An
+owner-Siri-originated fifteen-cent edit then reached the participant exactly
+once, and both phones preserved the matching balance and history across
+termination, relaunch, and another sync. The remaining two-phone matrix covers
 offline/reconnect recovery.
 
 After the basic two-way matrix is stable:

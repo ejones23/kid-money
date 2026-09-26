@@ -226,3 +226,9 @@ build 6 fifteen-cent phrase on build 11.
   the app build and OS changed since build 6, this test cannot distinguish an
   app regression from an iOS 27 routing change. Do not claim build 11 preserves
   the previously verified locked one-shot grammar.
+- Shared-ledger delivery: after explicit **Sync Now** on both phones, the
+  Siri-originated `$0.15` transaction reached the spouse exactly once and both
+  phones showed `$3.00` with matching histories.
+- Shared-ledger relaunch: terminating and relaunching both apps preserved the
+  matching balance and history. A subsequent **Sync Now** on each phone added
+  no duplicate.

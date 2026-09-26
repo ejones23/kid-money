@@ -3,8 +3,9 @@
 Status: **Build 11 is Testing in both Internal Testing and the external Family
 Test group. Build 10 passed owner opt-in, invitation, participant adoption,
 and matching imported history; its ordinary Sync Now left a new edit queued.
-Build 11 physically passed manual incremental sync in both directions;
-Siri, relaunch, and recovery remain.**
+Build 11 physically passed manual incremental sync in both directions,
+owner-Siri-originated delivery, and two-phone relaunch persistence. Controlled
+offline/reconnect recovery remains.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to
@@ -105,13 +106,15 @@ the edit once with the expected balance.
    and fifteen cents, created exactly one Siri transaction, reached `$3.00`,
    and queued one cloud change. Because both the app build and OS changed since
    the build 6 success, the observation does not isolate an app regression from
-   an OS routing change. Sync that transaction to the spouse and verify it
-   appears exactly once. Siri is disabled on the spouse's iPhone 14, so no
-   participant-side Siri test is required; the already-passed manual reverse
+   an OS routing change. **Passed:** that transaction reached the spouse
+   exactly once with a matching `$3.00` balance. Siri is disabled on the
+   spouse's iPhone 14, so no participant-side Siri test is required; the
+   already-passed manual reverse
    mutation covers participant-to-owner synchronization. A simulator build
    does not establish Siri behavior.
-4. Terminate and relaunch both apps. Confirm matching balances and histories,
-   then run **Sync Now** once more on each.
+4. **Passed:** terminating and relaunching both apps preserved the matching
+   `$3.00` balance and history. Another **Sync Now** on each phone created no
+   duplicate transaction.
 
 ## Recovery checks after the basic matrix passes
 
