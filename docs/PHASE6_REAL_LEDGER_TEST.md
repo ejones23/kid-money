@@ -1,13 +1,14 @@
 # Phase 6 real-ledger physical test
 
 Status: **Build 10 is Testing in both Internal Testing and the external Family
-Test group. The owner-only, no-upload physical preflight passed on September 26,
-2026. Deliberate owner upload and two-phone ledger sync remain unverified.**
+Test group. The owner-only preflight passed, the owner chose upload, the owner
+screen reported Sharing enabled, and a private text invitation was sent on
+September 26, 2026. Participant adoption and two-phone sync remain unverified.**
 
-This is separate from the successful counter-only connection test. The next
-build will offer an explicit owner upload of the actual child and transaction
-ledger to the owner's private iCloud storage. It is not a disposable counter.
-The owner should review the consent sheet before deciding to proceed.
+This is separate from the successful counter-only connection test. Build 10
+offers an explicit owner upload of the actual child and transaction ledger to
+the owner's private iCloud storage. It is not a disposable counter. The owner
+reviewed the consent sheet before proceeding.
 
 ## Before installation
 
@@ -42,6 +43,11 @@ remained local-only after tapping **Not Now**.
    change or error before choosing **Upload My Ledger to iCloud**.
 
 ## Owner opt-in and invitation
+
+Owner report on September 26, 2026: the upload action completed, the Sharing
+screen displayed **Sharing enabled**, and the private invitation was sent by
+text. This is an owner-side physical observation, not yet confirmation that a
+second device can import or edit the real ledger.
 
 1. On the owner phone, open **Kid Money → Sharing**. Confirm it still says the
    ledger is on this phone only. Merely opening this screen must not upload.

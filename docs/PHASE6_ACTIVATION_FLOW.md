@@ -1,10 +1,12 @@
 # Phase 6 activation and invitation flow
 
-Status: **Owner/participant screens are wired locally, but not enabled in TestFlight.**
+Status: **Build 10 exposes the flow in TestFlight. Owner consent, Sharing
+enabled, and private invitation are physically observed; participant adoption
+and two-way sync are pending.**
 
 The counter-only connection test proved that two Apple Accounts can share one
-CloudKit zone. The real-ledger UI now follows this flow in a local build. Build
-9 on TestFlight remains counter-only. Opening Sharing does not start an upload;
+CloudKit zone. The real-ledger UI now follows this flow in build 10. Build 9's
+separate probe remains counter-only. Opening Sharing does not start an upload;
 the owner must press **Upload My Ledger to iCloud** in a separate consent sheet.
 
 ## Owner: explicit opt-in
@@ -78,18 +80,19 @@ rejected rather than accepted by either path.
   data. No destructive reset or automatic reactivation is part of the first
   wiring checkpoint.
 
-## Release gates
+## Release gates and physical verification
 
-Before a TestFlight build can expose this flow: validate owner and participant
-UI state transitions; update privacy disclosures for child names, notes, and
-history in private iCloud sharing; and confirm that cold-start invitations
-cannot fall into the counter probe. Then run a two-device physical matrix for
+Before TestFlight exposure, we validated owner and participant UI state
+transitions, updated privacy disclosures for child names, notes, and history in
+private iCloud sharing, and checked that cold-start invitations cannot fall
+into the counter probe. The owner-side opt-in and invitation are now observed;
+the remaining two-device physical matrix covers
 initial upload, invitation acceptance, bidirectional manual and Siri edits,
 offline/reconnect, restart, account changes, and revocation. Compilation and
 simulator tests alone do not establish physical CloudKit or Siri behavior.
 
 The access-checked sync session and its injected failure tests are
 implemented. An activated family ledger can run it with **Sync Now**; no
-automatic background sync or startup upload is enabled yet. Before TestFlight,
-the Household, Child, and LedgerTransaction schema must be deployed to
-Production, and the real-ledger physical matrix must be prepared.
+automatic background sync or startup upload is enabled yet. The Household,
+Child, and LedgerTransaction schema is deployed to Production. The real-ledger
+physical matrix remains in progress.

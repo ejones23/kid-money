@@ -367,6 +367,7 @@ private struct OwnerSharingConsentView: View {
                 Section {
                     Button("Upload My Ledger to iCloud") { onConfirm() }
                         .buttonStyle(.borderedProminent)
+                        .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
             .navigationTitle("Share Family Ledger")

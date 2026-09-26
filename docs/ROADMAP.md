@@ -101,8 +101,8 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — build 10 in both TestFlight groups; owner no-upload
-preflight passed; real-ledger upload and two-phone sync pending**
+Status: **In progress — build 10 in both TestFlight groups; owner upload and
+invitation reported successful; participant adoption and two-phone sync pending**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -161,6 +161,8 @@ preflight passed; real-ledger upload and two-phone sync pending**
 - [x] physically verify build 10 preserves the owner's local ledger and that
   cancelling the upload consent leaves sharing disabled
 - [x] add build 10 to the external Family Test group for the spouse
+- [x] physically observe owner-side Sharing enabled after explicit upload
+  consent and a private invitation sent through Apple's sharing UI
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -180,7 +182,8 @@ family external testers in build 10, as specified in
 `PHASE6_ACTIVATION_FLOW.md`. The Production CloudKit schema and privacy
 disclosures passed their release gates September 26, 2026. The owner-only
 no-upload physical preflight passed before external build 10 distribution.
-The actual ledger upload, invitation, and two-way sync are not yet verified.
+The owner reported Sharing enabled after explicit upload consent and sent the
+private invitation. Participant import and two-way sync are not yet verified.
 
 ## Explicitly deferred
 

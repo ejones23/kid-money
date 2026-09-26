@@ -211,8 +211,9 @@ fetches before sending, rechecks account and share access, and retains queued
 edits on failure. Build 10 has an explicit owner-consent screen,
 participant invitation review, guarded Join, Sync Now, and
 participant-management actions. The owner confirmed build 10 preserved the
-local ledger and that cancelling upload consent left sharing disabled; actual
-upload, invitation, and two-way sync are not yet physically verified. Build 10
+local ledger and that cancelling upload consent left sharing disabled. The
+owner then reported Sharing enabled after explicit upload and sent a private
+invitation; participant adoption and two-way sync remain unverified. Build 10
 is Testing in both internal and spouse external groups. The Production CloudKit
 schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in
