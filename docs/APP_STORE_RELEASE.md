@@ -91,7 +91,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   and private invitation sent on a physical phone.
 - [x] Verify participant adoption, Sharing enabled, and matching initial
   transaction history on the spouse's phone.
-- [ ] Resolve the build 10 ordinary-sync failure before continuing two-way edits.
+- [x] Resolve the build 10 owner-to-participant Sync Now failure in build 11;
+  verify the old pending edit drains and arrives once on the second phone.
+- [ ] Verify participant-to-owner Sync Now before claiming two-way sync works.
 - [x] Validate and upload build `0.1 (11)` with the candidate Sync Now fix;
   App Store Connect shows **Testing** in both internal and Family Test groups.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.

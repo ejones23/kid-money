@@ -3,7 +3,8 @@
 Status: **Build 11 is Testing in both Internal Testing and the external Family
 Test group. Build 10 passed owner opt-in, invitation, participant adoption,
 and matching imported history; its ordinary Sync Now left a new edit queued.
-Build 11 contains a candidate fix, awaiting the two-phone retry.**
+Build 11 physically passed the owner-to-participant retry; reverse-direction
+sync is next.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to
@@ -88,12 +89,14 @@ Before making any more edits, tap **Sync Now** on the owner phone and check
 that the pending count reaches zero. Then tap **Sync Now** on the spouse's
 phone and check that this same 25-cent transaction appears exactly once. If
 either check fails, record the **Sync** status and pending count on both phones
-and any alert text, then pause again.
+and any alert text, then pause again. **Result:** both phones updated to build
+11; the owner's pending count dropped to zero, and the participant received
+the edit once with the expected balance.
 
-1. On the owner phone, make one small manual adjustment with a distinctive
-   note. Tap **Sync Now** there, then on the spouse's phone. Confirm the exact
-   balance and one corresponding history row on both phones.
-2. On the spouse's phone, make a different small manual adjustment. Sync on
+1. The existing owner-side manual adjustment passed on build 11: explicit
+   **Sync Now** cleared the pending queue, and the participant saw exactly one
+   new history row and the expected balance after their **Sync Now**.
+2. On the spouse's phone, make one small manual adjustment. Sync on
    that phone, then on the owner phone; confirm both balances and histories.
 3. If both phones use the verified Siri grammar, make one numeric-cent voice
    adjustment on each phone, such as “Give [child] fifteen cents in Kid Money.”

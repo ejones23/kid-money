@@ -215,9 +215,11 @@ local ledger and that cancelling upload consent left sharing disabled. The
 owner then reported Sharing enabled after explicit upload and sent a private
 invitation. The spouse joined and saw the complete initial history, but a new
 owner-side edit remained queued after Sync Now and did not reach the spouse.
-Ordinary two-way sync remains unverified. Build 11 has a candidate fix for the
-Sync Now engine lifetime issue and is Testing in both internal and spouse
-external groups. The Production CloudKit
+Build 11 fixes the sync runtime lifetime issue and is Testing in both internal
+and spouse external groups. The previously queued edit cleared from the owner's
+queue and appeared exactly once on the spouse's phone after explicit Sync Now
+on each device. Reverse-direction sync and the full two-phone matrix remain
+unverified. The Production CloudKit
 schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in
 [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).

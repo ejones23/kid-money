@@ -101,8 +101,8 @@ second SwiftData or Core Data synchronization stack.
 
 ## Phase 6 — Shared family ledger
 
-Status: **In progress — build 10 completed invitation and initial import;
-ordinary Sync Now is failing to move a queued owner edit**
+Status: **In progress — build 11 physically verified owner-to-participant
+incremental sync; reverse direction and recovery still need testing**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -165,10 +165,11 @@ ordinary Sync Now is failing to move a queued owner edit**
   consent and a private invitation sent through Apple's sharing UI
 - [x] physically verify participant Join, Sharing enabled, and complete initial
   transaction history on a second iCloud Apple Account
-- [ ] fix and physically verify ordinary owner-to-participant and
-  participant-to-owner synchronization after manual changes
+- [x] fix and physically verify ordinary owner-to-participant synchronization
+  of the previously queued manual edit
+- [ ] physically verify participant-to-owner synchronization after a manual edit
 - [x] validate, upload, and add candidate Sync Now fix build 11 to both
-  TestFlight groups; await the two-phone retry of the existing queued edit
+  TestFlight groups
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -190,8 +191,9 @@ disclosures passed their release gates September 26, 2026. The owner-only
 no-upload physical preflight passed before external build 10 distribution.
 The participant joined and saw the complete initial history. A subsequent
 owner-side manual edit remained queued after Sync Now and did not appear on the
-participant after their Sync Now. Ordinary sync must be fixed before the rest
-of the two-way matrix.
+participant after their Sync Now. Build 11 repaired that path: the owner queue
+drained and the participant received the edit once with the expected balance.
+The reverse direction and broader two-phone matrix remain open.
 
 After the basic two-way matrix is stable:
 
