@@ -232,3 +232,18 @@ build 6 fifteen-cent phrase on build 11.
 - Shared-ledger relaunch: terminating and relaunching both apps preserved the
   matching balance and history. A subsequent **Sync Now** on each phone added
   no duplicate.
+
+## Xcode 27 App Intents integration preflight
+
+On September 26, 2026, the full suite passed under Xcode 27 on an iOS 27
+simulator: 89 Swift Testing tests plus one App Intents integration test. The
+integration runner launches Kid Money to register metadata, resolves a unique
+dynamic child-and-fifteen-cent entity through the app process, executes
+`GivePresetMoneyIntent` out of process, and reads back exactly 15 cents through
+a debug-only inspection intent.
+
+This confirms that iOS 27 can discover and execute the app-side preset intent
+and dynamic entity query. It does not exercise Siri's speech recognition,
+natural-language phrase matching, Wallet disambiguation, lock-screen policy,
+or TestFlight registration. The next physical check must therefore use a build
+compiled with Xcode 27 and repeat the exact one-shot phrase on the owner iPhone.

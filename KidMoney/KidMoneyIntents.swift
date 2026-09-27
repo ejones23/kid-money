@@ -600,6 +600,46 @@ struct TakeCoinIntent: AppIntent {
     }
 }
 
+#if DEBUG
+/// Test-only setup for Xcode 27's out-of-process App Intents integration tests.
+/// The compiler omits this action from archive and TestFlight builds.
+struct SeedAppIntentsTestChildIntent: AppIntent {
+    static let title: LocalizedStringResource = "Seed App Intents Test Child"
+    static var isDiscoverable: Bool { false }
+
+    @Parameter(title: "Name")
+    var name: String
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+        let container = try AppModelContainer.shared()
+        let service = LedgerService(modelContext: ModelContext(container))
+        let child = try service.addChild(named: name)
+        return .result(value: child.id.uuidString)
+    }
+}
+
+/// Test-only readback that verifies the production intent changed the ledger.
+struct ReadAppIntentsTestBalanceIntent: AppIntent {
+    static let title: LocalizedStringResource = "Read App Intents Test Balance"
+    static var isDiscoverable: Bool { false }
+
+    @Parameter(title: "Name")
+    var name: String
+
+    @MainActor
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+        let container = try AppModelContainer.shared()
+        let service = LedgerService(modelContext: ModelContext(container))
+        let matches = try service.children(matching: name)
+        guard matches.count == 1, let child = matches.first else {
+            throw KidMoneyIntentError.childNotFound
+        }
+        return .result(value: String(service.balance(for: child)))
+    }
+}
+#endif
+
 struct KidMoneyShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(

@@ -102,8 +102,8 @@ second SwiftData or Core Data synchronization stack.
 ## Phase 6 — Shared family ledger
 
 Status: **In progress — build 11 physically verified manual incremental sync
-in both directions, owner-Siri-originated delivery, and two-phone relaunch
-persistence; offline/reconnect recovery remains**
+in both directions, owner-Siri-originated delivery, two-phone relaunch
+persistence, and controlled offline/reconnect recovery**
 
 - [x] approve the persistence, authentication, and migration design
 - [x] preserve SwiftData as the local-first working store
@@ -175,9 +175,14 @@ persistence; offline/reconnect recovery remains**
   transaction and durable pending change in build 11
 - [x] verify the owner-Siri-originated transaction reaches the participant once
   and survives termination, relaunch, and another no-duplicate sync
+- [x] verify an offline owner edit remains queued across relaunch, stays absent
+  from the participant until reconnect, then synchronizes exactly once
+- [x] add Xcode 27 out-of-process App Intents coverage for dynamic entity
+  resolution and an exact fifteen-cent preset mutation
 - [ ] investigate iOS 27 one-shot grammar and locked-screen compatibility; the
   build 11 test failed after both the app and OS changed since build 6, while
-  the prompted intent still worked
+  the prompted intent still worked and the Xcode 27 app-side integration test
+  now passes
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -205,8 +210,16 @@ The participant then made a manual edit, cleared her queue with Sync Now, and
 the owner received it exactly once with the expected balance. An
 owner-Siri-originated fifteen-cent edit then reached the participant exactly
 once, and both phones preserved the matching balance and history across
-termination, relaunch, and another sync. The remaining two-phone matrix covers
-offline/reconnect recovery.
+termination, relaunch, and another sync. A subsequent offline owner edit
+remained queued across relaunch, stayed absent from the participant until
+reconnect, then synchronized exactly once; both phones converged to `$3.35`.
+Xcode 27's App Intents testing framework also executes the dynamic
+child-and-fifteen-cent preset path out of process and reads back exactly 15
+cents on the iOS 27 simulator. This validates the app-side intent and entity
+query boundary but not Siri's natural-language or locked-screen routing. The
+next experiment is a TestFlight build compiled with Xcode 27.
+Account-switch and share-revocation recovery remain intentionally deferred
+until their non-destructive physical procedure is agreed.
 
 After the basic two-way matrix is stable:
 

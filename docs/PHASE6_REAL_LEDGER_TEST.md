@@ -4,8 +4,8 @@ Status: **Build 11 is Testing in both Internal Testing and the external Family
 Test group. Build 10 passed owner opt-in, invitation, participant adoption,
 and matching imported history; its ordinary Sync Now left a new edit queued.
 Build 11 physically passed manual incremental sync in both directions,
-owner-Siri-originated delivery, and two-phone relaunch persistence. Controlled
-offline/reconnect recovery remains.**
+owner-Siri-originated delivery, two-phone relaunch persistence, and controlled
+offline/reconnect recovery.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to
@@ -118,9 +118,12 @@ the edit once with the expected balance.
 
 ## Recovery checks after the basic matrix passes
 
-- With one phone offline, make a small local edit. It should remain visible and
-  show pending work. Restore connectivity; run **Sync Now** on writer then
-  reader and verify the edit appears once.
+- **Passed on September 26, 2026:** with the owner phone offline, a 35-cent
+  local edit remained visible and pending, survived termination and relaunch,
+  and did not appear on the participant phone prematurely. After connectivity
+  returned, **Sync Now** on the writer drained the pending change and **Sync
+  Now** on the reader delivered it exactly once. A repeated sync created no
+  duplicate; both phones converged from `$3.00` to `$3.35`.
 - Account switching and invite revocation should be tested only after the
   basic two-way matrix is stable, with an agreed recovery plan. These can
   freeze shared edits, and the first build intentionally has no destructive

@@ -82,9 +82,12 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - an owner upload-consent screen and separate participant invitation review;
   neither launches network work merely because the app opened
 
-The project builds without errors or warnings in Xcode 26.6. All 89 current
-tests pass on the iOS 26.5 simulator. Xcode's App Shortcuts Preview resolves the
-Phase 3 take, balance, undo, dime, and quarter phrases to their intended actions.
+The project builds in Xcode 27. All 89 Swift Testing tests and one
+out-of-process App Intents integration test pass on the iOS 27 simulator. The
+integration test executes the same app-side intent path used by Siri and
+Shortcuts, including dynamic child-and-amount entity resolution and an exact
+fifteen-cent mutation. Natural-language routing and locked-screen behavior
+remain physical-iPhone checks rather than simulator claims.
 
 TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on both an unmanaged iPhone SE and the managed work iPhone after both reached iOS 26.6.2. Siri collects missing parameters, persists exact cent values, reports the resulting balance, and works with the app open, backgrounded, terminated, and while the work phone is locked. Device testing also showed that Siri accepts numeric phrases such as “ten cents” and “twenty-five cents” but rejects coin wording such as “a dime” and “a quarter,” justifying a supplemental denomination path in Phase 3.
 
@@ -114,8 +117,9 @@ completing the physical connection-probe matrix.
 
 ## Requirements
 
-- macOS with Xcode 26.6 or a compatible newer Xcode
-- iOS 26.5 simulator runtime for simulator testing
+- macOS with Xcode 27 for the complete test suite
+- iOS 27 simulator runtime for App Intents integration testing (the domain
+  suite also runs on iOS 26.5)
 - an iPhone running iOS 26+ for the real Siri proof of concept
 - an Apple development team configured in Xcode for physical-device installation
 
@@ -227,11 +231,21 @@ That Siri-originated transaction reached the spouse exactly once, and both
 phones preserved the matching `$3.00` balance and history through termination,
 relaunch, and another no-duplicate sync. Because both the app and OS changed
 since build 6, the one-shot failure is recorded as an iOS 27 compatibility
-finding rather than an isolated build regression. Offline/reconnect recovery
-remains unverified. The Production CloudKit
+finding rather than an isolated build regression. Controlled offline/reconnect
+recovery also passed: an offline owner-side 35-cent edit survived app relaunch,
+remained private until connectivity returned, synchronized exactly once, and
+left both phones at `$3.35` after another no-duplicate sync. The Production CloudKit
 schema and privacy disclosures passed
 their release gates on September 26, 2026. The flow is documented in
 [docs/PHASE6_ACTIVATION_FLOW.md](docs/PHASE6_ACTIVATION_FLOW.md).
+
+Xcode 27's App Intents testing framework now provides a stronger automated
+boundary check: the test runner launches the app, resolves the dynamic
+“Rebecca fifteen cents” style entity in the app process, performs the preset
+give intent out of process, and reads back exactly 15 cents. This narrows the
+remaining iOS 27 one-shot issue to Siri's natural-language routing or system
+registration layer. A TestFlight build compiled with Xcode 27 is the next
+physical experiment.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

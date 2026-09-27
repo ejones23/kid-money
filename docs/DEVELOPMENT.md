@@ -2,11 +2,11 @@
 
 ## Toolchain
 
-- Xcode 26.6 (build 17F113)
+- Xcode 27.0 (build 27A266a)
 - Swift 6 language mode
 - iOS 26.0 deployment target
-- iOS 26.5 simulator runtime
-- Swift Testing
+- iOS 27.0 simulator runtime (iOS 26.5 remains useful for compatibility checks)
+- Swift Testing and App Intents Testing
 - no third-party packages
 - TestFlight/App Store preparation in progress
 
@@ -24,13 +24,28 @@ xcodebuild -project KidMoney.xcodeproj -scheme KidMoney \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' test
 ```
 
+The `KidMoneyAppIntentsTests` UI-test target requires Xcode 27 and an iOS 27
+runtime. It launches the app once so the system can register intent metadata,
+then executes intents out of process through Apple's App Intents testing
+framework. Configure the same development team for `KidMoney` and
+`KidMoneyAppIntentsTests` when running on a signed destination. Debug-only test
+intents seed and inspect an isolated uniquely named child; they are excluded
+from Release and TestFlight builds.
+
 For sandboxed automation, add a writable derived-data path such as `-derivedDataPath /private/tmp/kidmoney-derived`.
 
 ## Simulator and test-runner notes
 
 A newly installed runtime can take several minutes to migrate system data on its first boot. Let one invocation finish. Concurrent test runs can leave temporary incomplete `.xcresult` bundles.
 
-Xcode 26.6's MCP `RunAllTests` action has occasionally attempted to read its result bundle before the write completed. `GetTestList` followed by `RunSomeTests` has produced reliable structured results. Treat an incomplete bundle as runner state, not a pass or failure; retry and require explicit counts.
+Xcode 26.6's MCP `RunAllTests` action occasionally attempted to read its result
+bundle before the write completed. If that recurs, treat an incomplete bundle
+as runner state, not a pass or failure; retry and require explicit counts.
+
+The iOS 27 simulator currently logs a duplicate system
+`UIAccessibilityLoaderWebShared` class warning from Apple's WebKit/WebCore
+accessibility bundles during UI-test launch. It is outside the app and does not
+fail the integration test. App code should still be free of compiler warnings.
 
 ## Xcode tools for agents
 

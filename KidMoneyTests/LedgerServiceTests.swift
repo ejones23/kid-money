@@ -813,11 +813,9 @@ struct LedgerServiceTests {
     @Test func queueRetryBackoffSurvivesStoreReopen() async throws {
         let storeURL = FileManager.default.temporaryDirectory
             .appending(path: "KidMoneyRetry-\(UUID().uuidString).store")
-        defer {
-            for suffix in ["", "-shm", "-wal"] {
-                try? FileManager.default.removeItem(atPath: storeURL.path + suffix)
-            }
-        }
+        // SwiftData can retain asynchronous SQLite work after the lexical lifetime
+        // of a container. Leave this uniquely named temporary store for the system
+        // to reap instead of unlinking files that SQLite may still have open.
         let now = Date(timeIntervalSinceReferenceDate: 1_000)
         let householdID: UUID
 
