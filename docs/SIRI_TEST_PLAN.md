@@ -261,3 +261,21 @@ ledger manually between attempts:
 Record the exact Siri response, whether Wallet/app/child/amount clarification
 appeared, and Rebecca's balance after each attempt. Do not infer locked-screen
 success from the simulator integration test.
+
+### Build 12 physical result
+
+- The first unlocked one-shot attempt returned “Kid Money hasn't added support
+  for that with Siri” and made no change from `$3.35`.
+- From the locked screen, the exact same one-shot phrase routed successfully.
+  Siri asked Kid Money or Wallet; after Kid Money was selected, it added
+  `$0.15` to Rebecca and reported the correct `$3.50` balance. Siri did not ask
+  for the child or amount, and the phone did not require unlocking.
+- The unlocked prompted fallback asked Kid Money or Wallet, which child, and
+  how much. Rebecca plus “fifteen cents” added another exact `$0.15`; the app
+  confirmed the resulting `$3.65` balance.
+- Interpretation: Xcode 27 build 12 preserves the complete one-shot entity
+  route and locked-screen execution, so build 11's failure was not removal of
+  the capability. The contradictory unlocked failure shows that Siri's
+  natural-language registration or routing remains intermittent or
+  context-dependent. The app-side intent, entity resolution, exact mutation,
+  spoken result, and persistence all worked when Siri selected the route.
