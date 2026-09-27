@@ -277,10 +277,15 @@ success from the simulator integration test.
   Siri asked only Kid Money or Wallet and, after Kid Money was selected, added
   another exact `$0.15` without child or amount follow-up; Rebecca reached the
   correct `$3.80` balance.
+- After Kid Money was explicitly terminated, the same unlocked one-shot phrase
+  again asked only Kid Money or Wallet and added the exact `$0.15` without
+  child or amount follow-up. Rebecca reached the correct `$3.95` balance.
 - Interpretation: Xcode 27 build 12 preserves the complete one-shot entity
   route and locked-screen execution, so build 11's failure was not removal of
   the capability. The initial failure followed by successful locked and
   unlocked attempts is consistent with a post-update Siri registration/cache
-  warm-up, although one sequence does not prove the cause. The app-side intent,
-  entity resolution, exact mutation, spoken result, and persistence all worked
-  when Siri selected the route.
+  warm-up, although one sequence does not prove the cause. The warmed route
+  also survives app termination. The app-side intent, entity resolution, exact
+  mutation, spoken result, and persistence all worked when Siri selected the
+  route. Stop repeating the automatic-routing matrix; next validate a fixed
+  personal Shortcut as the deterministic, user-configurable voice path.

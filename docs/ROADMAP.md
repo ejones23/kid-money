@@ -182,9 +182,14 @@ persistence, and controlled offline/reconnect recovery**
 - [x] compile, archive, upload, and add Xcode 27 build 12 to Internal Testing
 - [x] verify Xcode 27 build 12 can execute the one-shot fifteen-cent route from
   the locked screen without child or amount follow-up
-- [ ] characterize intermittent iOS 27 one-shot routing; build 12's first
+- [x] characterize intermittent iOS 27 one-shot routing; build 12's first
   unlocked attempt returned unsupported, while the identical locked phrase
-  immediately afterward succeeded and a later unlocked retry also succeeded
+  immediately afterward succeeded, later unlocked retries succeeded, and the
+  warmed route survived app termination
+- [ ] validate one fixed personal Shortcut by exact Siri name from the locked
+  screen without Wallet, child, or amount clarification
+- [ ] add concise in-app setup guidance for fixed favorite shortcuts after the
+  personal Shortcut path passes on a physical phone
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -226,7 +231,11 @@ identical unlocked attempt immediately beforehand returned unsupported. The
 next unlocked retry succeeded too, asking only for Kid Money/Wallet
 disambiguation and moving the balance to `$3.80`. The route exists and works;
 the sequence is consistent with an initial post-update registration/cache
-warm-up, but iOS 27 routing is not yet proven reliable across a terminated app.
+warm-up. A terminated-app attempt also succeeded and moved the balance to
+`$3.95`. This closes the repeated automatic-routing experiment: application
+execution is sound, while Siri's initial phrase routing is outside the app's
+deterministic control. The next product experiment is a user-created Shortcut
+whose fixed action and exact Siri name encode the child and amount.
 Account-switch and share-revocation recovery remain intentionally deferred
 until their non-destructive physical procedure is agreed.
 
