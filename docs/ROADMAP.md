@@ -179,6 +179,7 @@ persistence, and controlled offline/reconnect recovery**
   from the participant until reconnect, then synchronizes exactly once
 - [x] add Xcode 27 out-of-process App Intents coverage for dynamic entity
   resolution and an exact fifteen-cent preset mutation
+- [x] compile, archive, upload, and add Xcode 27 build 12 to Internal Testing
 - [ ] investigate iOS 27 one-shot grammar and locked-screen compatibility; the
   build 11 test failed after both the app and OS changed since build 6, while
   the prompted intent still worked and the Xcode 27 app-side integration test
@@ -218,6 +219,7 @@ child-and-fifteen-cent preset path out of process and reads back exactly 15
 cents on the iOS 27 simulator. This validates the app-side intent and entity
 query boundary but not Siri's natural-language or locked-screen routing. The
 next experiment is a TestFlight build compiled with Xcode 27.
+Build 12 is now available in Internal Testing for that physical check.
 Account-switch and share-revocation recovery remain intentionally deferred
 until their non-destructive physical procedure is agreed.
 

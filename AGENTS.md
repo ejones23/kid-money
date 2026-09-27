@@ -126,8 +126,8 @@ an additional personal iPhone SE is available but is not part of the current
 share. Owner-Siri-originated sync, two-phone relaunch persistence, and
 controlled offline/reconnect recovery have now passed. Xcode 27
 AppIntentsTesting coverage now passes for the dynamic fifteen-cent preset path.
-Next distribute a build compiled with Xcode 27 and retest the one-shot phrase
-on the owner phone; keep physical Siri behavior as the final authority. Do not
-start uploads merely because the app launched.
+Build `0.1 (12)` is available in Internal Testing; next retest the one-shot
+phrase on the owner phone. Keep physical Siri behavior as the final authority.
+Do not start uploads merely because the app launched.
 Keep attention-required recovery non-destructive and preserve the physically
 verified Siri grammar.

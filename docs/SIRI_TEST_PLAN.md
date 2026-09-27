@@ -247,3 +247,17 @@ and dynamic entity query. It does not exercise Siri's speech recognition,
 natural-language phrase matching, Wallet disambiguation, lock-screen policy,
 or TestFlight registration. The next physical check must therefore use a build
 compiled with Xcode 27 and repeat the exact one-shot phrase on the owner iPhone.
+
+Build `0.1 (12)` was compiled with Xcode 27, uploaded successfully, and added
+to Internal Testing on September 26, 2026. On the owner iPhone 15, first verify
+TestFlight shows build 12, then run this narrow matrix without changing the
+ledger manually between attempts:
+
+1. While unlocked, say “Siri, give Rebecca fifteen cents in Kid Money.”
+2. From the locked screen, repeat the exact phrase.
+3. If either one-shot attempt fails, while unlocked say “Siri, give money in
+   Kid Money,” select Rebecca if asked, and answer “fifteen cents.”
+
+Record the exact Siri response, whether Wallet/app/child/amount clarification
+appeared, and Rebecca's balance after each attempt. Do not infer locked-screen
+success from the simulator integration test.

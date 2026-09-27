@@ -245,7 +245,9 @@ boundary check: the test runner launches the app, resolves the dynamic
 give intent out of process, and reads back exactly 15 cents. This narrows the
 remaining iOS 27 one-shot issue to Siri's natural-language routing or system
 registration layer. A TestFlight build compiled with Xcode 27 is the next
-physical experiment.
+physical experiment. Build `0.1 (12)` was compiled and archived with Xcode 27,
+uploaded successfully, and added to Internal Testing on September 26, 2026;
+its owner-phone Siri routing check is pending.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 
