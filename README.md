@@ -252,7 +252,9 @@ unlocked one-shot request returned unsupported, while the identical locked
 request immediately afterward routed through Kid Money/Wallet disambiguation,
 added exactly `$0.15` without child or amount follow-up, and reported the
 correct balance. The route is therefore present and locked-screen capable, but
-Siri's iOS 27 natural-language routing remains intermittent.
+Siri's iOS 27 natural-language routing initially remained intermittent. A
+subsequent unlocked retry succeeded with only Kid Money/Wallet disambiguation
+and another exact `$0.15`, consistent with a one-time post-update route warm-up.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

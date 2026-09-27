@@ -184,7 +184,7 @@ persistence, and controlled offline/reconnect recovery**
   the locked screen without child or amount follow-up
 - [ ] characterize intermittent iOS 27 one-shot routing; build 12's first
   unlocked attempt returned unsupported, while the identical locked phrase
-  immediately afterward succeeded
+  immediately afterward succeeded and a later unlocked retry also succeeded
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -223,8 +223,10 @@ Xcode 27 build 12 then physically executed the one-shot fifteen-cent phrase
 from the locked screen after Kid Money/Wallet disambiguation, without asking
 for child or amount, and produced the correct `$3.50` balance. However, the
 identical unlocked attempt immediately beforehand returned unsupported. The
-route exists and works, but iOS 27 routing remains intermittent or
-context-dependent rather than reliably fixed by the newer toolchain.
+next unlocked retry succeeded too, asking only for Kid Money/Wallet
+disambiguation and moving the balance to `$3.80`. The route exists and works;
+the sequence is consistent with an initial post-update registration/cache
+warm-up, but iOS 27 routing is not yet proven reliable across a terminated app.
 Account-switch and share-revocation recovery remain intentionally deferred
 until their non-destructive physical procedure is agreed.
 
