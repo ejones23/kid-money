@@ -36,12 +36,13 @@ collect Apple Account passwords. Apple operates iCloud, and the developer does
 not receive the family's records or have access to them in the developer
 portal.
 
-Each participating phone keeps a local copy so the ledger works offline.
-In the first sharing test build, the parent starts synchronization with **Sync
-Now**; automatic background synchronization is not yet enabled. If access is
-revoked or the iCloud account changes, Kid Money
-pauses new shared edits and retains the existing local copy and unsent changes
-until the user decides how to recover them.
+Each participating phone keeps a local copy so the ledger works offline. Kid
+Money synchronizes an active shared ledger after local edits, when the app
+returns to the foreground, and through Apple's power-aware CloudKit background
+delivery. **Sync Now** remains available as a manual recovery action. The app
+does not continuously poll. If access is revoked or the iCloud account changes,
+Kid Money pauses new shared edits and retains the existing local copy and unsent
+changes until the user decides how to recover them.
 
 When the user invokes Kid Money through Siri, Apple may process the spoken request under Apple's Siri and privacy terms. Kid Money receives the intent values provided by the operating system and stores the resulting ledger transaction locally. The developer does not receive Siri recordings or intent values.
 

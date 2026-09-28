@@ -193,6 +193,12 @@ persistence, and controlled offline/reconnect recovery**
 - [x] stop the voice-routing experiment after a 36-phrase Vocal Shortcut matrix
   confused similar child names and amounts; retain voice as optional rather
   than adding an in-app training workflow
+- [x] retain one automatic CKSyncEngine runtime for an activated household
+- [x] coalesce local mutations into a debounced guarded send opportunity
+- [x] force a guarded fetch/send whenever the app returns to the foreground
+- [x] enable remote-notification background delivery without adding polling
+- [ ] physically verify automatic owner-to-participant and participant-to-owner
+  delivery, foreground catch-up, relaunch, and exact-once history
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -244,7 +250,7 @@ until their non-destructive physical procedure is agreed.
 
 ## Phase 7 — Visual-first quick actions
 
-Status: **Build 13 owner-phone validation complete; follow-up polish in progress**
+Status: **Build 13 owner-phone validation complete; build 14 candidate implemented**
 
 - [x] replace compact home rows with large child cards showing balance and six
   direct amount buttons
@@ -253,6 +259,7 @@ Status: **Build 13 owner-phone validation complete; follow-up polish in progress
 - [x] keep quick actions on the home screen and arbitrary adjustments in child
   detail
 - [x] place a direct, no-confirmation All Children card after the child cards
+- [x] add a contextual, one-tap visual Undo Last action to the home screen
 - [x] apply all-children changes atomically while preserving one auditable
   transaction and queued CloudKit save per active child
 - [x] exclude archived children from family-wide changes
@@ -282,7 +289,7 @@ notifications, payments, subscriptions, analytics, advertising, and
 gamification.
 
 CloudKit-based private family sharing is in progress by explicit owner request.
-The distributed prototype shares only a disposable counter. Deterministic real
+The original distributed prototype shared only a disposable counter. Deterministic real
 ledger mappings, durable queues, local remote-merge behavior, guarded queue
 processing, a dormant CKSyncEngine adapter, and the non-destructive migration
 state machine are implemented and tested. Dormant owner private-zone/share
@@ -290,7 +297,7 @@ provisioning is also implemented behind an injected setup transport. Participant
 adoption is implemented behind an injected transport with local preflight and
 retryable initial import. A separate injected activation gate tests account and
 share failure recovery. The local build now wires these paths to explicit
-sharing-screen actions; no automatic background sync is enabled. The real-ledger
-flow has not been distributed or physically verified.
+sharing setup and, after activation, one guarded automatic sync engine.
+Automatic behavior has not yet been distributed or physically verified.
 Minimal TestFlight and App Store preparation remains active for physical-device
 validation.

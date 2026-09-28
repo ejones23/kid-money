@@ -28,6 +28,11 @@
 	<true/>
 	<key>NSSiriUsageDescription</key>
 	<string>Kid Money uses Siri to update and report your family ledger when you ask.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 </dict>

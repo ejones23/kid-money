@@ -1,5 +1,7 @@
 import CloudKit
+import Combine
 import Foundation
+import OSLog
 import SwiftData
 
 enum CloudLedgerSyncSessionError: Error, Equatable {
@@ -13,10 +15,10 @@ protocol CloudLedgerSyncSessionTransport: AnyObject {
     func sendChanges(for ledger: SharedLedgerState) async throws
 }
 
-/// The only entry point for ordinary real-ledger network work. The sharing
-/// screen constructs it only for an explicit Sync Now action. It keeps
-/// automatic CKSyncEngine synchronization off and rechecks access between
-/// fetch and send.
+/// The only entry point for ordinary real-ledger network work. The app-scoped
+/// coordinator retains one session for automatic and explicit work. Setup uses
+/// a separate nonautomatic transport, while an active household rechecks
+/// access between its immediate fetch and send.
 @MainActor
 final class CloudLedgerSyncSession {
     let modelContext: ModelContext
@@ -182,6 +184,172 @@ final class CloudLedgerSyncSession {
     }
 }
 
+@MainActor
+protocol CloudLedgerSyncRunning: AnyObject {
+    @discardableResult
+    func run(now: Date, ignoreBackoff: Bool) async throws -> CloudLedgerSyncStatus
+}
+
+extension CloudLedgerSyncSession: CloudLedgerSyncRunning {}
+
+/// Owns the single long-lived production sync engine for an active household.
+/// Foreground work is immediate, local mutations are debounced, and the same
+/// guarded session backs the explicit Sync Now recovery action.
+@MainActor
+final class CloudLedgerAutomaticSyncCoordinator: ObservableObject {
+    typealias SessionFactory = @MainActor () -> any CloudLedgerSyncRunning
+
+    private static let logger = Logger(
+        subsystem: "io.github.ejones23.KidMoney",
+        category: "AutomaticSync"
+    )
+
+    private let debounceNanoseconds: UInt64
+    private let notificationCenter: NotificationCenter
+    private let makeSession: SessionFactory
+    private var session: (any CloudLedgerSyncRunning)?
+    private var runningTask: Task<CloudLedgerSyncStatus, any Error>?
+    private var runningToken: UUID?
+    private var debounceTask: Task<Void, Never>?
+    private var mutationObserver: NSObjectProtocol?
+
+    convenience init(
+        modelContext: ModelContext,
+        debounceNanoseconds: UInt64 = 750_000_000
+    ) {
+        self.init(debounceNanoseconds: debounceNanoseconds) {
+            let transport = CloudLedgerLiveSyncSessionTransport(
+                modelContext: modelContext,
+                automaticallySync: true
+            )
+            return CloudLedgerSyncSession(
+                modelContext: modelContext,
+                accessTransport: CloudLedgerLiveActivationTransport(),
+                syncTransport: transport
+            )
+        }
+    }
+
+    init(
+        debounceNanoseconds: UInt64,
+        notificationCenter: NotificationCenter = .default,
+        makeSession: @escaping SessionFactory
+    ) {
+        self.debounceNanoseconds = debounceNanoseconds
+        self.notificationCenter = notificationCenter
+        self.makeSession = makeSession
+    }
+
+    func start() {
+        guard mutationObserver == nil else { return }
+        mutationObserver = notificationCenter.addObserver(
+            forName: .kidMoneyLedgerDidMutate,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.scheduleAfterLocalMutation()
+            }
+        }
+        Task { @MainActor [weak self] in
+            await self?.syncWhenAppBecomesActive()
+        }
+    }
+
+    func syncWhenAppBecomesActive() async {
+        do {
+            _ = try await run(ignoreBackoff: true)
+        } catch CloudLedgerSyncSessionError.invalidLedger {
+            resetSession()
+        } catch {
+            Self.logger.error(
+                "Foreground synchronization did not complete: \(error.localizedDescription, privacy: .public)"
+            )
+        }
+    }
+
+    func scheduleAfterLocalMutation() {
+        debounceTask?.cancel()
+        debounceTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await Task.sleep(nanoseconds: debounceNanoseconds)
+                try Task.checkCancellation()
+                _ = try await runAfterCurrentWork(ignoreBackoff: false)
+            } catch is CancellationError {
+                return
+            } catch CloudLedgerSyncSessionError.invalidLedger {
+                resetSession()
+            } catch {
+                Self.logger.error(
+                    "Debounced synchronization did not complete: \(error.localizedDescription, privacy: .public)"
+                )
+            }
+        }
+    }
+
+    @discardableResult
+    func syncNow() async throws -> CloudLedgerSyncStatus {
+        debounceTask?.cancel()
+        return try await run(ignoreBackoff: true)
+    }
+
+    func sharedLedgerStateDidChange() {
+        resetSession()
+        Task { @MainActor [weak self] in
+            await self?.syncWhenAppBecomesActive()
+        }
+    }
+
+    private func run(ignoreBackoff: Bool) async throws -> CloudLedgerSyncStatus {
+        if let runningTask {
+            return try await runningTask.value
+        }
+        return try await beginRun(ignoreBackoff: ignoreBackoff)
+    }
+
+    /// A mutation that lands while an older fetch/send is in flight must get a
+    /// later send opportunity. Joining the older task alone can miss a queue
+    /// entry added after that task materialized its send batch.
+    private func runAfterCurrentWork(
+        ignoreBackoff: Bool
+    ) async throws -> CloudLedgerSyncStatus {
+        if let runningTask {
+            _ = try? await runningTask.value
+        }
+        return try await beginRun(ignoreBackoff: ignoreBackoff)
+    }
+
+    private func beginRun(ignoreBackoff: Bool) async throws -> CloudLedgerSyncStatus {
+        let session = session ?? makeSession()
+        self.session = session
+        let token = UUID()
+        let task = Task { @MainActor in
+            try await session.run(now: .now, ignoreBackoff: ignoreBackoff)
+        }
+        runningTask = task
+        runningToken = token
+        defer {
+            if runningToken == token {
+                runningTask = nil
+                runningToken = nil
+            }
+        }
+        do {
+            return try await task.value
+        } catch CloudLedgerSyncSessionError.invalidLedger {
+            resetSession()
+            throw CloudLedgerSyncSessionError.invalidLedger
+        }
+    }
+
+    private func resetSession() {
+        debounceTask?.cancel()
+        debounceTask = nil
+        session = nil
+    }
+}
+
 enum CloudLedgerSyncFailure: Equatable {
     case offline(code: String, retryAfter: TimeInterval?)
     case attentionRequired(code: String)
@@ -218,23 +386,26 @@ enum CloudLedgerSyncFailurePolicy {
     }
 }
 
-/// A live transport exists for the future explicit setup flow, but is not
-/// constructed on app launch. Each operation restores the engine's persisted
-/// token; `automaticallySync` remains false.
+/// Retains one engine for a session and restores its persisted state. Explicit
+/// setup transports leave automatic scheduling off; the app-scoped active-
+/// household coordinator opts in.
 @MainActor
 final class CloudLedgerLiveSyncSessionTransport: CloudLedgerSyncSessionTransport {
     let modelContext: ModelContext
     let container: CKContainer
+    let automaticallySync: Bool
     private var retainedRuntime: CloudLedgerSyncEngineRuntime?
 
     init(
         modelContext: ModelContext,
         container: CKContainer = CKContainer(
             identifier: FamilySharingProbe.containerIdentifier
-        )
+        ),
+        automaticallySync: Bool = false
     ) {
         self.modelContext = modelContext
         self.container = container
+        self.automaticallySync = automaticallySync
     }
 
     func fetchChanges(for ledger: SharedLedgerState) async throws {
@@ -268,7 +439,8 @@ final class CloudLedgerLiveSyncSessionTransport: CloudLedgerSyncSessionTransport
         let runtime = try CloudLedgerSyncEngineRuntime(
             database: database,
             modelContext: modelContext,
-            householdID: ledger.householdID
+            householdID: ledger.householdID,
+            automaticallySync: automaticallySync
         )
         retainedRuntime = runtime
         return runtime

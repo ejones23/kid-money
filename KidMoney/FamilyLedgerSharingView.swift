@@ -10,6 +10,7 @@ private enum OwnerSharingPreflightError: Error {
 @MainActor
 struct FamilyLedgerSharingView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var syncCoordinator: CloudLedgerAutomaticSyncCoordinator
     @Query private var children: [Child]
     @Query private var transactions: [LedgerTransaction]
     @Query private var sharedLedgers: [SharedLedgerState]
@@ -192,6 +193,7 @@ struct FamilyLedgerSharingView: View {
             modelContext: modelContext,
             transport: CloudLedgerLiveActivationTransport()
         ).activate()
+        syncCoordinator.sharedLedgerStateDidChange()
         if let share = result.share {
             presentedShare = share
             isShowingShare = true
@@ -203,6 +205,7 @@ struct FamilyLedgerSharingView: View {
             modelContext: modelContext,
             transport: CloudLedgerLiveSetupTransport(modelContext: modelContext)
         ).cancelSetup()
+        syncCoordinator.sharedLedgerStateDidChange()
     }
 
     private func joinFamilyLedger() async throws {
@@ -215,6 +218,7 @@ struct FamilyLedgerSharingView: View {
             modelContext: modelContext,
             transport: CloudLedgerLiveActivationTransport()
         ).activate()
+        syncCoordinator.sharedLedgerStateDidChange()
     }
 
     private func declineInvitation() throws {
@@ -225,11 +229,7 @@ struct FamilyLedgerSharingView: View {
     }
 
     private func syncNow() async throws {
-        _ = try await CloudLedgerSyncSession(
-            modelContext: modelContext,
-            accessTransport: CloudLedgerLiveActivationTransport(),
-            syncTransport: CloudLedgerLiveSyncSessionTransport(modelContext: modelContext)
-        ).run(ignoreBackoff: true)
+        _ = try await syncCoordinator.syncNow()
     }
 
     private func showOwnerShare() async throws {

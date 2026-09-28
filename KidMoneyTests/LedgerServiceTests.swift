@@ -194,6 +194,14 @@ struct LedgerServiceTests {
     @Test func moneyFormattingDoesNotUseFloatingPoint() {
         #expect(MoneyFormatter.string(cents: 5, locale: Locale(identifier: "en_US")) == "$0.05")
         #expect(MoneyFormatter.string(cents: 135, locale: Locale(identifier: "en_US")) == "$1.35")
+        #expect(
+            MoneyFormatter.absoluteString(cents: -135, locale: Locale(identifier: "en_US"))
+                == "$1.35"
+        )
+        #expect(
+            MoneyFormatter.absoluteString(cents: .min, locale: Locale(identifier: "en_US"))
+                == "$92,233,720,368,547,758.08"
+        )
     }
 
     @Test func usdAmountsConvertToExactCents() throws {
@@ -283,6 +291,31 @@ struct LedgerServiceTests {
         #expect(compensation.amountCents == -25)
         #expect(compensation.source == .siri)
         #expect(transactions.contains { $0.id == original.id })
+    }
+
+    @Test func undoPreviewShowsTheNextEligibleTransaction() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let rebecca = try service.addChild(named: "Rebecca")
+        let david = try service.addChild(named: "David")
+        try service.addTransaction(cents: 10, to: rebecca).createdAt =
+            Date(timeIntervalSince1970: 1)
+        try service.addTransaction(cents: -25, to: david).createdAt =
+            Date(timeIntervalSince1970: 2)
+        try context.save()
+
+        #expect(try service.undoPreview() == UndoPreview(
+            childID: david.id,
+            childName: "David",
+            originalAmountCents: -25
+        ))
+        _ = try service.undoLastTransaction()
+        #expect(try service.undoPreview() == UndoPreview(
+            childID: rebecca.id,
+            childName: "Rebecca",
+            originalAmountCents: 10
+        ))
     }
 
     @Test func transactionRejectsBalanceOverflowWithoutPersisting() throws {

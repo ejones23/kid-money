@@ -31,6 +31,18 @@ struct UndoResult {
     let newBalanceCents: Int64
 }
 
+struct UndoPreview: Equatable {
+    let childID: UUID
+    let childName: String
+    let originalAmountCents: Int64
+}
+
+extension Notification.Name {
+    static let kidMoneyLedgerDidMutate = Notification.Name(
+        "io.github.ejones23.KidMoney.ledgerDidMutate"
+    )
+}
+
 @MainActor
 struct LedgerService {
     private static let logger = Logger(
@@ -79,6 +91,7 @@ struct LedgerService {
         modelContext.insert(child)
         try enqueueCloudSave(for: child)
         try modelContext.save()
+        notifyLedgerMutation()
         Self.logger.info("Saved child creation")
         return child
     }
@@ -92,6 +105,7 @@ struct LedgerService {
         child.lastModifiedAt = .now
         try enqueueCloudSave(for: child)
         try modelContext.save()
+        notifyLedgerMutation()
         Self.logger.info("Saved child rename")
     }
 
@@ -101,6 +115,7 @@ struct LedgerService {
         child.lastModifiedAt = .now
         try enqueueCloudSave(for: child)
         try modelContext.save()
+        notifyLedgerMutation()
         Self.logger.info("Saved child archive")
     }
 
@@ -131,6 +146,7 @@ struct LedgerService {
         modelContext.insert(transaction)
         try enqueueCloudSave(for: transaction)
         try modelContext.save()
+        notifyLedgerMutation()
         Self.logger.info(
             "Saved \(cents, privacy: .private) cent \(source.rawValue, privacy: .public) transaction"
         )
@@ -170,6 +186,7 @@ struct LedgerService {
                 return transaction
             }
             try modelContext.save()
+            notifyLedgerMutation()
             Self.logger.info(
                 "Saved \(transactions.count, privacy: .public) all-children transactions"
             )
@@ -194,16 +211,7 @@ struct LedgerService {
     }
 
     func undoLastTransaction(source: TransactionSource = .manual) throws -> UndoResult {
-        let descriptor = FetchDescriptor<LedgerTransaction>(
-            sortBy: [SortDescriptor(\LedgerTransaction.createdAt, order: .reverse)]
-        )
-        let transactions = try modelContext.fetch(descriptor)
-        let reversedTransactionIDs = Set(transactions.compactMap(\.reversesTransactionID))
-        guard let original = transactions.first(where: {
-            $0.reversesTransactionID == nil
-                && !reversedTransactionIDs.contains($0.id)
-                && $0.child != nil
-        }), let child = original.child else {
+        guard let original = try lastUndoableTransaction(), let child = original.child else {
             throw LedgerError.nothingToUndo
         }
         guard original.amountCents != .min else {
@@ -225,6 +233,31 @@ struct LedgerService {
         )
         Self.logger.info("Saved compensating undo transaction")
         return result
+    }
+
+    func undoPreview() throws -> UndoPreview? {
+        guard let transaction = try lastUndoableTransaction(),
+              let child = transaction.child else {
+            return nil
+        }
+        return UndoPreview(
+            childID: child.id,
+            childName: child.name,
+            originalAmountCents: transaction.amountCents
+        )
+    }
+
+    private func lastUndoableTransaction() throws -> LedgerTransaction? {
+        let descriptor = FetchDescriptor<LedgerTransaction>(
+            sortBy: [SortDescriptor(\LedgerTransaction.createdAt, order: .reverse)]
+        )
+        let transactions = try modelContext.fetch(descriptor)
+        let reversedTransactionIDs = Set(transactions.compactMap(\.reversesTransactionID))
+        return transactions.first {
+            $0.reversesTransactionID == nil
+                && !reversedTransactionIDs.contains($0.id)
+                && $0.child != nil
+        }
     }
 
     private func cloudBackedSharedLedger() throws -> SharedLedgerState? {
@@ -305,5 +338,9 @@ struct LedgerService {
                 recordName: recordName
             ))
         }
+    }
+
+    private func notifyLedgerMutation() {
+        NotificationCenter.default.post(name: .kidMoneyLedgerDidMutate, object: nil)
     }
 }

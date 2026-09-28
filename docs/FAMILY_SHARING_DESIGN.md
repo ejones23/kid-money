@@ -1,7 +1,8 @@
 # Family sharing design proposal
 
-Status: **Approved; initial private-ledger import and manual incremental sync
-in both directions passed on two phones; broader recovery remains unverified**
+Status: **Approved; initial import and manual incremental sync passed on two
+phones; guarded hybrid automatic sync is implemented and awaiting TestFlight
+verification**
 
 The consent and invitation UI boundary is in
 [PHASE6_ACTIVATION_FLOW.md](PHASE6_ACTIVATION_FLOW.md). Build 10 reached both
@@ -190,10 +191,12 @@ cloud synchronization is distributed.
    and atomically imports the invited zone. A dormant activation gate now
    checks setup phase, iCloud identity, and share access; offline edits remain
    queued across restart, while account changes or revocation freeze new edits
-   without deleting local data. Explicit owner consent, participant Join,
-   Sync Now, and participant-management UI are now wired in the local build.
-   Automatic background sync and remote-notification capability remain
-   disabled.**
+   without deleting local data. Explicit owner consent, participant Join, Sync
+   Now, and participant-management UI are wired. A single app-scoped
+   coordinator now enables CKSyncEngine's automatic scheduler only for an
+   activated household, adds foreground and debounced post-mutation sync,
+   registers for silent remote changes, and preserves Sync Now as a guarded
+   recovery action. Physical verification remains.**
 5. Verify manual and Siri mutations on both adults' devices, including app
    termination and offline/reconnect behavior.
 6. Test concurrent additions, same-transaction undo, rename/archive conflicts,

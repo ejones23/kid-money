@@ -25,6 +25,8 @@ enum QuickAmountPreferences {
 struct ChildListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<Child> { !$0.isArchived }, sort: \Child.sortOrder) private var children: [Child]
+    @Query(sort: \LedgerTransaction.createdAt, order: .reverse)
+    private var transactions: [LedgerTransaction]
     @AppStorage(QuickAmountPreferences.storageKey)
     private var storedQuickAmounts = QuickAmountPreferences.defaultStorageValue
     @State private var isShowingAddChild = false
@@ -36,6 +38,11 @@ struct ChildListView: View {
 
     private var quickAmounts: [Int64] {
         QuickAmountPreferences.decode(storedQuickAmounts)
+    }
+
+    private var undoPreview: UndoPreview? {
+        _ = transactions.count
+        return try? LedgerService(modelContext: modelContext).undoPreview()
     }
 
     var body: some View {
@@ -61,6 +68,12 @@ struct ChildListView: View {
                             }
                             .pickerStyle(.segmented)
                             .padding(.horizontal)
+
+                            if let undoPreview {
+                                UndoLastTransactionButton(preview: undoPreview) {
+                                    undoLastTransaction()
+                                }
+                            }
 
                             ForEach(children) { child in
                                 ChildQuickActionCard(
@@ -152,6 +165,15 @@ struct ChildListView: View {
             errorMessage = error.localizedDescription
         }
     }
+
+    private func undoLastTransaction() {
+        do {
+            _ = try LedgerService(modelContext: modelContext).undoLastTransaction()
+            completedActionCount += 1
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }
 
 private enum QuickAdjustmentDirection: String, CaseIterable, Identifiable {
@@ -167,6 +189,46 @@ private enum QuickAdjustmentDirection: String, CaseIterable, Identifiable {
 
     func signed(_ cents: Int64) -> Int64 {
         self == .give ? cents : -cents
+    }
+}
+
+private struct UndoLastTransactionButton: View {
+    let preview: UndoPreview
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.uturn.backward.circle.fill")
+                    .font(.title2)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Undo Last")
+                        .font(.headline)
+                    Text(description)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(.background, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(.separator.opacity(0.35), lineWidth: 0.5)
+            }
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal)
+        .accessibilityLabel("Undo last transaction. \(description)")
+    }
+
+    private var description: String {
+        let amount = MoneyFormatter.absoluteString(cents: preview.originalAmountCents)
+        if preview.originalAmountCents > 0 {
+            return "Gave \(amount) to \(preview.childName)"
+        }
+        return "Took \(amount) from \(preview.childName)"
     }
 }
 

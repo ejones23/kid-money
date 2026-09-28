@@ -1,12 +1,13 @@
 # Visual quick-action physical test
 
-Use this checklist for TestFlight build 13 on the owner iPhone first. Run the
-sync portion on the spouse iPhone after the owner-side behavior passes. Record
-the starting balances rather than relying on balances from earlier voice tests.
+Use this checklist for TestFlight build 14 on the owner iPhone first. Build 13's
+initial owner checks passed; build 14 adds the follow-up layout, visual undo, and
+automatic synchronization. Record starting balances rather than relying on
+balances from earlier tests.
 
 ## Preconditions
 
-- Both phones show TestFlight build `0.1 (13)`.
+- Both phones show TestFlight build `0.1 (14)`.
 - The shared ledger reports **Sharing enabled** on both phones.
 - Run **Sync Now** on both phones and record every active child's starting
   balance.
@@ -21,6 +22,9 @@ the starting balances rather than relying on balances from earlier voice tests.
    in the child's history.
 3. Select **Take**. Tap `−$0.10` on a different child. Confirm that only that
    child decreases by exactly ten cents and that one manual transaction appears.
+   Confirm the home-screen **Undo Last** control identifies that child and
+   amount. Tap it once and verify the prior balance is restored and an **Undo**
+   row appears in history.
 4. Open **Quick Amounts** from the sliders button. Remove one amount, add a
    different exact amount such as `$0.75`, and reorder at least one item. Save.
    Confirm the new ordered set appears on every child and All Children, but is
@@ -37,20 +41,27 @@ the starting balances rather than relying on balances from earlier voice tests.
 7. Open each child's history and verify the newest-first ordering, signed
    amounts, source, note, and balances remain correct.
 
-## Two-phone synchronization
+## Two-phone automatic synchronization
 
-1. On the owner phone, open **Sharing**. Confirm the quick-action transactions
-   appear in **Changes waiting to sync**, then tap **Sync Now** and confirm the
-   count reaches zero.
-2. On the spouse phone, tap **Sync Now**. Confirm every individual and
-   all-children transaction appears exactly once and all balances match the
-   owner phone.
+1. Open Kid Money on both phones, then leave the spouse phone on the home
+   screen. On the owner phone, make one small individual adjustment. Do **not**
+   open Sharing or tap Sync Now. Confirm it reaches the spouse exactly once.
+   Record whether it appeared while the spouse app remained open or only after
+   backgrounding and reopening it.
+2. Reverse the roles: make one small adjustment on the spouse phone without
+   using Sync Now. Confirm the owner receives it exactly once. If it does not
+   appear promptly, background and reopen the owner app; foreground catch-up
+   must deliver it without opening Sharing.
 3. Confirm the spouse phone's quick-amount buttons did not change. Quick-amount
    preferences are intentionally per device, not shared ledger data.
-4. On the spouse phone, perform one individual visual quick action, sync both
-   phones, and confirm it appears exactly once on the owner phone.
-5. Terminate and relaunch both apps, sync again, and confirm balances and
-   history remain unchanged with no duplicates.
+4. Make three quick taps on one phone. Confirm all three local transactions are
+   preserved, the remote phone receives each exactly once, and the final
+   balance matches. The network work may be coalesced; the ledger entries must
+   not be.
+5. Terminate and relaunch both apps without using Sync Now. Confirm balances
+   and history remain unchanged with no duplicates.
+6. Use **Sync Now** only as a recovery diagnostic if an automatic step remains
+   stuck. Before tapping it, record each phone's Sync status and pending count.
 
 ## Report
 

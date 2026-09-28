@@ -98,9 +98,12 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   App Store Connect shows **Testing** in both internal and Family Test groups.
 - [x] Archive and upload visual-first build `0.1 (13)` with Xcode 27 and add it
   to `Internal Testing` after processing completes.
-- [ ] Complete the owner-phone quick-action checks in
-  `docs/QUICK_ACTION_TEST_PLAN.md`, then add build 13 to `Family Test`.
-- [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
+- [x] Complete the build 13 owner-phone quick-action checks in
+  `docs/QUICK_ACTION_TEST_PLAN.md`.
+- [ ] Upload build `0.1 (14)`, add it to both TestFlight groups, and run the
+  focused automatic-sync and visual Undo matrix.
+- [ ] Complete build 14's automatic two-device matrix before claiming shared
+  accounts synchronize without manual intervention.
 
 ## 6. Public release
 

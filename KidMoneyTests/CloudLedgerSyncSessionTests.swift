@@ -35,10 +35,42 @@ private final class SessionWorkStub: CloudLedgerSyncSessionTransport {
 }
 
 @MainActor
+private final class AutomaticSyncRunnerStub: CloudLedgerSyncRunning {
+    var ignoreBackoffCalls: [Bool] = []
+
+    func run(now: Date, ignoreBackoff: Bool) async throws -> CloudLedgerSyncStatus {
+        ignoreBackoffCalls.append(ignoreBackoff)
+        return .synced
+    }
+}
+
+@MainActor
+private final class BlockingAutomaticSyncRunnerStub: CloudLedgerSyncRunning {
+    var ignoreBackoffCalls: [Bool] = []
+    private var firstRunContinuation: CheckedContinuation<Void, Never>?
+
+    func run(now: Date, ignoreBackoff: Bool) async throws -> CloudLedgerSyncStatus {
+        ignoreBackoffCalls.append(ignoreBackoff)
+        if ignoreBackoffCalls.count == 1 {
+            await withCheckedContinuation { continuation in
+                firstRunContinuation = continuation
+            }
+        }
+        return .synced
+    }
+
+    func finishFirstRun() {
+        firstRunContinuation?.resume()
+        firstRunContinuation = nil
+    }
+}
+
+@MainActor
 struct CloudLedgerSyncSessionTests {
     @Test func liveTransportRetainsDelegateAcrossFetchAndSendAndRefreshesQueue() throws {
         let (context, shared) = try fixture()
         let transport = CloudLedgerLiveSyncSessionTransport(modelContext: context)
+        #expect(!transport.automaticallySync)
         weak var delegate: CloudLedgerSyncEngineDelegate?
 
         do {
@@ -59,6 +91,61 @@ struct CloudLedgerSyncSessionTests {
         }
 
         #expect(delegate != nil)
+    }
+
+    @Test func automaticCoordinatorDebouncesMutationsAndReusesOneSession() async throws {
+        let runner = AutomaticSyncRunnerStub()
+        var factoryCalls = 0
+        let coordinator = CloudLedgerAutomaticSyncCoordinator(
+            debounceNanoseconds: 5_000_000
+        ) {
+            factoryCalls += 1
+            return runner
+        }
+
+        coordinator.scheduleAfterLocalMutation()
+        coordinator.scheduleAfterLocalMutation()
+        coordinator.scheduleAfterLocalMutation()
+        try await Task.sleep(nanoseconds: 50_000_000)
+
+        #expect(runner.ignoreBackoffCalls == [false])
+        await coordinator.syncWhenAppBecomesActive()
+        #expect(runner.ignoreBackoffCalls == [false, true])
+        _ = try await coordinator.syncNow()
+        #expect(runner.ignoreBackoffCalls == [false, true, true])
+        #expect(factoryCalls == 1)
+    }
+
+    @Test func automaticTransportEnablesSystemScheduling() throws {
+        let (context, _) = try fixture()
+        let transport = CloudLedgerLiveSyncSessionTransport(
+            modelContext: context,
+            automaticallySync: true
+        )
+
+        #expect(transport.automaticallySync)
+    }
+
+    @Test func mutationDuringAnOlderSyncGetsAFollowUpSendOpportunity() async throws {
+        let runner = BlockingAutomaticSyncRunnerStub()
+        let coordinator = CloudLedgerAutomaticSyncCoordinator(
+            debounceNanoseconds: 1_000_000
+        ) {
+            runner
+        }
+        let foregroundTask = Task {
+            await coordinator.syncWhenAppBecomesActive()
+        }
+        try await Task.sleep(nanoseconds: 5_000_000)
+        #expect(runner.ignoreBackoffCalls == [true])
+
+        coordinator.scheduleAfterLocalMutation()
+        try await Task.sleep(nanoseconds: 5_000_000)
+        runner.finishFirstRun()
+        await foregroundTask.value
+        try await Task.sleep(nanoseconds: 10_000_000)
+
+        #expect(runner.ignoreBackoffCalls == [true, false])
     }
 
     @Test func accessibleSessionFetchesBeforeSendingAndReportsSynced() async throws {

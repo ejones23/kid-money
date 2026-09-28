@@ -142,6 +142,7 @@ final class CloudLedgerSyncEngineStore {
     }
 
     func record(for recordID: CKRecord.ID) throws -> CKRecord? {
+        try ensureMayServiceLedger()
         guard recordID.zoneID == zoneID else { return nil }
         guard try pendingChanges().contains(where: {
             $0.operation == .save && $0.recordName == recordID.recordName
@@ -177,6 +178,7 @@ final class CloudLedgerSyncEngineStore {
         _ records: [CKRecord],
         deletions: [CloudLedgerFetchedDeletion]
     ) throws {
+        try ensureMayServiceLedger()
         if let deletion = deletions.first(where: { $0.recordID.zoneID == zoneID }) {
             try requireUserAttention(code: "remote-record-deleted")
             throw CloudLedgerSyncEngineAdapterError.fetchedRecordDeletion(
@@ -204,6 +206,7 @@ final class CloudLedgerSyncEngineStore {
     }
 
     func handleSavedRecords(_ records: [CKRecord]) throws -> [CKRecord.ID] {
+        try ensureMayServiceLedger()
         var changesToRetry: [CKRecord.ID] = []
         for record in records where record.recordID.zoneID == zoneID {
             if CloudLedgerRecordType(rawValue: record.recordType) != nil {
@@ -344,6 +347,17 @@ final class CloudLedgerSyncEngineStore {
             throw CloudLedgerSyncEngineAdapterError.missingSharedLedger
         }
         return ledger
+    }
+
+    private func ensureMayServiceLedger() throws {
+        let ledger = try sharedLedger()
+        if ledger.phase == .active { return }
+        if ledger.phase == .preparing,
+           let migration = try migrationState(),
+           migration.phase == .uploadingInitialLedger {
+            return
+        }
+        throw CloudLedgerSyncEngineAdapterError.invalidSharedLedger
     }
 
     private func syncState() throws -> CloudLedgerSyncState {
@@ -603,6 +617,7 @@ final class CloudLedgerSyncEngineDelegate: CKSyncEngineDelegate, @unchecked Send
 final class CloudLedgerSyncEngineRuntime {
     let engine: CKSyncEngine
     let delegate: CloudLedgerSyncEngineDelegate
+    let automaticallySync: Bool
 
     init(
         database: CKDatabase,
@@ -625,6 +640,7 @@ final class CloudLedgerSyncEngineRuntime {
         engine.state.add(pendingRecordZoneChanges: try store.pendingEngineChanges())
         self.delegate = delegate
         self.engine = engine
+        self.automaticallySync = automaticallySync
     }
 
     func refreshPendingChangesFromQueue() throws {

@@ -5,7 +5,8 @@ Test group. Build 10 passed owner opt-in, invitation, participant adoption,
 and matching imported history; its ordinary Sync Now left a new edit queued.
 Build 11 physically passed manual incremental sync in both directions,
 owner-Siri-originated delivery, two-phone relaunch persistence, and controlled
-offline/reconnect recovery.**
+offline/reconnect recovery. Build 14 adds guarded hybrid automatic sync and is
+awaiting two-phone verification.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to
@@ -132,3 +133,27 @@ the edit once with the expected balance.
 For any failure, send the exact on-screen error, device role, build number,
 action that preceded it, and whether the existing local ledger remains visible.
 Do not send iCloud credentials, device logs, or family ledger screenshots.
+
+## Build 14 automatic-sync matrix
+
+Run this after both phones show build 14. Keep **Sync Now** as a diagnostic
+fallback rather than part of the normal path.
+
+1. Launch Kid Money on both phones so each activated household creates its one
+   automatic engine. Record matching starting balances.
+2. Adjust one child on the owner phone. Do not open Sharing. Confirm the pending
+   queue clears automatically and the participant receives the transaction
+   exactly once. If delivery is not prompt, background and reopen the
+   participant app; the foreground fetch must catch up automatically.
+3. Make a different adjustment on the participant and confirm the reverse path
+   under the same rules.
+4. Make three rapid adjustments on one phone. Confirm all three transactions
+   arrive exactly once even though the network wakeup is debounced.
+5. Put the owner phone offline, make one adjustment, and confirm it remains
+   local and queued. Restore connectivity and bring Kid Money to the foreground;
+   confirm automatic exact-once delivery without Sync Now.
+6. Terminate and relaunch both apps. Confirm matching balances and histories,
+   no duplicate rows, and no unexpected attention-required state.
+7. If any step remains stuck, record Sync status and pending count on both
+   phones before using **Sync Now**. A successful manual recovery is useful but
+   does not count as automatic-sync success for the failed step.

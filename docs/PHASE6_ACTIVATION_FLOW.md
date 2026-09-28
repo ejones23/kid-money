@@ -92,7 +92,9 @@ offline/reconnect, restart, account changes, and revocation. Compilation and
 simulator tests alone do not establish physical CloudKit or Siri behavior.
 
 The access-checked sync session and its injected failure tests are
-implemented. An activated family ledger can run it with **Sync Now**; no
-automatic background sync or startup upload is enabled yet. The Household,
-Child, and LedgerTransaction schema is deployed to Production. The real-ledger
-physical matrix remains in progress.
+implemented. Build 14 retains one guarded automatic engine for an activated
+family ledger, performs immediate foreground catch-up, debounces post-mutation
+sends, and keeps **Sync Now** as a recovery action. It does not poll and still
+cannot upload a local-only or incomplete setup ledger merely because the app
+opened. The Household, Child, and LedgerTransaction schema is deployed to
+Production. The automatic two-phone physical matrix remains in progress.

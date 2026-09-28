@@ -18,7 +18,9 @@ deterministic CloudKit records, a durable local pending-change queue, and tested
 remote decode/merge rules. A tested queue processor now adds persisted sync
 status, retry/backoff, iCloud account gating, and optimistic conflict handling,
 and a `CKSyncEngine` delegate now handles scoped send/fetch events, opaque engine
-state, and CloudKit system metadata. Automatic synchronization is still off.
+state, and CloudKit system metadata. The local build now enables guarded hybrid
+synchronization for an activated household; physical TestFlight verification is
+the next gate.
 A durable migration state
 machine now stages an existing ledger with deterministic record identities,
 repairs interrupted queues, and refuses destructive or ambiguous adoption. A
@@ -48,6 +50,7 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - shared `LedgerService` domain logic
 - add-child flow
 - large active-child cards with derived USD balances and direct quick actions
+- a contextual, one-tap visual Undo Last action on the home screen
 - one configurable, ordered set of up to six quick amounts per device
 - direct all-children give/take actions that create one auditable
   transaction per active child
@@ -70,7 +73,7 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   deterministic child conflicts and durable out-of-order transaction deferral
 - restart-safe queue draining with account gating, bounded retry/backoff, and
   optimistic conflict handling behind an injected CloudKit transport boundary
-- a dormant `CKSyncEngine` adapter for scoped batches, inbound merges, account
+- a `CKSyncEngine` adapter for scoped batches, inbound merges, account
   changes, successful-send cleanup, and serialized engine-state restoration
 - a non-destructive existing-ledger migration coordinator with durable phases,
   deterministic initial staging, restart repair, and guarded activation
@@ -80,13 +83,14 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
   preflight, scoped initial import, and interrupted-acceptance recovery
 - a dormant activation gate with account/share verification, offline continuity,
   and non-destructive account-switch and revocation handling
-- an access-checked sync session behind an explicit Sync Now action that fetches
-  before sending, rechecks identity and share access, and retains queued
-  changes on failures
+- one app-scoped automatic-sync coordinator that reuses an access-checked
+  session for foreground, debounced post-mutation, and explicit Sync Now work
+- CloudKit's power-aware automatic scheduler and silent-change delivery for an
+  activated household, with no repeating timer or polling
 - an owner upload-consent screen and separate participant invitation review;
   neither launches network work merely because the app opened
 
-The project builds in Xcode 27. All 93 Swift Testing tests and one
+The project builds in Xcode 27. All 97 Swift Testing tests and one
 out-of-process App Intents integration test pass on the iOS 27 simulator. The
 integration test executes the same app-side intent path used by Siri and
 Shortcuts, including dynamic child-and-amount entity resolution and an exact
@@ -195,13 +199,13 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-Build 13 completed the visual-first checkpoint. The home screen gives each
+Build 13 completed the first visual-first checkpoint. The home screen gives each
 child a large card with six direct amount buttons and uses one Give/Take
-selector. Follow-up polish moves the direct All Children card below the child
-cards, removes its confirmation, and keeps quick actions on the landing page
-instead of duplicating them in child detail. The amount list is user-
-configurable and intentionally stored per device so each parent can choose
-their own working set.
+selector. The follow-up build puts All Children last, applies it without a
+confirmation, keeps quick actions off child detail, and adds a contextual Undo
+Last control. It also enables guarded hybrid synchronization: immediate work on
+foreground and after a short mutation debounce, plus CloudKit's system-managed
+automatic scheduler. The amount list remains per device.
 
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 
@@ -281,10 +285,11 @@ phrase matrix led to the visual-first product pivot.
 
 Build `0.1 (13)` implements the visual-first home-screen pivot: large child
 cards, six configurable per-device quick amounts, a Give/Take selector, and an
-atomic All Children action. It passed 93 Swift Testing tests plus the
-out-of-process App Intents integration test, was archived with Xcode 27, and
-was added to Internal Testing on September 27, 2026. Owner-phone validation is
-the next checkpoint; the spouse external group follows after those checks.
+atomic All Children action. It passed its owner-phone checks on September 27,
+2026. Build 14 moves All Children below the individual child cards, removes its
+confirmation, keeps quick actions off child detail, adds a contextual Undo Last
+control, and enables guarded hybrid automatic synchronization. Its two-phone
+automatic-sync matrix is the next physical checkpoint.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

@@ -11,9 +11,10 @@ transport-independent queue processor now exercises send policy, retry, account
 gating, and optimistic conflicts. A concrete `CKSyncEngine` delegate now maps
 engine events into those persistence and merge boundaries. A durable migration
 coordinator stages existing local ledgers without changing their rows. The
-sharing screen now instantiates setup and synchronization only for explicit
-owner/participant actions; app launch does not start either path. An owner
-setup runner composes those pieces behind an injected CloudKit boundary.
+sharing screen instantiates setup only for explicit owner/participant actions.
+Once that consented flow activates a household, one app-scoped coordinator owns
+its sync engine and begins guarded automatic synchronization. An owner setup
+runner composes setup behind an injected CloudKit boundary.
 
 ```text
 SwiftUI views ──────┐
@@ -64,8 +65,9 @@ The service is `@MainActor` because its `ModelContext` is main-actor-bound in th
 
 The ordered quick-amount list is stored as positive integer cents in
 `@AppStorage`, not SwiftData. It defaults to 5, 10, 15, 20, 25, and 50 cents,
-is capped at six unique values, and is reused by the home screen and child
-detail. Input still goes through exact `MoneyConversion`; no floating-point
+is capped at six unique values, and is used only by the home screen. Child
+detail retains arbitrary adjustments and history. Input still goes through
+exact `MoneyConversion`; no floating-point
 money enters the domain. The preference is intentionally per device and is not
 part of the shared family ledger, allowing each parent to choose a different
 button layout without creating CloudKit conflicts.
@@ -108,9 +110,9 @@ local edits and their coalesced pending changes together so an edit made during
 setup cannot fall outside the initial upload. Once a household is active, the
 same queueing rule continues for normal synchronization. An attention-required
 household rejects further ledger mutations instead of silently accumulating
-changes that cannot safely converge. Only explicit sharing-screen setup or
-Sync Now actions can start real-ledger network work in the local build. Build 9
-on TestFlight remains counter-only.
+changes that cannot safely converge. Only explicit sharing setup can activate
+real-ledger networking. Before activation, app launch and ordinary local-only
+mutations remain offline. Build 9 on TestFlight remains counter-only.
 
 `CloudLedgerRecordMapper` maps Household, Child, and LedgerTransaction values
 without floating-point money. Children and transactions use their stable UUIDs
@@ -159,9 +161,12 @@ version is in flight, the successful-send event compares that accepted payload
 with current local state and immediately requeues the newer version.
 
 Each state-update event is JSON-encoded into `CloudLedgerSyncState.engineStateData`
-and restored when constructing `CloudLedgerSyncEngineRuntime`. Automatic sync
-defaults to disabled. Sharing-screen actions create the runtime on demand;
-remote-notification capability and automatic background sync remain disabled.
+and restored when constructing `CloudLedgerSyncEngineRuntime`. Setup and tests
+leave automatic scheduling disabled. For an already activated household,
+`CloudLedgerAutomaticSyncCoordinator` retains one runtime with automatic
+scheduling enabled, registers for remote notifications, and services
+foreground, debounced post-mutation, and manual requests through the same
+engine.
 
 `CloudLedgerMigrationCoordinator` persists the owner setup phases: awaiting
 zone creation, uploading the initial ledger, awaiting share creation, ready to
@@ -223,18 +228,28 @@ access recheck after an outage changes status to pending, not synced, because
 fetch and send have not yet completed. `PHASE6_ACTIVATION_FLOW.md` specifies
 the consent and invitation entry points before app wiring.
 
-`CloudLedgerSyncSession` is the entry point for ordinary network work.
+`CloudLedgerSyncSession` remains the guarded entry point for immediate network work.
 It requires an activated household with matching completed owner or participant
 setup state, checks the pinned account and share before fetching, fetches the
 household zone, checks again before sending any queued data, and only reports
 synced after successful work. Transient CloudKit failures persist retry time
 and leave local edits writable; missing zones, changed accounts, or terminal
-errors freeze new edits without removing the queue. The live transport keeps
-`CKSyncEngine.automaticallySync` disabled and is constructed only by Sync Now.
-It retains one engine and delegate through the complete fetch/send operation;
-the engine's configuration holds its delegate weakly, so a temporary runtime
-cannot safely service a live sync request. Before sending it adds any durable
-changes queued after the engine was constructed.
+errors freeze new edits without removing the queue. The app-scoped coordinator
+constructs its live transport with `CKSyncEngine.automaticallySync` enabled only
+after an activated ledger passes the access preflight. It retains one engine
+and delegate for the process and reuses them for Sync Now; this avoids multiple
+production engines targeting the same database. Setup transports keep
+automatic sync disabled. Before sending, the runtime adds durable changes
+queued after the engine was constructed.
+
+Every successful local `LedgerService` mutation posts a process-local wakeup.
+The coordinator coalesces rapid edits for 750 milliseconds, then runs another
+guarded session even if an older session was already in flight. Entering the
+foreground forces an immediate guarded fetch/send. System scheduling and
+silent CloudKit notifications provide power-aware background opportunities;
+there is no repeating poll or `BGTaskScheduler` job. If sharing is inactive or
+attention-required, no automatic runtime is created and durable queued changes
+remain intact.
 
 CloudKit can deliver a transaction before its referenced child. Such a record
 is stored as a `DeferredCloudTransaction`, survives process relaunch, and is
