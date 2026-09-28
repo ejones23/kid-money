@@ -23,12 +23,14 @@ the starting balances rather than relying on balances from earlier voice tests.
    child decreases by exactly ten cents and that one manual transaction appears.
 4. Open **Quick Amounts** from the sliders button. Remove one amount, add a
    different exact amount such as `$0.75`, and reorder at least one item. Save.
-   Confirm the new ordered set appears on every child, All Children, and child
-   detail. Terminate and relaunch Kid Money; confirm the preference persists.
-5. Select **Give**, then choose a small amount on **All Children**. Confirm the
-   dialog states the amount and active-child count. Cancel once and verify no
-   balances change. Repeat and confirm. Every active child must increase by the
-   exact amount and receive one transaction labeled **Applied to all children**.
+   Confirm the new ordered set appears on every child and All Children, but is
+   not duplicated in child detail. Terminate and relaunch Kid Money; confirm
+   the preference persists.
+5. Confirm **All Children** appears after every individual child. Select
+   **Give**, then choose a small amount on **All Children**. The action should
+   apply immediately without a confirmation dialog. Every active child must
+   increase by the exact amount and receive one transaction labeled **Applied
+   to all children**.
 6. Select **Take** and apply a small amount to **All Children**. Confirm every
    active child decreases by exactly that amount and receives one matching
    transaction.

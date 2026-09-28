@@ -244,21 +244,24 @@ until their non-destructive physical procedure is agreed.
 
 ## Phase 7 — Visual-first quick actions
 
-Status: **Implementation complete; awaiting build 13 physical validation**
+Status: **Build 13 owner-phone validation complete; follow-up polish in progress**
 
 - [x] replace compact home rows with large child cards showing balance and six
   direct amount buttons
 - [x] add a global Give/Take selector so the same layout handles both signs
 - [x] store one ordered, configurable set of up to six exact amounts per device
-- [x] reuse the configured quick amounts on child detail
-- [x] add a confirmed All Children card
+- [x] keep quick actions on the home screen and arbitrary adjustments in child
+  detail
+- [x] place a direct, no-confirmation All Children card after the child cards
 - [x] apply all-children changes atomically while preserving one auditable
   transaction and queued CloudKit save per active child
 - [x] exclude archived children from family-wide changes
 - [x] upload build 13 and add it to Internal Testing
 - [ ] add build 13 to the family external group after the owner-phone checks
-- [ ] physically verify individual give/take, group give/take, customization,
-  relaunch persistence, transaction history, and two-phone manual sync
+- [x] physically verify individual give/take, group give/take, customization,
+  relaunch persistence, and transaction history on the owner phone
+- [ ] physically verify the polished layout and automatic synchronization on
+  both phones in a subsequent TestFlight build
 
 Voice remains implemented, documented, and test-covered, but it is no longer a
 release gate for visual ledger improvements. Do not expand the Siri phrase

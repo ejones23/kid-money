@@ -5,16 +5,10 @@ struct ChildDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     let child: Child
-    @AppStorage(QuickAmountPreferences.storageKey)
-    private var storedQuickAmounts = QuickAmountPreferences.defaultStorageValue
     @State private var errorMessage: String?
     @State private var adjustmentMode: ManualAdjustmentMode?
     @State private var isRenaming = false
     @State private var isConfirmingArchive = false
-
-    private var quickAmounts: [Int64] {
-        QuickAmountPreferences.decode(storedQuickAmounts)
-    }
 
     var body: some View {
         let service = LedgerService(modelContext: modelContext)
@@ -32,23 +26,6 @@ struct ChildDetailView: View {
                 }
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
-            }
-
-            Section("Quick Add") {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                    ForEach(quickAmounts, id: \.self) { cents in
-                        Button {
-                            addTransaction(cents: cents)
-                        } label: {
-                            Text("+\(MoneyFormatter.string(cents: cents))")
-                                .font(.headline.monospacedDigit())
-                                .frame(maxWidth: .infinity, minHeight: 32)
-                        }
-                        .buttonStyle(.bordered)
-                        .accessibilityLabel("Add \(MoneyFormatter.string(cents: cents))")
-                    }
-                }
-                .padding(.vertical, 4)
             }
 
             Section("Custom Adjustment") {
@@ -114,14 +91,6 @@ struct ChildDetailView: View {
 
     private var sortedTransactions: [LedgerTransaction] {
         child.transactions.sorted { $0.createdAt > $1.createdAt }
-    }
-
-    private func addTransaction(cents: Int64) {
-        do {
-            try LedgerService(modelContext: modelContext).addTransaction(cents: cents, to: child)
-        } catch {
-            errorMessage = error.localizedDescription
-        }
     }
 
     private func archiveChild() {

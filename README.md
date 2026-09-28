@@ -49,9 +49,9 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - add-child flow
 - large active-child cards with derived USD balances and direct quick actions
 - one configurable, ordered set of up to six quick amounts per device
-- confirmed all-children give/take actions that create one auditable
+- direct all-children give/take actions that create one auditable
   transaction per active child
-- newest-first transaction history with quick and arbitrary manual adjustments
+- newest-first transaction history with arbitrary manual adjustments
 - child rename and archive flows that preserve ledger history
 - `GiveMoneyIntent` with a background execution mode
 - `TakeMoneyIntent`, `GetBalanceIntent`, and auditable `UndoLastTransactionIntent`
@@ -195,13 +195,13 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-Build 13 is the visual-first checkpoint. The home screen gives each child a
-large card with six direct amount buttons, uses a single Give/Take selector,
-and provides the same actions for All Children behind a confirmation. The
-amount list is user-configurable and intentionally stored per device so each
-parent can choose their own working set. Physical testing must cover exact
-individual and group transactions, relaunch persistence, history, and
-two-phone manual synchronization.
+Build 13 completed the visual-first checkpoint. The home screen gives each
+child a large card with six direct amount buttons and uses one Give/Take
+selector. Follow-up polish moves the direct All Children card below the child
+cards, removes its confirmation, and keeps quick actions on the landing page
+instead of duplicating them in child detail. The amount list is user-
+configurable and intentionally stored per device so each parent can choose
+their own working set.
 
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 

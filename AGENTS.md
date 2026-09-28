@@ -133,12 +133,9 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Complete and physically validate the visual-first home screen in build 13:
-large child cards, one configurable per-device set of six quick amounts, a
-Give/Take selector, and confirmed all-children adjustments. Verify individual
-and group transactions, history, preference persistence, and two-phone manual
-sync. Group mutations must preflight every active child and commit or roll back
-as a single local operation while still creating one auditable transaction per
-child. Do not resume Siri-routing experiments. Do not start CloudKit uploads
-merely because the app launched, and keep attention-required recovery
-non-destructive.
+Build 13 passed its visual-first owner-phone checks. Finish the follow-up polish:
+put All Children last, apply it without confirmation, and keep quick actions
+only on the home screen. Next, design and test automatic shared-ledger sync
+around the existing guarded session and CKSyncEngine runtime. Preserve manual
+Sync Now as a recovery control, keep attention-required recovery non-
+destructive, and do not resume Siri-routing experiments.

@@ -30,7 +30,6 @@ struct ChildListView: View {
     @State private var isShowingAddChild = false
     @State private var isShowingQuickAmountSettings = false
     @State private var direction: QuickAdjustmentDirection = .give
-    @State private var pendingGroupAdjustment: GroupAdjustment?
     @State private var errorMessage: String?
     @State private var completedActionCount = 0
     @State private var invitationNotice = CloudLedgerInvitationNotice.shared
@@ -63,17 +62,6 @@ struct ChildListView: View {
                             .pickerStyle(.segmented)
                             .padding(.horizontal)
 
-                            AllChildrenQuickActionCard(
-                                childCount: children.count,
-                                amounts: quickAmounts,
-                                direction: direction
-                            ) { cents in
-                                pendingGroupAdjustment = GroupAdjustment(
-                                    signedCents: direction.signed(cents),
-                                    childCount: children.count
-                                )
-                            }
-
                             ForEach(children) { child in
                                 ChildQuickActionCard(
                                     child: child,
@@ -82,6 +70,14 @@ struct ChildListView: View {
                                 ) { cents in
                                     addTransaction(cents: direction.signed(cents), to: child)
                                 }
+                            }
+
+                            AllChildrenQuickActionCard(
+                                childCount: children.count,
+                                amounts: quickAmounts,
+                                direction: direction
+                            ) { cents in
+                                addTransactionToAllChildren(cents: direction.signed(cents))
                             }
                         }
                         .padding(.vertical)
@@ -117,23 +113,6 @@ struct ChildListView: View {
             .sheet(isPresented: $isShowingQuickAmountSettings) {
                 QuickAmountSettingsView(storedAmounts: $storedQuickAmounts)
             }
-            .confirmationDialog(
-                pendingGroupAdjustment?.confirmationTitle ?? "Adjust All Children?",
-                isPresented: Binding(
-                    get: { pendingGroupAdjustment != nil },
-                    set: { if !$0 { pendingGroupAdjustment = nil } }
-                ),
-                titleVisibility: .visible
-            ) {
-                if let adjustment = pendingGroupAdjustment {
-                    Button(adjustment.confirmationButtonTitle) {
-                        addTransactionToAllChildren(cents: adjustment.signedCents)
-                    }
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This creates a separate auditable transaction for every active child.")
-            }
             .alert("Couldn't Complete Action", isPresented: Binding(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
@@ -163,7 +142,6 @@ struct ChildListView: View {
     }
 
     private func addTransactionToAllChildren(cents: Int64) {
-        pendingGroupAdjustment = nil
         do {
             try LedgerService(modelContext: modelContext).addTransactionToAllActiveChildren(
                 cents: cents,
@@ -189,27 +167,6 @@ private enum QuickAdjustmentDirection: String, CaseIterable, Identifiable {
 
     func signed(_ cents: Int64) -> Int64 {
         self == .give ? cents : -cents
-    }
-}
-
-private struct GroupAdjustment: Identifiable {
-    let id = UUID()
-    let signedCents: Int64
-    let childCount: Int
-
-    private var amount: String {
-        MoneyFormatter.string(cents: abs(signedCents))
-    }
-
-    var confirmationTitle: String {
-        let verb = signedCents > 0 ? "Give" : "Take"
-        let preposition = signedCents > 0 ? "to" : "from"
-        let target = childCount == 1 ? "the only child" : "all \(childCount) children"
-        return "\(verb) \(amount) \(preposition) \(target)?"
-    }
-
-    var confirmationButtonTitle: String {
-        signedCents > 0 ? "Give to All" : "Take from All"
     }
 }
 
