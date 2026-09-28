@@ -4,7 +4,12 @@ This file is the working contract for coding agents operating in this repository
 
 ## Mission
 
-Build a Siri-first, local iPhone ledger that lets a parent add, subtract, query, and undo money assigned to children. The crucial product test is a real Siri invocation on a physical iPhone; do not confuse a compiling App Intent with successful Siri routing.
+Build a visual-first, local iPhone ledger that lets a parent add, subtract,
+query, and undo money assigned to children with as little friction as possible.
+Siri and Shortcuts remain supported secondary entry points, but unreliable
+speech recognition and system routing must not dictate the primary interface.
+Never confuse a compiling App Intent with successful Siri routing on a physical
+iPhone.
 
 Read these before substantial work:
 
@@ -19,7 +24,17 @@ Read these before substantial work:
 
 Phases 1 through 5 and the focused Siri-routing experiment are complete. TestFlight build `0.1 (6)` physically verified the locked-screen numeric give/take grammar, exact balances, and relaunch persistence. Siri may still request Kid Money/Wallet disambiguation. Build `0.1 (7)` passed the manual-interface review. Phase 5 added exact input, duplicate-name matching, overflow protection, multi-context persistence tests, privacy-conscious logging, accessibility improvements, one production `ModelContainer`, and an opt-out from SwiftData-managed CloudKit sync.
 
-Private CloudKit family sharing is approved for Phase 6. Build `0.1 (9)` passed the two-account counter-only physical probe on September 24, 2026: bidirectional writes and relaunch persistence worked, while both phones' local ledgers remained unchanged. The real-ledger foundation includes deterministic records, durable queues, strict atomic merge, out-of-order deferral, undo convergence, a guarded queue processor, and an on-demand CKSyncEngine adapter. Owner and participant setup coordinators stage, upload, share, accept, and import under injected transports. Build `0.1 (10)` wires these paths to explicit owner consent, participant Join, Sync Now, and participant-management UI; merely opening the app does not start an upload. Build 10 passed its owner-only, no-upload physical preflight on September 26, 2026, and is Testing in both internal and spouse external TestFlight groups. The owner reported Sharing enabled after upload consent and sent a private invitation. The spouse joined and saw the complete initial history. A new owner-side transaction then remained queued after Sync Now and did not arrive on the spouse's phone. Build `0.1 (11)` retains the sync runtime through fetch and send. On two phones, the previously queued owner edit cleared after Sync Now and appeared exactly once on the spouse's phone with the expected balance. The spouse then made a manual edit; Sync Now cleared her queue and delivered it once to the owner with the expected balance. Manual sync now works in both directions on physical phones. After both phones had been updated to iOS 27, build 11's locked one-shot fifteen-cent phrase requested an unlock and then returned an unsupported-capability response, while the unlocked prompted Give Money route created the correct `$0.15` Siri transaction and queued it for sync. That Siri-originated transaction subsequently reached the spouse exactly once; both phones preserved the matching `$3.00` balance and history through termination, relaunch, and another no-duplicate sync. Because both the app build and OS changed since build 6, the one-shot failure is an iOS 27 compatibility finding rather than an isolated build regression. Controlled offline/reconnect recovery then passed: an offline 35-cent owner edit remained pending across relaunch, stayed absent on the participant until reconnect, synchronized exactly once, and left both phones at `$3.35` after a no-duplicate repeat sync. Under Xcode 27, all 89 Swift Testing tests plus one out-of-process App Intents integration test pass on an iOS 27 simulator. The integration test resolves a dynamic child-and-fifteen-cent entity, executes the preset give intent, and reads back the exact 15-cent result; it does not prove Siri's natural-language or locked-screen routing. Build `0.1 (12)`, compiled with Xcode 27, then physically demonstrated that the identical one-shot phrase can fail as unsupported while unlocked and succeed from the locked screen after Kid Money/Wallet disambiguation, adding the exact 15 cents without child or amount follow-up. Later unlocked retries also succeeded with only app disambiguation and exact 15-cent mutations, including after the app was terminated. The warmed route survives termination; initial Siri phrase routing remains the nondeterministic layer.
+Private CloudKit family sharing is approved for Phase 6. Build `0.1 (9)` passed the two-account counter-only physical probe on September 24, 2026: bidirectional writes and relaunch persistence worked, while both phones' local ledgers remained unchanged. The real-ledger foundation includes deterministic records, durable queues, strict atomic merge, out-of-order deferral, undo convergence, a guarded queue processor, and an on-demand CKSyncEngine adapter. Owner and participant setup coordinators stage, upload, share, accept, and import under injected transports. Build `0.1 (10)` wires these paths to explicit owner consent, participant Join, Sync Now, and participant-management UI; merely opening the app does not start an upload. Build 10 passed its owner-only, no-upload physical preflight on September 26, 2026, and is Testing in both internal and spouse external TestFlight groups. The owner reported Sharing enabled after upload consent and sent a private invitation. The spouse joined and saw the complete initial history. A new owner-side transaction then remained queued after Sync Now and did not arrive on the spouse's phone. Build `0.1 (11)` retains the sync runtime through fetch and send. On two phones, the previously queued owner edit cleared after Sync Now and appeared exactly once on the spouse's phone with the expected balance. The spouse then made a manual edit; Sync Now cleared her queue and delivered it once to the owner with the expected balance. Manual sync now works in both directions on physical phones. After both phones had been updated to iOS 27, build 11's locked one-shot fifteen-cent phrase requested an unlock and then returned an unsupported-capability response, while the unlocked prompted Give Money route created the correct `$0.15` Siri transaction and queued it for sync. That Siri-originated transaction subsequently reached the spouse exactly once; both phones preserved the matching `$3.00` balance and history through termination, relaunch, and another no-duplicate sync. Because both the app build and OS changed since build 6, the one-shot failure is an iOS 27 compatibility finding rather than an isolated build regression. Controlled offline/reconnect recovery then passed: an offline 35-cent owner edit remained pending across relaunch, stayed absent on the participant until reconnect, synchronized exactly once, and left both phones at `$3.35` after a no-duplicate repeat sync. Under Xcode 27, all 93 Swift Testing tests plus one out-of-process App Intents integration test pass on an iOS 27 simulator. The integration test resolves a dynamic child-and-fifteen-cent entity, executes the preset give intent, and reads back the exact 15-cent result; it does not prove Siri's natural-language or locked-screen routing. Build `0.1 (12)`, compiled with Xcode 27, then physically demonstrated that the identical one-shot phrase can fail as unsupported while unlocked and succeed from the locked screen after Kid Money/Wallet disambiguation, adding the exact 15 cents without child or amount follow-up. Later unlocked retries also succeeded with only app disambiguation and exact 15-cent mutations, including after the app was terminated. The warmed route survives termination; initial Siri phrase routing remains the nondeterministic layer.
+
+The follow-up personal-Shortcut experiment proved that a fixed action can run,
+but invoking its exact name through Siri routed to web search. A Vocal Shortcut
+named “Rebecca allowance fifteen” then executed from the locked screen and
+added the exact 15 cents. The owner trained 36 fixed phrases spanning three
+children, six amounts, and give/take, but on-device speech recognition confused
+similar names and amounts such as Daniel/David and fifty/fifteen. On September
+27, 2026, the product direction therefore changed to visual-first. Voice stays
+available as an optional bridge, but no more Siri-routing work or in-app voice
+setup guidance is planned unless the platform behavior materially improves.
 
 The activation gate validates owner or participant readiness, confirms iCloud
 account identity and live share access, keeps offline edits queued across
@@ -46,6 +61,8 @@ Latest verified capabilities:
 - resolve child-and-numeric-amount combinations through a dynamic App Entity for one-shot give and take phrases
 - show newest-first transaction history with source, date, signed amount, and optional note
 - add quick or arbitrary manual adjustments
+- apply one of six configurable, per-device quick amounts to an individual
+  child or atomically to every active child from the home screen
 - rename or archive children while preserving their ledger history
 - deterministically map households, children, transactions, and compensating
   undo entries to CloudKit records without using floating-point money
@@ -77,7 +94,8 @@ Latest verified capabilities:
 - Keep USD conversion isolated and exact. Reject zero, unsupported currency, fractional cents, and overflow.
 - Do not hard-code child names or silently create a child after failed voice recognition.
 - Prefer current installed-SDK APIs. Inspect compiler/SDK documentation instead of copying obsolete SiriKit examples.
-- Preserve the phase order. Get to a real Siri test before building the rest of the UI.
+- Preserve the physical Siri findings, but prioritize the visual interface and
+  shared-ledger reliability over further voice-routing experiments.
 - Private CloudKit family sharing is explicitly requested and approved for Phase
   6. The counter-only physical matrix in `docs/PHASE6_CONNECTION_TEST.md` has
   passed. Do not wire real-ledger upload into the app until activation and
@@ -115,27 +133,12 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-The owner-only, no-upload physical preflight for build `0.1 (10)` passed on
-September 26, 2026. Its real-ledger schema is deployed to CloudKit Production,
-its privacy label and full policy are published. Build 11, with a candidate
-Sync Now lifetime fix, is Testing in the internal and spouse external groups.
-Owner opt-in, invitation, participant initial import, and manual incremental
-sync in both directions have been physically observed. The shared-ledger owner
-is a work iPhone 15; the participant is a spouse iPhone 14 with Siri disabled;
-an additional personal iPhone SE is available but is not part of the current
-share. Owner-Siri-originated sync, two-phone relaunch persistence, and
-controlled offline/reconnect recovery have now passed. Xcode 27
-AppIntentsTesting coverage now passes for the dynamic fifteen-cent preset path.
-Build `0.1 (12)` is available in Internal Testing. Its first unlocked one-shot
-request returned unsupported, while the identical locked phrase immediately
-afterward succeeded after Kid Money/Wallet disambiguation, supplied both child
-and amount without follow-up, and added the correct `$0.15`. A subsequent
-unlocked retry also succeeded with only app disambiguation and the exact
-mutation, and another retry succeeded after the app was terminated. Stop
-repeating the automatic-routing matrix. Next validate a user-created personal
-Shortcut with a fixed child and amount from the locked screen, then add in-app
-setup guidance if it eliminates Wallet, child, and amount clarification. Keep
-physical Siri behavior as the final authority. Do not start uploads merely
-because the app launched.
-Keep attention-required recovery non-destructive and preserve the physically
-verified Siri grammar.
+Complete and physically validate the visual-first home screen in build 13:
+large child cards, one configurable per-device set of six quick amounts, a
+Give/Take selector, and confirmed all-children adjustments. Verify individual
+and group transactions, history, preference persistence, and two-phone manual
+sync. Group mutations must preflight every active child and commit or roll back
+as a single local operation while still creating one auditable transaction per
+child. Do not resume Siri-routing experiments. Do not start CloudKit uploads
+merely because the app launched, and keep attention-required recovery
+non-destructive.

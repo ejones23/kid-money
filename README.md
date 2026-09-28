@@ -1,8 +1,9 @@
 # Kid Money
 
-Kid Money is a small, local-first iPhone ledger for tracking money owed to children. The primary product goal is a fast Siri interaction such as:
-
-> “Give Rebecca a dime in Kid Money.”
+Kid Money is a small, local-first iPhone ledger for tracking money owed to
+children. Its primary product goal is now the fastest possible visual
+interaction after opening the app: choose Give or Take, then tap an amount on a
+child's card. Siri and Shortcuts remain optional secondary entry points.
 
 The current ledger is intentionally simple: no custom backend, application
 accounts, or third-party dependencies. A child's balance is derived from an
@@ -46,7 +47,10 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - SwiftData models for children and signed ledger transactions
 - shared `LedgerService` domain logic
 - add-child flow
-- active-child list with derived USD balances
+- large active-child cards with derived USD balances and direct quick actions
+- one configurable, ordered set of up to six quick amounts per device
+- confirmed all-children give/take actions that create one auditable
+  transaction per active child
 - newest-first transaction history with quick and arbitrary manual adjustments
 - child rename and archive flows that preserve ledger history
 - `GiveMoneyIntent` with a background execution mode
@@ -82,7 +86,7 @@ Phases 1 through 5 are complete, and Phase 6 has begun:
 - an owner upload-consent screen and separate participant invitation review;
   neither launches network work merely because the app opened
 
-The project builds in Xcode 27. All 89 Swift Testing tests and one
+The project builds in Xcode 27. All 93 Swift Testing tests and one
 out-of-process App Intents integration test pass on the iOS 27 simulator. The
 integration test executes the same app-side intent path used by Siri and
 Shortcuts, including dynamic child-and-amount entity resolution and an exact
@@ -94,6 +98,14 @@ TestFlight build `0.1 (3)` completed the Phase 2 physical-device checkpoint on b
 TestFlight build `0.1 (4)` completed Phase 3 on the managed work phone. It preserved the existing ledger during migration and verified take, balance, auditable undo, named dime and quarter actions, terminated execution, repeated undo, and relaunch persistence. Coin phrases still request the child separately, and one dime attempt intermittently routed to a web result before succeeding on retry.
 
 TestFlight build `0.1 (5)` physically verified one-shot additions for ten cents, twenty cents, and one dollar, including locked-screen execution, plus one-shot numeric subtraction. The stable wording is “Give/Take Rebecca twenty cents in Kid Money.” App-name-first forms can invoke Wallet disambiguation, and coin words remain unreliable; the owner accepted numeric amounts as the product grammar. Build `0.1 (6)` expanded the vocabulary to every five-cent increment through one dollar. Its locked-screen physical matrix passed for fifteen, twenty-five, and thirty-five cents with exact balances and relaunch persistence. Siri still requested Kid Money/Wallet disambiguation, but it extracted the child and amount without follow-up.
+
+Build 12 confirmed that the app-side preset intent still works on iOS 27, but
+Siri routing remained intermittent. A fixed Vocal Shortcut subsequently ran
+from the locked screen, yet a larger 36-phrase matrix confused similar names
+and amounts such as Daniel/David and fifty/fifteen. On September 27, 2026, the
+project deliberately became visual-first. The voice implementation is retained
+as a useful optional bridge, but further Siri-routing optimization and an
+in-app voice-training workflow are no longer near-term goals.
 
 Phase 4's manual interface passed its physical-device review in TestFlight build `0.1 (7)`: child detail shows a newest-first transaction history, quick-add buttons, arbitrary add/subtract forms with optional notes, and rename/archive management that preserves ledger history.
 
@@ -165,6 +177,7 @@ docs/PHASE6_CONNECTION_TEST.md Two-device CloudKit connection-test procedure
 docs/PHASE6_CLOUDKIT_SCHEMA.md Production schema release gate
 docs/PHASE6_REAL_LEDGER_TEST.md Two-device real-ledger test procedure
 docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
+docs/QUICK_ACTION_TEST_PLAN.md Visual quick-action physical test procedure
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
 docs/privacy.md               Draft public privacy policy
@@ -182,7 +195,13 @@ docs/support.md               Draft public support page
 
 ## Next milestone
 
-Build 6 completed the focused Siri-routing improvement. Apple permits only one intent parameter in an App Shortcut phrase, so the app presents each active child paired with a preset amount as one dynamic App Entity. Every five-cent increment from five cents through one dollar is available through the verified child-first grammar; arbitrary amounts remain available through the existing follow-up flow. Physical testing confirmed correct locked-screen execution after Siri's Kid Money/Wallet app choice.
+Build 13 is the visual-first checkpoint. The home screen gives each child a
+large card with six direct amount buttons, uses a single Give/Take selector,
+and provides the same actions for All Children behind a confirmation. The
+amount list is user-configurable and intentionally stored per device so each
+parent can choose their own working set. Physical testing must cover exact
+individual and group transactions, relaunch persistence, history, and
+two-phone manual synchronization.
 
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 
@@ -264,7 +283,10 @@ Physical testing showed that the prior coin phrases reliably collected the denom
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) and [docs/SIRI_TEST_PLAN.md](docs/SIRI_TEST_PLAN.md) for the full checkpoint.
 
-Release preparation is tracked separately in [docs/APP_STORE_RELEASE.md](docs/APP_STORE_RELEASE.md). It exists to unblock the physical Siri test through TestFlight; it does not replace the Siri-first product phase order.
+Release preparation is tracked separately in
+[docs/APP_STORE_RELEASE.md](docs/APP_STORE_RELEASE.md). TestFlight remains the
+physical-device verification path for visual behavior, sharing, and the
+retained optional voice integrations.
 
 ## Source of truth
 

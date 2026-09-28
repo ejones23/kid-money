@@ -6,6 +6,7 @@ enum LedgerError: LocalizedError, Equatable {
     case emptyName
     case nonPositiveAmount
     case balanceOutOfRange
+    case noActiveChildren
     case nothingToUndo
     case transactionAmountOutOfRange
     case sharedLedgerUnavailable
@@ -15,6 +16,7 @@ enum LedgerError: LocalizedError, Equatable {
         case .emptyName: "Enter a child's name."
         case .nonPositiveAmount: "The amount must be greater than zero."
         case .balanceOutOfRange: "That transaction would make the balance too large."
+        case .noActiveChildren: "Add a child before adjusting everyone."
         case .nothingToUndo: "There are no transactions to undo."
         case .transactionAmountOutOfRange: "That transaction cannot be reversed."
         case .sharedLedgerUnavailable:
@@ -133,6 +135,49 @@ struct LedgerService {
             "Saved \(cents, privacy: .private) cent \(source.rawValue, privacy: .public) transaction"
         )
         return transaction
+    }
+
+    @discardableResult
+    func addTransactionToAllActiveChildren(
+        cents: Int64,
+        note: String? = nil,
+        source: TransactionSource = .manual
+    ) throws -> [LedgerTransaction] {
+        try ensureSharedLedgerAllowsMutation()
+        guard cents != 0 else { throw LedgerError.nonPositiveAmount }
+
+        let children = try activeChildren()
+        guard !children.isEmpty else { throw LedgerError.noActiveChildren }
+        for child in children {
+            guard !balance(for: child).addingReportingOverflow(cents).overflow else {
+                Self.logger.error("Rejected all-children adjustment because one balance overflowed")
+                throw LedgerError.balanceOutOfRange
+            }
+        }
+
+        do {
+            let createdAt = Date.now
+            let transactions = try children.map { child in
+                let transaction = LedgerTransaction(
+                    amountCents: cents,
+                    createdAt: createdAt,
+                    note: note,
+                    source: source,
+                    child: child
+                )
+                modelContext.insert(transaction)
+                try enqueueCloudSave(for: transaction)
+                return transaction
+            }
+            try modelContext.save()
+            Self.logger.info(
+                "Saved \(transactions.count, privacy: .public) all-children transactions"
+            )
+            return transactions
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
     }
 
     func balance(for child: Child) -> Int64 {

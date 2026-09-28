@@ -1,6 +1,9 @@
 # Roadmap
 
-The phase order is intentional: prove the riskiest Siri path before expanding the interface.
+The original phase order intentionally proved the riskiest Siri path before
+expanding the interface. Physical testing has now shown both the value and the
+limits of that path; beginning September 27, 2026, visual interaction is the
+primary product direction and voice is an optional secondary bridge.
 
 ## Phase 1 — Skeleton and persistence
 
@@ -186,10 +189,10 @@ persistence, and controlled offline/reconnect recovery**
   unlocked attempt returned unsupported, while the identical locked phrase
   immediately afterward succeeded, later unlocked retries succeeded, and the
   warmed route survived app termination
-- [ ] validate one fixed personal Shortcut by exact Siri name from the locked
-  screen without Wallet, child, or amount clarification
-- [ ] add concise in-app setup guidance for fixed favorite shortcuts after the
-  personal Shortcut path passes on a physical phone
+- [x] test a fixed personal Shortcut and Vocal Shortcut from the locked screen
+- [x] stop the voice-routing experiment after a 36-phrase Vocal Shortcut matrix
+  confused similar child names and amounts; retain voice as optional rather
+  than adding an in-app training workflow
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -238,6 +241,28 @@ deterministic control. The next product experiment is a user-created Shortcut
 whose fixed action and exact Siri name encode the child and amount.
 Account-switch and share-revocation recovery remain intentionally deferred
 until their non-destructive physical procedure is agreed.
+
+## Phase 7 — Visual-first quick actions
+
+Status: **Implementation complete; awaiting build 13 physical validation**
+
+- [x] replace compact home rows with large child cards showing balance and six
+  direct amount buttons
+- [x] add a global Give/Take selector so the same layout handles both signs
+- [x] store one ordered, configurable set of up to six exact amounts per device
+- [x] reuse the configured quick amounts on child detail
+- [x] add a confirmed All Children card
+- [x] apply all-children changes atomically while preserving one auditable
+  transaction and queued CloudKit save per active child
+- [x] exclude archived children from family-wide changes
+- [ ] distribute build 13 to internal and family external testers
+- [ ] physically verify individual give/take, group give/take, customization,
+  relaunch persistence, transaction history, and two-phone manual sync
+
+Voice remains implemented, documented, and test-covered, but it is no longer a
+release gate for visual ledger improvements. Do not expand the Siri phrase
+matrix unless a future iOS release materially changes the routing or speech-
+recognition constraints observed on real devices.
 
 After the basic two-way matrix is stable:
 

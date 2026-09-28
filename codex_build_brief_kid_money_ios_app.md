@@ -1,4 +1,4 @@
-# Project: Kid Money — Siri-First Allowance / Kid Ledger App
+# Project: Kid Money — Visual-First Allowance / Kid Ledger App
 
 I want you to build this iOS app with me.
 
@@ -10,7 +10,16 @@ I use Codex extensively and am comfortable letting you make substantial changes 
 
 I have previously used AI to generate iOS application code, but I have never published an app to the App Store.
 
-This began as a personal app for my family. On September 5, 2026, the owner explicitly authorized minimal TestFlight and App Store preparation so the physical Siri checkpoint can be tested through an approved distribution channel on a managed phone. Preserve the Siri-first phase order while doing that release work.
+This began as a personal app for my family. On September 5, 2026, the owner explicitly authorized minimal TestFlight and App Store preparation so the physical Siri checkpoint could be tested through an approved distribution channel on a managed phone.
+
+On September 27, 2026, physical testing changed the product priority. Siri,
+personal Shortcuts, and Vocal Shortcuts all proved capable of exact ledger
+mutations, but system routing was intermittent and a 36-phrase Vocal Shortcut
+matrix confused similar child names and amounts. The primary interaction is now
+visual: open the app and make common adjustments directly from large child
+cards. Retain voice as an optional bridge and preserve its verified behavior,
+but do not make further Siri-routing work or extensive voice training a release
+gate.
 
 ## The real-world problem
 
@@ -35,7 +44,9 @@ Currently I keep a handwritten-style tally in an Apple Notes note. This is cumbe
 4. mentally perform the arithmetic,
 5. edit the balance.
 
-I want the primary interaction to be Siri.
+The original goal was for the primary interaction to be Siri. The current goal
+is a very fast visual interaction, with Siri retained as an optional secondary
+entry point.
 
 Examples of the experience I want:
 

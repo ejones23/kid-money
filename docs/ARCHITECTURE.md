@@ -21,6 +21,9 @@ SwiftUI views ──────┐
 App Intents ───────┘
 ```
 
+The visual home screen is the primary interaction surface. App Intents remain
+a second caller of the same service rather than a separate product path.
+
 ## Domain model
 
 ### Child
@@ -41,11 +44,31 @@ Amounts are signed: `+10` adds ten cents and `-25` removes a quarter. The balanc
 
 ## Service boundary
 
-`LedgerService` owns domain mutations and queries. SwiftUI uses it to add, rename, and archive children; add transactions; fetch history; and calculate balances. App Intents reuse the same operations. Archiving only changes the child's active flag and never deletes ledger history.
+`LedgerService` owns domain mutations and queries. SwiftUI uses it to add,
+rename, and archive children; add transactions; fetch history; and calculate
+balances. App Intents reuse the same operations. Archiving only changes the
+child's active flag and never deletes ledger history.
+
+The all-children quick action is one service operation. It fetches active
+children, validates every resulting balance before inserting anything, creates
+one transaction per child with a shared timestamp and note, queues every
+CloudKit record when sharing is active, and saves once. Any validation or save
+failure rolls back the entire local batch. This keeps balances transaction-
+derived and prevents a partially applied family-wide adjustment.
 
 Before inserting a transaction, the service verifies that adding its signed cents to the current derived balance cannot overflow `Int64`. A rejected transaction is not inserted or saved.
 
 The service is `@MainActor` because its `ModelContext` is main-actor-bound in the current small application. Revisit context ownership only if App Intent execution demonstrates a concrete concurrency need.
+
+## Visual quick-action preferences
+
+The ordered quick-amount list is stored as positive integer cents in
+`@AppStorage`, not SwiftData. It defaults to 5, 10, 15, 20, 25, and 50 cents,
+is capped at six unique values, and is reused by the home screen and child
+detail. Input still goes through exact `MoneyConversion`; no floating-point
+money enters the domain. The preference is intentionally per device and is not
+part of the shared family ledger, allowing each parent to choose a different
+button layout without creating CloudKit conflicts.
 
 ## Persistence
 

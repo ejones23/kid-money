@@ -5,12 +5,16 @@ struct ChildDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     let child: Child
+    @AppStorage(QuickAmountPreferences.storageKey)
+    private var storedQuickAmounts = QuickAmountPreferences.defaultStorageValue
     @State private var errorMessage: String?
     @State private var adjustmentMode: ManualAdjustmentMode?
     @State private var isRenaming = false
     @State private var isConfirmingArchive = false
 
-    private let quickAmounts: [Int64] = [5, 10, 25, 100]
+    private var quickAmounts: [Int64] {
+        QuickAmountPreferences.decode(storedQuickAmounts)
+    }
 
     var body: some View {
         let service = LedgerService(modelContext: modelContext)

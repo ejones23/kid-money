@@ -289,3 +289,23 @@ success from the simulator integration test.
   mutation, spoken result, and persistence all worked when Siri selected the
   route. Stop repeating the automatic-routing matrix; next validate a fixed
   personal Shortcut as the deterministic, user-configurable voice path.
+
+### Personal and Vocal Shortcut result — September 27, 2026
+
+- A fixed Shortcut action worked when run directly, but asking Siri for its
+  exact name, “Rebecca Ledger Fifteen,” produced web-search results despite the
+  shortcut's Allow Running When Locked setting.
+- A Vocal Shortcut trained as “Rebecca allowance fifteen” did execute the
+  fixed action from the locked screen and added the exact 15 cents.
+- The owner then created 36 fixed combinations: give/take, six five-cent-step
+  amounts, and Rebecca/David/Daniel. Real use exposed speech-recognition
+  collisions including Daniel versus David and fifty versus fifteen.
+- Product decision: stop expanding and retesting the voice phrase matrix.
+  Preserve App Intents and Shortcuts as optional integrations, but make the
+  visual home screen the primary fast path. Do not add an in-app guide asking
+  users to train dozens of Vocal Shortcuts.
+
+These findings do not invalidate the earlier successful Siri executions. They
+show that app-side correctness is insufficient for a dependable primary
+interaction when speech recognition and system route selection remain outside
+the app's control.

@@ -33,6 +33,63 @@ struct LedgerServiceTests {
         #expect(service.balance(for: daniel) == 25)
     }
 
+    @Test func allChildrenAdjustmentCreatesOneTransactionPerActiveChild() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let rebecca = try service.addChild(named: "Rebecca")
+        let david = try service.addChild(named: "David")
+        let archived = try service.addChild(named: "Archived")
+        try service.archiveChild(archived)
+
+        let transactions = try service.addTransactionToAllActiveChildren(
+            cents: 25,
+            note: "Applied to all children"
+        )
+
+        #expect(transactions.count == 2)
+        #expect(Set(transactions.compactMap { $0.child?.id }) == [rebecca.id, david.id])
+        #expect(transactions.allSatisfy { $0.amountCents == 25 })
+        #expect(transactions.allSatisfy { $0.note == "Applied to all children" })
+        #expect(service.balance(for: rebecca) == 25)
+        #expect(service.balance(for: david) == 25)
+        #expect(service.balance(for: archived) == 0)
+    }
+
+    @Test func allChildrenAdjustmentRejectsTheWholeBatchBeforeOverflow() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let context = ModelContext(container)
+        let service = LedgerService(modelContext: context)
+        let rebecca = try service.addChild(named: "Rebecca")
+        let david = try service.addChild(named: "David")
+        try service.addTransaction(cents: .max, to: rebecca)
+
+        #expect(throws: LedgerError.balanceOutOfRange) {
+            try service.addTransactionToAllActiveChildren(cents: 1)
+        }
+        #expect(service.balance(for: rebecca) == .max)
+        #expect(service.balance(for: david) == 0)
+        #expect(try service.transactions(for: david).isEmpty)
+    }
+
+    @Test func allChildrenAdjustmentRequiresAnActiveChild() throws {
+        let container = try AppModelContainer.make(inMemory: true)
+        let service = LedgerService(modelContext: ModelContext(container))
+
+        #expect(throws: LedgerError.noActiveChildren) {
+            try service.addTransactionToAllActiveChildren(cents: 10)
+        }
+    }
+
+    @Test func quickAmountPreferencesPreserveOrderAndRejectInvalidValues() {
+        #expect(
+            QuickAmountPreferences.decode("25,5,25,-1,0,nope,10")
+                == [25, 5, 10]
+        )
+        #expect(QuickAmountPreferences.decode("") == QuickAmountPreferences.defaults)
+        #expect(QuickAmountPreferences.encode([5, 15, 50]) == "5,15,50")
+    }
+
     @Test func renameAndArchivePreserveLedgerHistory() throws {
         let container = try AppModelContainer.make(inMemory: true)
         let context = ModelContext(container)
