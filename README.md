@@ -274,10 +274,17 @@ correct balance. The route is therefore present and locked-screen capable, but
 Siri's iOS 27 natural-language routing initially remained intermittent. A
 subsequent unlocked retry succeeded with only Kid Money/Wallet disambiguation
 and another exact `$0.15`, consistent with a one-time post-update route warm-up.
-The same request also succeeded after Kid Money was terminated. Rather than
-continue testing Apple's nondeterministic app-selection layer, the next
-checkpoint uses a user-created personal Shortcut with a fixed child and amount
-and a deliberately named Siri phrase.
+The same request also succeeded after Kid Money was terminated. A subsequent
+personal-Shortcut and Vocal Shortcut experiment proved fixed actions could run
+from the lock screen, but recognition collisions across the required family
+phrase matrix led to the visual-first product pivot.
+
+Build `0.1 (13)` implements the visual-first home-screen pivot: large child
+cards, six configurable per-device quick amounts, a Give/Take selector, and an
+atomic All Children action. It passed 93 Swift Testing tests plus the
+out-of-process App Intents integration test, was archived with Xcode 27, and
+was added to Internal Testing on September 27, 2026. Owner-phone validation is
+the next checkpoint; the spouse external group follows after those checks.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

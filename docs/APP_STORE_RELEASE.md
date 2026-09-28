@@ -96,6 +96,10 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Verify participant-to-owner Sync Now for a single manual edit.
 - [x] Validate and upload build `0.1 (11)` with the candidate Sync Now fix;
   App Store Connect shows **Testing** in both internal and Family Test groups.
+- [x] Archive and upload visual-first build `0.1 (13)` with Xcode 27 and add it
+  to `Internal Testing` after processing completes.
+- [ ] Complete the owner-phone quick-action checks in
+  `docs/QUICK_ACTION_TEST_PLAN.md`, then add build 13 to `Family Test`.
 - [ ] Run the real-ledger two-device matrix before claiming shared accounts work.
 
 ## 6. Public release

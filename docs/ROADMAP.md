@@ -255,7 +255,8 @@ Status: **Implementation complete; awaiting build 13 physical validation**
 - [x] apply all-children changes atomically while preserving one auditable
   transaction and queued CloudKit save per active child
 - [x] exclude archived children from family-wide changes
-- [ ] distribute build 13 to internal and family external testers
+- [x] upload build 13 and add it to Internal Testing
+- [ ] add build 13 to the family external group after the owner-phone checks
 - [ ] physically verify individual give/take, group give/take, customization,
   relaunch persistence, transaction history, and two-phone manual sync
 
