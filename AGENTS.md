@@ -140,7 +140,9 @@ app-scoped automatic CKSyncEngine, foreground catch-up, debounced post-mutation
 work, silent remote-change delivery, and the existing Sync Now recovery action.
 It passed 97 Swift tests, one App Intent integration test, and App Store Connect
 validation; it was uploaded and is Testing in both Internal Testing and Family
-Test. The owner-phone visual and pending-queue checks passed. Run the
-two-phone automatic-sync matrix, then verify exact-once delivery in both
-directions and after relaunch. Keep attention-required recovery non-destructive
-and do not resume Siri-routing experiments.
+Test. The owner-phone visual and pending-queue checks passed. Basic automatic
+two-way sync passed on physical phones without Sync Now; one incoming change
+appeared after the receiving app was backgrounded and foregrounded. Finish
+rapid-edit and automatic offline/reconnect checks, then prepare a release
+candidate without the disposable connection-test UI. Keep attention-required
+recovery non-destructive and do not resume Siri-routing experiments.

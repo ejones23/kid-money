@@ -197,8 +197,11 @@ persistence, and controlled offline/reconnect recovery**
 - [x] coalesce local mutations into a debounced guarded send opportunity
 - [x] force a guarded fetch/send whenever the app returns to the foreground
 - [x] enable remote-notification background delivery without adding polling
-- [ ] physically verify automatic owner-to-participant and participant-to-owner
-  delivery, foreground catch-up, relaunch, and exact-once history
+- [x] physically verify basic automatic owner-to-participant and
+  participant-to-owner delivery, foreground catch-up, and relaunch without
+  using Sync Now in build 14
+- [ ] physically verify rapid consecutive edits and automatic offline/reconnect
+  recovery in build 14 before closing the automatic-sync matrix
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -250,7 +253,8 @@ until their non-destructive physical procedure is agreed.
 
 ## Phase 7 — Visual-first quick actions
 
-Status: **Build 14 owner-phone validation complete; two-phone sync pending**
+Status: **Build 14 owner-phone and basic two-phone automatic sync passed;
+rapid-edit and offline recovery checks pending**
 
 - [x] replace compact home rows with large child cards showing balance and six
   direct amount buttons
@@ -271,8 +275,9 @@ Status: **Build 14 owner-phone validation complete; two-phone sync pending**
   Connect shows Testing in both Internal Testing and Family Test
 - [x] physically verify individual give/take, group give/take, customization,
   relaunch persistence, and transaction history on the owner phone
-- [ ] physically verify the polished layout and automatic synchronization on
-  both phones in a subsequent TestFlight build
+- [x] physically verify the polished layout on the owner phone and basic
+  automatic synchronization in both directions on two phones; the receiving
+  app needed a background/foreground cycle for one change
 
 Voice remains implemented, documented, and test-covered, but it is no longer a
 release gate for visual ledger improvements. Do not expand the Siri phrase

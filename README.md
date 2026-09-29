@@ -205,7 +205,9 @@ selector. The follow-up build puts All Children last, applies it without a
 confirmation, keeps quick actions off child detail, and adds a contextual Undo
 Last control. It also enables guarded hybrid synchronization: immediate work on
 foreground and after a short mutation debounce, plus CloudKit's system-managed
-automatic scheduler. The amount list remains per device.
+automatic scheduler. Basic two-phone automatic sync passed without Sync Now;
+one incoming change appeared after foreground catch-up. Rapid-edit and
+automatic offline/reconnect checks remain. The amount list remains per device.
 
 Phase 4's useful manual interface passed the focused physical-hardware review in [docs/PHASE4_TEST_PLAN.md](docs/PHASE4_TEST_PLAN.md). Phase 5 reliability work is complete: locale-aware exact input parsing, duplicate child-name disambiguation, balance-overflow rejection, the minimum-integer undo edge case, multi-context store stress, privacy-conscious diagnostics, and focused accessibility improvements are covered. The app and App Intents now use one process-wide production container, with SwiftData-managed CloudKit synchronization explicitly disabled in preparation for the direct CloudKit layer.
 
@@ -289,7 +291,9 @@ atomic All Children action. It passed its owner-phone checks on September 27,
 2026. Build 14 moves All Children below the individual child cards, removes its
 confirmation, keeps quick actions off child detail, adds a contextual Undo Last
 control, and enables guarded hybrid automatic synchronization. Its two-phone
-automatic-sync matrix is the next physical checkpoint.
+automatic-sync basic two-phone check passed; rapid edits and automatic
+offline/reconnect are the remaining focused physical checks before a release
+candidate.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

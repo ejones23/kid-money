@@ -105,7 +105,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   and automatic pending-queue checks.
 - [x] Add build 14 to `Family Test` with one-phone review instructions; App Store
   Connect shows **Testing** in both internal and Family Test groups.
-- [ ] Run build 14's focused automatic-sync matrix on both phones.
+- [x] Run build 14's basic two-phone automatic-sync check: changes arrived in
+  both directions without Sync Now; one receiving app needed foreground catch-up.
+- [ ] Complete the rapid-edit and automatic offline/reconnect checks.
 - [ ] Complete build 14's automatic two-device matrix before claiming shared
   accounts synchronize without manual intervention.
 
