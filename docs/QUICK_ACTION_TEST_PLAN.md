@@ -7,10 +7,12 @@ balances from earlier tests.
 
 ## Preconditions
 
-- Both phones show TestFlight build `0.1 (14)`.
-- The shared ledger reports **Sharing enabled** on both phones.
-- Run **Sync Now** on both phones and record every active child's starting
+- For the owner-phone visual actions, the owner phone shows TestFlight build
+  `0.1 (14)` and **Sharing enabled**. Record each active child's starting
   balance.
+- Before the two-phone section, both phones show build `0.1 (14)` and
+  **Sharing enabled**. Run **Sync Now** on both phones once to establish a
+  matching baseline; do not use it during the automatic-sync checks.
 - Do not create or archive a child during this test.
 
 ## Owner-phone visual actions
