@@ -250,7 +250,7 @@ until their non-destructive physical procedure is agreed.
 
 ## Phase 7 — Visual-first quick actions
 
-Status: **Build 13 owner-phone validation complete; build 14 candidate implemented**
+Status: **Build 14 owner-phone validation complete; two-phone sync pending**
 
 - [x] replace compact home rows with large child cards showing balance and six
   direct amount buttons
@@ -264,7 +264,10 @@ Status: **Build 13 owner-phone validation complete; build 14 candidate implement
   transaction and queued CloudKit save per active child
 - [x] exclude archived children from family-wide changes
 - [x] upload build 13 and add it to Internal Testing
-- [ ] add build 13 to the family external group after the owner-phone checks
+- [x] physically verify build 14's Undo Last, All Children placement and
+  no-confirmation behavior, absence of detail-page quick actions, and automatic
+  clearing of the owner's pending sync queue
+- [ ] add build 14 to the family external group for two-phone checks
 - [x] physically verify individual give/take, group give/take, customization,
   relaunch persistence, and transaction history on the owner phone
 - [ ] physically verify the polished layout and automatic synchronization on

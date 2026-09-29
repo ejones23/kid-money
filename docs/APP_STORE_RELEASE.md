@@ -101,8 +101,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Complete the build 13 owner-phone quick-action checks in
   `docs/QUICK_ACTION_TEST_PLAN.md`.
 - [x] Upload build `0.1 (14)` and add it to `Internal Testing`.
-- [ ] Complete build 14's owner-phone visual checks, then add it to `Family
-  Test` and run the focused automatic-sync matrix.
+- [x] Complete build 14's owner-phone visual Undo, All Children, child-detail,
+  and automatic pending-queue checks.
+- [ ] Add build 14 to `Family Test` and run the focused automatic-sync matrix.
 - [ ] Complete build 14's automatic two-device matrix before claiming shared
   accounts synchronize without manual intervention.
 
