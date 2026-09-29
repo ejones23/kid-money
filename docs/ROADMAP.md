@@ -267,7 +267,8 @@ Status: **Build 14 owner-phone validation complete; two-phone sync pending**
 - [x] physically verify build 14's Undo Last, All Children placement and
   no-confirmation behavior, absence of detail-page quick actions, and automatic
   clearing of the owner's pending sync queue
-- [ ] add build 14 to the family external group for two-phone checks
+- [x] add build 14 to the family external group for two-phone checks; App Store
+  Connect shows Testing in both Internal Testing and Family Test
 - [x] physically verify individual give/take, group give/take, customization,
   relaunch persistence, and transaction history on the owner phone
 - [ ] physically verify the polished layout and automatic synchronization on

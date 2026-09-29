@@ -139,8 +139,8 @@ Build 14 adds visual Undo Last and guarded hybrid shared-ledger sync: one
 app-scoped automatic CKSyncEngine, foreground catch-up, debounced post-mutation
 work, silent remote-change delivery, and the existing Sync Now recovery action.
 It passed 97 Swift tests, one App Intent integration test, and App Store Connect
-validation; it was uploaded and assigned to Internal Testing. The owner-phone
-visual and pending-queue checks passed. Add build 14 to Family Test for the
+validation; it was uploaded and is Testing in both Internal Testing and Family
+Test. The owner-phone visual and pending-queue checks passed. Run the
 two-phone automatic-sync matrix, then verify exact-once delivery in both
 directions and after relaunch. Keep attention-required recovery non-destructive
 and do not resume Siri-routing experiments.

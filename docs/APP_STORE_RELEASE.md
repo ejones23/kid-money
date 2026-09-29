@@ -103,7 +103,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Upload build `0.1 (14)` and add it to `Internal Testing`.
 - [x] Complete build 14's owner-phone visual Undo, All Children, child-detail,
   and automatic pending-queue checks.
-- [ ] Add build 14 to `Family Test` and run the focused automatic-sync matrix.
+- [x] Add build 14 to `Family Test` with one-phone review instructions; App Store
+  Connect shows **Testing** in both internal and Family Test groups.
+- [ ] Run build 14's focused automatic-sync matrix on both phones.
 - [ ] Complete build 14's automatic two-device matrix before claiming shared
   accounts synchronize without manual intervention.
 
