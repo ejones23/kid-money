@@ -17,7 +17,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [ ] Review the provisional icon with the product owner.
 - [ ] Capture representative iPhone screenshots from the release candidate.
 - [ ] Finalize description, subtitle, keywords, categories, and copyright.
-- [ ] Provide a user-approved public support contact method.
+- [ ] Provide a user-approved public support email or other actual contact
+  information on the support page; GitHub Issues alone is not the release plan.
 
 ## 3. Privacy and compliance
 
