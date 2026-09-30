@@ -19,11 +19,11 @@ Kid Money has:
 
 The app stores child names and ledger transactions locally so that it can calculate and display balances. This information is entered and controlled by the device owner. The operating system may include application data in device backups according to the user's Apple backup settings.
 
-An optional family-sharing connection test uses the user's private iCloud
-CloudKit storage. It stores one disposable counter, an update timestamp, and an
-owner-or-participant role value in a private share sent only to people the owner
-invites. TestFlight build 9 contains this counter-only test and does not upload
-the local ledger.
+Earlier TestFlight builds offered a separate family-sharing connection test.
+That test stored a disposable counter, an update timestamp, and an
+owner-or-participant role in a private iCloud share. It never uploaded child
+names or transactions. The connection-test entry is not offered in the public
+release; existing test records are separate from the family ledger.
 
 Builds with real-ledger sharing offer an optional **Share Family Ledger** action.
 Only after the ledger owner explicitly confirms does Kid Money copy the

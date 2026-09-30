@@ -39,15 +39,6 @@ struct FamilyLedgerSharingView: View {
             } else {
                 ownerOptInSection
             }
-
-            Section("Connection Test") {
-                NavigationLink("Open Counter-Only Test") {
-                    FamilySharingProbeView()
-                }
-                Text("This older test shares only a disposable counter, not your family ledger.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
         }
         .navigationTitle("Sharing")
         .overlay {

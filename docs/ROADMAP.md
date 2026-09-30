@@ -200,8 +200,8 @@ persistence, and controlled offline/reconnect recovery**
 - [x] physically verify basic automatic owner-to-participant and
   participant-to-owner delivery, foreground catch-up, and relaunch without
   using Sync Now in build 14
-- [ ] physically verify rapid consecutive edits and automatic offline/reconnect
-  recovery in build 14 before closing the automatic-sync matrix
+- [x] physically verify rapid consecutive edits and automatic offline/reconnect
+  recovery in build 14
 - enable one private custom record zone and zone-wide `CKShare` per household
 - use each participant's existing iCloud Apple Account for authentication
 - invite a spouse with read-write access through Apple's system sharing UI
@@ -253,8 +253,7 @@ until their non-destructive physical procedure is agreed.
 
 ## Phase 7 — Visual-first quick actions
 
-Status: **Build 14 owner-phone and basic two-phone automatic sync passed;
-rapid-edit and offline recovery checks pending**
+Status: **Build 14 physical matrix passed; release-candidate cleanup in progress**
 
 - [x] replace compact home rows with large child cards showing balance and six
   direct amount buttons
@@ -278,6 +277,11 @@ rapid-edit and offline recovery checks pending**
 - [x] physically verify the polished layout on the owner phone and basic
   automatic synchronization in both directions on two phones; the receiving
   app needed a background/foreground cycle for one change
+- [x] physically verify rapid edits and automatic offline/reconnect recovery
+  without Sync Now on two phones
+- [x] remove the home-screen Undo Last control at the owner's request while
+  retaining the underlying undo operation for Shortcuts
+- [x] hide the obsolete counter-only connection test from the sharing screen
 
 Voice remains implemented, documented, and test-covered, but it is no longer a
 release gate for visual ledger improvements. Do not expand the Siri phrase

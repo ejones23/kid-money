@@ -8,19 +8,12 @@ child's card. Siri and Shortcuts remain optional secondary entry points.
 The current ledger is intentionally simple: no custom backend, application
 accounts, or third-party dependencies. A child's balance is derived from an
 auditable transaction ledger rather than stored as a mutable total. Private
-iCloud sharing between invited parents is now in development; its approved
-design preserves the local-first ledger and does not introduce a Kid Money
-login or custom backend. TestFlight builds 8–9 contain only a disposable
-CloudKit connection probe and do not upload ledger data. Build 10 passed an
-owner-only, no-upload physical preflight and is Testing in both internal and
-spouse external TestFlight groups. The real sync foundation now defines
-deterministic CloudKit records, a durable local pending-change queue, and tested
-remote decode/merge rules. A tested queue processor now adds persisted sync
-status, retry/backoff, iCloud account gating, and optimistic conflict handling,
-and a `CKSyncEngine` delegate now handles scoped send/fetch events, opaque engine
-state, and CloudKit system metadata. The local build now enables guarded hybrid
-synchronization for an activated household; physical TestFlight verification is
-the next gate.
+iCloud sharing between invited parents is available after the ledger owner
+explicitly opts in; it preserves a local copy and needs no Kid Money login or
+custom backend. TestFlight build 14 passed owner and spouse two-way automatic
+sync, rapid-edit, and offline/reconnect checks. One incoming change was picked
+up when the receiving app returned to the foreground. The release candidate
+removes the obsolete counter-test entry and home-screen Undo Last control.
 A durable migration state
 machine now stages an existing ledger with deterministic record identities,
 repairs interrupted queues, and refuses destructive or ambiguous adoption. A
@@ -39,18 +32,20 @@ This is an early-stage public project. The code is available for learning,
 adaptation, and contribution under the MIT License, but it should not yet be
 treated as a finished personal-finance product.
 
-The project uses internal TestFlight distribution so that its physical-device Siri checkpoint can be tested through an approved channel rather than a locally signed app on a managed phone.
+The project uses TestFlight to verify visual behavior and private sharing on
+physical phones before public release, without installing a locally signed
+developer app on a managed phone.
 
 ## Current status
 
-Phases 1 through 5 are complete, and Phase 6 has begun:
+Phases 1 through 5 are complete. The core shared-ledger and visual-first flows
+have passed physical tests, and public-release preparation is in progress:
 
 - SwiftUI application targeting iOS 26+
 - SwiftData models for children and signed ledger transactions
 - shared `LedgerService` domain logic
 - add-child flow
 - large active-child cards with derived USD balances and direct quick actions
-- a contextual, one-tap visual Undo Last action on the home screen
 - one configurable, ordered set of up to six quick amounts per device
 - direct all-children give/take actions that create one auditable
   transaction per active child
@@ -182,6 +177,7 @@ docs/PHASE6_CLOUDKIT_SCHEMA.md Production schema release gate
 docs/PHASE6_REAL_LEDGER_TEST.md Two-device real-ledger test procedure
 docs/PHASE4_TEST_PLAN.md      Manual-interface owner review
 docs/QUICK_ACTION_TEST_PLAN.md Visual quick-action physical test procedure
+docs/RELEASE_CANDIDATE_TEST.md Release-candidate physical smoke check
 docs/ROADMAP.md               Delivery plan and next steps
 docs/SIRI_TEST_PLAN.md        Physical-device proof checklist
 docs/privacy.md               Draft public privacy policy
@@ -289,11 +285,12 @@ Build `0.1 (13)` implements the visual-first home-screen pivot: large child
 cards, six configurable per-device quick amounts, a Give/Take selector, and an
 atomic All Children action. It passed its owner-phone checks on September 27,
 2026. Build 14 moves All Children below the individual child cards, removes its
-confirmation, keeps quick actions off child detail, adds a contextual Undo Last
-control, and enables guarded hybrid automatic synchronization. Its two-phone
-automatic-sync basic two-phone check passed; rapid edits and automatic
-offline/reconnect are the remaining focused physical checks before a release
-candidate.
+confirmation, keeps quick actions off child detail, and enables guarded hybrid
+automatic synchronization. Build 14 passed two-way automatic sync, rapid edits,
+and offline/reconnect recovery on physical phones. One incoming change required
+foregrounding the receiving app. Release cleanup removes the home-screen Undo
+Last control and the obsolete counter-test entry; the auditable undo operation
+remains available through Shortcuts.
 
 Physical testing showed that the prior coin phrases reliably collected the denomination but still requested the child separately, even when the child was spoken in the initial utterance. Build 5 replaces those overlapping advertised coin routes with the combined entity experiment; the underlying coin intents remain available as actions in Shortcuts.
 

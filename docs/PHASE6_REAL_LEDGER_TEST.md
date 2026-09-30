@@ -8,7 +8,7 @@ owner-Siri-originated delivery, two-phone relaunch persistence, and controlled
 offline/reconnect recovery. Build 14 adds guarded hybrid automatic sync. Basic
 two-way physical testing passed without Sync Now; foreground catch-up was
 needed for one change. Rapid edits and automatic offline/reconnect recovery
-remain unverified.**
+also passed.**
 
 This is separate from the successful counter-only connection test. Build 10
 offers an explicit owner upload of the actual child and transaction ledger to

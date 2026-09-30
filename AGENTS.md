@@ -135,14 +135,16 @@ Xcode must be open with this project loaded, and **Xcode → Settings → Intell
 
 ## Immediate next task
 
-Build 14 adds visual Undo Last and guarded hybrid shared-ledger sync: one
+Build 14 added visual Undo Last and guarded hybrid shared-ledger sync: one
 app-scoped automatic CKSyncEngine, foreground catch-up, debounced post-mutation
 work, silent remote-change delivery, and the existing Sync Now recovery action.
 It passed 97 Swift tests, one App Intent integration test, and App Store Connect
 validation; it was uploaded and is Testing in both Internal Testing and Family
-Test. The owner-phone visual and pending-queue checks passed. Basic automatic
-two-way sync passed on physical phones without Sync Now; one incoming change
-appeared after the receiving app was backgrounded and foregrounded. Finish
-rapid-edit and automatic offline/reconnect checks, then prepare a release
-candidate without the disposable connection-test UI. Keep attention-required
-recovery non-destructive and do not resume Siri-routing experiments.
+Test. The owner-phone visual and pending-queue checks passed. Automatic
+two-way sync, rapid edits, and offline/reconnect passed on physical phones
+without Sync Now; one incoming change appeared after the receiving app was
+backgrounded and foregrounded. Release cleanup removes the home-screen Undo
+Last control at the owner's request and hides the disposable connection-test
+UI while retaining the underlying Shortcuts undo behavior. Prepare and verify
+a release candidate. Keep attention-required recovery non-destructive and do
+not resume Siri-routing experiments.

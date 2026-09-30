@@ -107,9 +107,13 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   Connect shows **Testing** in both internal and Family Test groups.
 - [x] Run build 14's basic two-phone automatic-sync check: changes arrived in
   both directions without Sync Now; one receiving app needed foreground catch-up.
-- [ ] Complete the rapid-edit and automatic offline/reconnect checks.
-- [ ] Complete build 14's automatic two-device matrix before claiming shared
-  accounts synchronize without manual intervention.
+- [x] Complete the rapid-edit and automatic offline/reconnect checks.
+- [x] Complete build 14's automatic two-device matrix, including foreground
+  catch-up and exact-once history, without Sync Now.
+- [x] Remove the home-screen Undo Last control and hide the obsolete
+  counter-only connection test in the release-candidate source.
+- [ ] Verify the release candidate on TestFlight after these UI changes.
+  Use `docs/RELEASE_CANDIDATE_TEST.md` for the focused upgrade smoke check.
 
 ## 6. Public release
 

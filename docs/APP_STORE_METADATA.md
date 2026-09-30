@@ -1,6 +1,7 @@
 # App Store metadata draft
 
-This is working copy for App Store Connect. Confirm name availability and review every statement against the release build before submission.
+This is working copy for App Store Connect. Confirm every statement against the
+release build, and obtain the product owner's approval before submission.
 
 ## Product choices
 
@@ -12,21 +13,36 @@ This is working copy for App Store Connect. Confirm name availability and review
 - Price: **Free**
 - Made for Kids: **No** — the intended operator is a parent or guardian
 - Bundle identifier: `io.github.ejones23.KidMoney`
-- Version: `0.1`
+- Version: `0.1` in TestFlight; choose the public version before submission
 
 ## Promotional text
 
-Track the small amounts you owe your children with a simple, private ledger designed around quick Siri actions.
+Track the small amounts you owe your children. Give or take money with quick
+buttons, and share a private ledger with another parent if you choose.
 
 ## Description
 
-Kid Money is a lightweight ledger for parents who keep track of money assigned to their children.
+Kid Money is a simple ledger for parents who track money assigned to their
+children. It records amounts owed; it does not hold or transfer money.
 
-Create a child, record additions to their ledger, and see a balance derived from the complete transaction history. Kid Money stores monetary values as exact cents and keeps the ledger on your device.
+Create a child, choose Give or Take, and tap an amount on that child's card.
+Choose up to six quick amounts that fit your family, or enter a different
+amount and an optional note in the child's history. An All Children card lets
+you apply one adjustment to every active child. Each balance is calculated
+from its transaction history using exact cents.
 
-The app is being designed for quick Siri interactions, so everyday updates can take less time than editing a note and doing arithmetic by hand.
+Your ledger works on your iPhone without a Kid Money account. If you choose to
+enable family sharing, Kid Money uploads the ledger to your private iCloud
+storage so you can invite another adult to view and edit it from their own
+Apple Account. Changes can be made offline and synchronize when connectivity
+returns. Sharing is optional; it is not enabled merely by opening the app.
 
-Kid Money does not connect to bank accounts, move real money, provide financial advice, or create accounts for children.
+Kid Money also provides optional Shortcuts and Siri actions. Spoken requests
+may require clarification or app selection because Siri's routing is
+controlled by iOS.
+
+Kid Money does not connect to bank accounts, make payments, provide financial
+advice, or create accounts for children. The app currently supports US dollars.
 
 ## Keywords
 
@@ -34,14 +50,23 @@ allowance,kids,children,chores,ledger,balance,parent,family,money
 
 ## URLs
 
-These URLs will work after GitHub Pages is enabled for the repository's `docs` directory:
+These URLs are published through GitHub Pages; verify them again before
+submission:
 
 - Support: `https://ejones23.github.io/kid-money/support.html`
 - Privacy policy: `https://ejones23.github.io/kid-money/privacy.html`
 - Marketing: `https://ejones23.github.io/kid-money/`
 
-Before submission, confirm that the support page provides a user-approved contact method that satisfies App Store Connect and applicable legal requirements.
+Before submission, confirm that the support page's contact method is approved
+by the product owner and suitable for public users.
 
 ## Review notes draft
 
-Kid Money is a local ledger; it does not connect to financial institutions or transfer money. No account or login is required. To exercise the app, create a child from the main screen and use the manual transaction control on the child's detail screen. Siri/App Shortcut behavior should be described here after physical TestFlight verification.
+Kid Money is a parent-operated ledger. It does not connect to financial
+institutions or transfer money. No Kid Money login is required. To review on
+one phone, create a child, use the Give/Take quick buttons on the main screen,
+inspect the child's history, enter an arbitrary adjustment, then terminate and
+relaunch to check persistence. Optional family sharing uses the user's iCloud
+Apple Account and an invitation to a second adult; the one-phone ledger does
+not require iCloud setup. Siri and Shortcuts are optional and not needed to
+review the core workflow.
