@@ -121,6 +121,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Complete build 15's owner-phone TestFlight upgrade check: existing data,
   visual controls, hidden connection-test UI, one adjustment, and automatic
   pending-change drain all passed.
+- [x] Submit build 15 to the external `Family Test` group with accurate
+  one-phone review instructions; App Store Connect shows **Testing** in both
+  internal and external groups.
 - [ ] Complete build 15's two-phone TestFlight check after external review.
   Use `docs/RELEASE_CANDIDATE_TEST.md` for the remaining shared-ledger check.
 
