@@ -14,7 +14,7 @@ release build, and obtain the product owner's approval before submission.
 - Availability: **United States only** (owner-approved; configure in App Store Connect)
 - Made for Kids: **No** — the intended operator is a parent or guardian
 - Bundle identifier: `io.github.ejones23.KidMoney`
-- Version: `0.1` in TestFlight; choose the public version before submission
+- Public version: **1.0** (owner-approved); release-candidate build: **16**
 - Current app icon: **approved by product owner** on October 4, 2026
 
 ## Promotional text

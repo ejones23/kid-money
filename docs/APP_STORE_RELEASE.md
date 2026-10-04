@@ -132,6 +132,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 ## 6. Public release
 
 - [x] Resolve every release-candidate TestFlight finding.
+- [x] Choose public version `1.0`; create build 16 as the version-only successor
+  to the physically verified build 15.
 - [ ] Configure United States-only storefront availability and a free price in
   App Store Connect. The product owner approved US-only availability; the
   App Store Connect setting still needs verification.

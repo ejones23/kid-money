@@ -66,6 +66,19 @@ private final class BlockingAutomaticSyncRunnerStub: CloudLedgerSyncRunning {
 }
 
 @MainActor
+private func waitUntil(
+    timeoutNanoseconds: UInt64 = 1_000_000_000,
+    condition: @MainActor () -> Bool
+) async {
+    let pollNanoseconds: UInt64 = 1_000_000
+    var elapsed: UInt64 = 0
+    while !condition(), elapsed < timeoutNanoseconds {
+        try? await Task.sleep(nanoseconds: pollNanoseconds)
+        elapsed += pollNanoseconds
+    }
+}
+
+@MainActor
 struct CloudLedgerSyncSessionTests {
     @Test func liveTransportRetainsDelegateAcrossFetchAndSendAndRefreshesQueue() throws {
         let (context, shared) = try fixture()
@@ -106,7 +119,7 @@ struct CloudLedgerSyncSessionTests {
         coordinator.scheduleAfterLocalMutation()
         coordinator.scheduleAfterLocalMutation()
         coordinator.scheduleAfterLocalMutation()
-        try await Task.sleep(nanoseconds: 50_000_000)
+        await waitUntil { runner.ignoreBackoffCalls.count == 1 }
 
         #expect(runner.ignoreBackoffCalls == [false])
         await coordinator.syncWhenAppBecomesActive()
@@ -136,14 +149,13 @@ struct CloudLedgerSyncSessionTests {
         let foregroundTask = Task {
             await coordinator.syncWhenAppBecomesActive()
         }
-        try await Task.sleep(nanoseconds: 5_000_000)
+        await waitUntil { runner.ignoreBackoffCalls.count == 1 }
         #expect(runner.ignoreBackoffCalls == [true])
 
         coordinator.scheduleAfterLocalMutation()
-        try await Task.sleep(nanoseconds: 5_000_000)
         runner.finishFirstRun()
         await foregroundTask.value
-        try await Task.sleep(nanoseconds: 10_000_000)
+        await waitUntil { runner.ignoreBackoffCalls.count == 2 }
 
         #expect(runner.ignoreBackoffCalls == [true, false])
     }
