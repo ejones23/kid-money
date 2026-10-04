@@ -1,6 +1,6 @@
 # App icon
 
-The current icon is a provisional AI-generated release asset. It should be reviewed on a Home Screen and in App Store contexts before submission.
+The current AI-generated release icon was approved by the product owner on October 4, 2026. Verify that the uploaded release build and App Store listing use this asset.
 
 - Workspace asset: `KidMoney/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png`
 - Dimensions: 1024×1024 pixels

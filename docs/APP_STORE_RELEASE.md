@@ -14,7 +14,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 
 - [x] Use a stable reverse-DNS bundle identifier.
 - [x] Add an opaque 1024×1024 App Store icon.
-- [ ] Review the provisional icon with the product owner.
+- [x] Review the current icon with the product owner; approved October 4, 2026.
 - [ ] Capture representative iPhone screenshots from the release candidate.
 - [ ] Finalize description, subtitle, keywords, categories, and copyright.
 - [ ] Provide a user-approved public support email or other actual contact
@@ -119,7 +119,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 ## 6. Public release
 
 - [ ] Resolve every TestFlight finding.
-- [ ] Choose storefront availability and a free price.
+- [ ] Configure United States-only storefront availability and a free price in
+  App Store Connect. The product owner approved US-only availability; the
+  App Store Connect setting still needs verification.
 - [ ] Attach the verified build to the App Store version.
 - [ ] Submit the app and required metadata for App Review.
 - [ ] Respond to review questions without sharing private ledger or device data.
