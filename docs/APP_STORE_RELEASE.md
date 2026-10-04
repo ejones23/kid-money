@@ -113,6 +113,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   catch-up and exact-once history, without Sync Now.
 - [x] Remove the home-screen Undo Last control and hide the obsolete
   counter-only connection test in the release-candidate source.
+- [x] Archive and upload release-candidate build `0.1 (15)`; App Store Connect
+  accepted the upload on October 4, 2026. Internal Testing assignment is pending.
 - [ ] Verify the release candidate on TestFlight after these UI changes.
   Use `docs/RELEASE_CANDIDATE_TEST.md` for the focused upgrade smoke check.
 
