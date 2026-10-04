@@ -124,12 +124,14 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Submit build 15 to the external `Family Test` group with accurate
   one-phone review instructions; App Store Connect shows **Testing** in both
   internal and external groups.
-- [ ] Complete build 15's two-phone TestFlight check after external review.
-  Use `docs/RELEASE_CANDIDATE_TEST.md` for the remaining shared-ledger check.
+- [x] Complete build 15's two-phone TestFlight check: both upgraded ledgers
+  retained their data, owner-to-participant and participant-to-owner automatic
+  delivery each arrived exactly once, and both replicas persisted matching
+  results after termination and relaunch.
 
 ## 6. Public release
 
-- [ ] Resolve every TestFlight finding.
+- [x] Resolve every release-candidate TestFlight finding.
 - [ ] Configure United States-only storefront availability and a free price in
   App Store Connect. The product owner approved US-only availability; the
   App Store Connect setting still needs verification.

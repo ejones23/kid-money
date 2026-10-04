@@ -253,7 +253,8 @@ until their non-destructive physical procedure is agreed.
 
 ## Phase 7 — Visual-first quick actions
 
-Status: **Build 14 physical matrix passed; release-candidate cleanup in progress**
+Status: **Complete — build 15 passed the owner and two-phone release-candidate
+matrix**
 
 - [x] replace compact home rows with large child cards showing balance and six
   direct amount buttons
@@ -282,6 +283,9 @@ Status: **Build 14 physical matrix passed; release-candidate cleanup in progress
 - [x] remove the home-screen Undo Last control at the owner's request while
   retaining the underlying undo operation for Shortcuts
 - [x] hide the obsolete counter-only connection test from the sharing screen
+- [x] distribute build 15 to both TestFlight groups and verify upgrade safety,
+  bidirectional exact-once automatic sync, and termination/relaunch persistence
+  on two physical phones
 
 Voice remains implemented, documented, and test-covered, but it is no longer a
 release gate for visual ledger improvements. Do not expand the Siri phrase
@@ -311,6 +315,6 @@ adoption is implemented behind an injected transport with local preflight and
 retryable initial import. A separate injected activation gate tests account and
 share failure recovery. The local build now wires these paths to explicit
 sharing setup and, after activation, one guarded automatic sync engine.
-Automatic behavior has not yet been distributed or physically verified.
-Minimal TestFlight and App Store preparation remains active for physical-device
-validation.
+Automatic behavior is distributed and physically verified in both directions,
+including foreground catch-up, rapid edits, and offline/reconnect recovery.
+App Store listing and submission preparation is now the active release work.
