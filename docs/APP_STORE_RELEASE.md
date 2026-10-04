@@ -20,6 +20,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Provide the user-approved public support email
   `kidmoneyledger@duck.com` on the support page; GitHub Issues remain available
   for non-sensitive reports.
+- [x] Verify the published support link and the Duck address receive/reply path
+  without exposing the owner's personal address.
 
 ## 3. Privacy and compliance
 
@@ -116,8 +118,11 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   counter-only connection test in the release-candidate source.
 - [x] Archive and upload release-candidate build `0.1 (15)`; App Store Connect
   accepted the upload on October 4, 2026 and it is assigned to Internal Testing.
-- [ ] Verify the release candidate on TestFlight after these UI changes.
-  Use `docs/RELEASE_CANDIDATE_TEST.md` for the focused upgrade smoke check.
+- [x] Complete build 15's owner-phone TestFlight upgrade check: existing data,
+  visual controls, hidden connection-test UI, one adjustment, and automatic
+  pending-change drain all passed.
+- [ ] Complete build 15's two-phone TestFlight check after external review.
+  Use `docs/RELEASE_CANDIDATE_TEST.md` for the remaining shared-ledger check.
 
 ## 6. Public release
 
