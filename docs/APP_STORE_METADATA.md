@@ -59,9 +59,9 @@ submission:
 - Privacy policy: `https://ejones23.github.io/kid-money/privacy.html`
 - Marketing: `https://ejones23.github.io/kid-money/`
 
-Before submission, add a product-owner-approved public support email or other
-actual contact information to the support page. GitHub Issues may remain an
-additional channel but should not be its only contact route.
+The support page provides the owner-approved public contact address
+`kidmoneyledger@duck.com`. GitHub Issues remain an additional channel for
+non-sensitive reports.
 
 ## Review notes draft
 

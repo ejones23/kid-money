@@ -17,8 +17,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Review the current icon with the product owner; approved October 4, 2026.
 - [ ] Capture representative iPhone screenshots from the release candidate.
 - [ ] Finalize description, subtitle, keywords, categories, and copyright.
-- [ ] Provide a user-approved public support email or other actual contact
-  information on the support page; GitHub Issues alone is not the release plan.
+- [x] Provide the user-approved public support email
+  `kidmoneyledger@duck.com` on the support page; GitHub Issues remain available
+  for non-sensitive reports.
 
 ## 3. Privacy and compliance
 
@@ -114,7 +115,7 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Remove the home-screen Undo Last control and hide the obsolete
   counter-only connection test in the release-candidate source.
 - [x] Archive and upload release-candidate build `0.1 (15)`; App Store Connect
-  accepted the upload on October 4, 2026. Internal Testing assignment is pending.
+  accepted the upload on October 4, 2026 and it is assigned to Internal Testing.
 - [ ] Verify the release candidate on TestFlight after these UI changes.
   Use `docs/RELEASE_CANDIDATE_TEST.md` for the focused upgrade smoke check.
 
