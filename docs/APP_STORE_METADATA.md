@@ -11,13 +11,15 @@ release build, and obtain the product owner's approval before submission.
 - Primary category: **Finance**
 - Secondary category: **Lifestyle**
 - Price: **Free**
-- Availability: **United States only** (owner-approved; configure in App Store Connect)
+- Availability: **United States only** (owner-approved and configured)
 - Made for Kids: **No** — the intended operator is a parent or guardian
 - Bundle identifier: `io.github.ejones23.KidMoney`
 - Public version: **1.0** (owner-approved); release-candidate build: **16**
 - Current app icon: **approved by product owner** on October 4, 2026
 - Screenshots: **two owner-approved iPhone screenshots uploaded** on October 4,
   2026, using fictional data; home screen first and child history second
+- Age rating: **4+** globally, with App Store Connect's regional equivalents
+- App Store version: build **1.0 (16)** attached; manual release selected
 
 ## Promotional text
 

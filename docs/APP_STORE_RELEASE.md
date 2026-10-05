@@ -18,7 +18,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Capture and upload representative iPhone screenshots from the release
   candidate using fictional ledger data; the home screen appears first,
   followed by child history.
-- [ ] Finalize description, subtitle, keywords, categories, and copyright.
+- [ ] Finalize copyright. Description, subtitle, keywords, and categories are
+  saved in App Store Connect.
 - [x] Provide the user-approved public support email
   `kidmoneyledger@duck.com` on the support page; GitHub Issues remain available
   for non-sensitive reports.
@@ -29,9 +30,10 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 
 - [x] Draft public privacy and support pages.
 - [x] Enable GitHub Pages from the repository's `docs` directory and verify every URL.
-- [ ] Audit the release build and third-party code before selecting “Data Not Collected.”
-- [ ] Complete the age-rating questionnaire.
-- [ ] Confirm the app is not designated Made for Kids; the operator is a parent or guardian.
+- [x] Audit the release build and third-party code before selecting “Data Not Collected.”
+- [x] Complete the age-rating questionnaire; App Store Connect calculates a
+  global 4+ rating with regional equivalents.
+- [x] Confirm the app is not designated Made for Kids; the operator is a parent or guardian.
 - [x] Declare that build `0.1 (1)` contains no encryption algorithms and add the matching Info.plist setting for future builds.
 - [ ] Verify that all user-facing claims match the shipped behavior.
 
@@ -139,10 +141,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Archive, validate, and upload public candidate `1.0 (16)`; App Store
   Connect accepted the upload on October 4, 2026 and it is assigned to
   `Internal Testing`.
-- [ ] Configure United States-only storefront availability and a free price in
-  App Store Connect. The product owner approved US-only availability; the
-  App Store Connect setting still needs verification.
-- [ ] Attach the verified build to the App Store version.
+- [x] Configure United States-only storefront availability and a free price in
+  App Store Connect.
+- [x] Attach verified build `1.0 (16)` to the App Store version.
 - [ ] Submit the app and required metadata for App Review.
 - [ ] Respond to review questions without sharing private ledger or device data.
 - [ ] Release manually after approval and verify the live product page.
