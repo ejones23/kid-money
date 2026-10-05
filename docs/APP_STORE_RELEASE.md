@@ -15,7 +15,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Use a stable reverse-DNS bundle identifier.
 - [x] Add an opaque 1024×1024 App Store icon.
 - [x] Review the current icon with the product owner; approved October 4, 2026.
-- [ ] Capture representative iPhone screenshots from the release candidate.
+- [x] Capture and upload representative iPhone screenshots from the release
+  candidate using fictional ledger data; the home screen appears first,
+  followed by child history.
 - [ ] Finalize description, subtitle, keywords, categories, and copyright.
 - [x] Provide the user-approved public support email
   `kidmoneyledger@duck.com` on the support page; GitHub Issues remain available
@@ -134,6 +136,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Resolve every release-candidate TestFlight finding.
 - [x] Choose public version `1.0`; create build 16 as the version-only successor
   to the physically verified build 15.
+- [x] Archive, validate, and upload public candidate `1.0 (16)`; App Store
+  Connect accepted the upload on October 4, 2026 and it is assigned to
+  `Internal Testing`.
 - [ ] Configure United States-only storefront availability and a free price in
   App Store Connect. The product owner approved US-only availability; the
   App Store Connect setting still needs verification.

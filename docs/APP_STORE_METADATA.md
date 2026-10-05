@@ -16,6 +16,8 @@ release build, and obtain the product owner's approval before submission.
 - Bundle identifier: `io.github.ejones23.KidMoney`
 - Public version: **1.0** (owner-approved); release-candidate build: **16**
 - Current app icon: **approved by product owner** on October 4, 2026
+- Screenshots: **two owner-approved iPhone screenshots uploaded** on October 4,
+  2026, using fictional data; home screen first and child history second
 
 ## Promotional text
 
