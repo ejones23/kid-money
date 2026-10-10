@@ -18,8 +18,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Capture and upload representative iPhone screenshots from the release
   candidate using fictional ledger data; the home screen appears first,
   followed by child history.
-- [ ] Finalize copyright. Description, subtitle, keywords, and categories are
-  saved in App Store Connect.
+- [x] Finalize copyright, description, subtitle, keywords, and categories in
+  App Store Connect.
 - [x] Provide the user-approved public support email
   `kidmoneyledger@duck.com` on the support page; GitHub Issues remain available
   for non-sensitive reports.
@@ -34,6 +34,8 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Complete the age-rating questionnaire; App Store Connect calculates a
   global 4+ rating with regional equivalents.
 - [x] Confirm the app is not designated Made for Kids; the operator is a parent or guardian.
+- [x] Declare that the app does not contain, show, or access third-party
+  content.
 - [x] Declare that build `0.1 (1)` contains no encryption algorithms and add the matching Info.plist setting for future builds.
 - [ ] Verify that all user-facing claims match the shipped behavior.
 
@@ -144,6 +146,10 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
 - [x] Configure United States-only storefront availability and a free price in
   App Store Connect.
 - [x] Attach verified build `1.0 (16)` to the App Store version.
+- [x] Save App Review contact information, retain manual release, and limit the
+  compatibility release to iPhone by disabling Apple Silicon Mac and Apple
+  Vision Pro availability. App Store Connect enabled **Add for Review** on
+  October 10, 2026.
 - [ ] Submit the app and required metadata for App Review.
 - [ ] Respond to review questions without sharing private ledger or device data.
 - [ ] Release manually after approval and verify the live product page.

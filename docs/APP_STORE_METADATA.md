@@ -20,6 +20,12 @@ release build, and obtain the product owner's approval before submission.
   2026, using fictional data; home screen first and child history second
 - Age rating: **4+** globally, with App Store Connect's regional equivalents
 - App Store version: build **1.0 (16)** attached; manual release selected
+- Compatibility distribution: **iPhone only** for 1.0; Apple Silicon Mac and
+  Apple Vision Pro availability are disabled
+- Content rights: **does not contain, show, or access third-party content**
+- Copyright: **2026 Emmanuel Jones**
+- Submission state: required metadata is saved and **Add for Review** is
+  enabled as of October 10, 2026; the app has not been submitted
 
 ## Promotional text
 
