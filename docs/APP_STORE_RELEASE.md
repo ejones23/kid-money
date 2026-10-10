@@ -150,7 +150,9 @@ The immediate distribution goal is a TestFlight build that can exercise the phys
   compatibility release to iPhone by disabling Apple Silicon Mac and Apple
   Vision Pro availability. App Store Connect enabled **Add for Review** on
   October 10, 2026.
-- [ ] Submit the app and required metadata for App Review.
+- [x] Submit build `1.0 (16)` and its required metadata for App Review;
+  App Store Connect reported **Waiting for Review** on October 10, 2026, with
+  manual release retained.
 - [ ] Respond to review questions without sharing private ledger or device data.
 - [ ] Release manually after approval and verify the live product page.
 

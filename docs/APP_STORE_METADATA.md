@@ -24,8 +24,8 @@ release build, and obtain the product owner's approval before submission.
   Apple Vision Pro availability are disabled
 - Content rights: **does not contain, show, or access third-party content**
 - Copyright: **2026 Emmanuel Jones**
-- Submission state: required metadata is saved and **Add for Review** is
-  enabled as of October 10, 2026; the app has not been submitted
+- Submission state: **Waiting for Review** as of October 10, 2026; build
+  **1.0 (16)** was submitted with manual release retained
 
 ## Promotional text
 
